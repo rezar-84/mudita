@@ -9,8 +9,56 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as YukleRouteImport } from './routes/yukle'
+import { Route as TasarlaRouteImport } from './routes/tasarla'
+import { Route as SssRouteImport } from './routes/sss'
+import { Route as SepetRouteImport } from './routes/sepet'
+import { Route as OdemeRouteImport } from './routes/odeme'
+import { Route as IletisimRouteImport } from './routes/iletisim'
+import { Route as HakkimizdaRouteImport } from './routes/hakkimizda'
+import { Route as GaleriRouteImport } from './routes/galeri'
 import { Route as IndexRouteImport } from './routes/index'
 
+const YukleRoute = YukleRouteImport.update({
+  id: '/yukle',
+  path: '/yukle',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TasarlaRoute = TasarlaRouteImport.update({
+  id: '/tasarla',
+  path: '/tasarla',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SssRoute = SssRouteImport.update({
+  id: '/sss',
+  path: '/sss',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SepetRoute = SepetRouteImport.update({
+  id: '/sepet',
+  path: '/sepet',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OdemeRoute = OdemeRouteImport.update({
+  id: '/odeme',
+  path: '/odeme',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IletisimRoute = IletisimRouteImport.update({
+  id: '/iletisim',
+  path: '/iletisim',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HakkimizdaRoute = HakkimizdaRouteImport.update({
+  id: '/hakkimizda',
+  path: '/hakkimizda',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GaleriRoute = GaleriRouteImport.update({
+  id: '/galeri',
+  path: '/galeri',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +67,144 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/galeri': typeof GaleriRoute
+  '/hakkimizda': typeof HakkimizdaRoute
+  '/iletisim': typeof IletisimRoute
+  '/odeme': typeof OdemeRoute
+  '/sepet': typeof SepetRoute
+  '/sss': typeof SssRoute
+  '/tasarla': typeof TasarlaRoute
+  '/yukle': typeof YukleRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/galeri': typeof GaleriRoute
+  '/hakkimizda': typeof HakkimizdaRoute
+  '/iletisim': typeof IletisimRoute
+  '/odeme': typeof OdemeRoute
+  '/sepet': typeof SepetRoute
+  '/sss': typeof SssRoute
+  '/tasarla': typeof TasarlaRoute
+  '/yukle': typeof YukleRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/galeri': typeof GaleriRoute
+  '/hakkimizda': typeof HakkimizdaRoute
+  '/iletisim': typeof IletisimRoute
+  '/odeme': typeof OdemeRoute
+  '/sepet': typeof SepetRoute
+  '/sss': typeof SssRoute
+  '/tasarla': typeof TasarlaRoute
+  '/yukle': typeof YukleRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/galeri'
+    | '/hakkimizda'
+    | '/iletisim'
+    | '/odeme'
+    | '/sepet'
+    | '/sss'
+    | '/tasarla'
+    | '/yukle'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/galeri'
+    | '/hakkimizda'
+    | '/iletisim'
+    | '/odeme'
+    | '/sepet'
+    | '/sss'
+    | '/tasarla'
+    | '/yukle'
+  id:
+    | '__root__'
+    | '/'
+    | '/galeri'
+    | '/hakkimizda'
+    | '/iletisim'
+    | '/odeme'
+    | '/sepet'
+    | '/sss'
+    | '/tasarla'
+    | '/yukle'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  GaleriRoute: typeof GaleriRoute
+  HakkimizdaRoute: typeof HakkimizdaRoute
+  IletisimRoute: typeof IletisimRoute
+  OdemeRoute: typeof OdemeRoute
+  SepetRoute: typeof SepetRoute
+  SssRoute: typeof SssRoute
+  TasarlaRoute: typeof TasarlaRoute
+  YukleRoute: typeof YukleRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/yukle': {
+      id: '/yukle'
+      path: '/yukle'
+      fullPath: '/yukle'
+      preLoaderRoute: typeof YukleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tasarla': {
+      id: '/tasarla'
+      path: '/tasarla'
+      fullPath: '/tasarla'
+      preLoaderRoute: typeof TasarlaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sss': {
+      id: '/sss'
+      path: '/sss'
+      fullPath: '/sss'
+      preLoaderRoute: typeof SssRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sepet': {
+      id: '/sepet'
+      path: '/sepet'
+      fullPath: '/sepet'
+      preLoaderRoute: typeof SepetRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/odeme': {
+      id: '/odeme'
+      path: '/odeme'
+      fullPath: '/odeme'
+      preLoaderRoute: typeof OdemeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/iletisim': {
+      id: '/iletisim'
+      path: '/iletisim'
+      fullPath: '/iletisim'
+      preLoaderRoute: typeof IletisimRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hakkimizda': {
+      id: '/hakkimizda'
+      path: '/hakkimizda'
+      fullPath: '/hakkimizda'
+      preLoaderRoute: typeof HakkimizdaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/galeri': {
+      id: '/galeri'
+      path: '/galeri'
+      fullPath: '/galeri'
+      preLoaderRoute: typeof GaleriRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,6 +217,14 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  GaleriRoute: GaleriRoute,
+  HakkimizdaRoute: HakkimizdaRoute,
+  IletisimRoute: IletisimRoute,
+  OdemeRoute: OdemeRoute,
+  SepetRoute: SepetRoute,
+  SssRoute: SssRoute,
+  TasarlaRoute: TasarlaRoute,
+  YukleRoute: YukleRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
