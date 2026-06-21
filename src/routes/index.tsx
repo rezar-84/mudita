@@ -51,6 +51,51 @@ function HomePage() {
       {/* HERO */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-preset-dark" aria-hidden />
+
+        {/* Animated neon glow orbs */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+          <div className="absolute -top-32 -left-20 h-[28rem] w-[28rem] rounded-full blur-3xl animate-hero-orb-1" style={{ background: "radial-gradient(circle, rgba(255,62,181,0.45), transparent 60%)" }} />
+          <div className="absolute top-1/3 -right-24 h-[32rem] w-[32rem] rounded-full blur-3xl animate-hero-orb-2" style={{ background: "radial-gradient(circle, rgba(30,144,255,0.45), transparent 60%)" }} />
+          <div className="absolute -bottom-24 left-1/3 h-[26rem] w-[26rem] rounded-full blur-3xl animate-hero-orb-3" style={{ background: "radial-gradient(circle, rgba(0,217,107,0.35), transparent 60%)" }} />
+        </div>
+
+        {/* Animated rotating rays */}
+        <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" aria-hidden>
+          <div
+            className="h-[80rem] w-[80rem] opacity-[0.18] animate-hero-rays"
+            style={{
+              background:
+                "conic-gradient(from 0deg, transparent 0deg, rgba(255,62,181,0.6) 6deg, transparent 12deg, transparent 40deg, rgba(30,144,255,0.55) 46deg, transparent 52deg, transparent 90deg, rgba(255,212,0,0.5) 96deg, transparent 102deg, transparent 150deg, rgba(0,217,107,0.5) 156deg, transparent 162deg, transparent 220deg, rgba(255,62,181,0.55) 226deg, transparent 232deg, transparent 290deg, rgba(30,144,255,0.5) 296deg, transparent 302deg, transparent 360deg)",
+              maskImage: "radial-gradient(circle, black 0%, transparent 65%)",
+              WebkitMaskImage: "radial-gradient(circle, black 0%, transparent 65%)",
+            }}
+          />
+        </div>
+
+        {/* Twinkling sparkle dots */}
+        <div className="pointer-events-none absolute inset-0" aria-hidden>
+          {[
+            { l: "12%", t: "22%", d: "0s", c: "#ff8ad1" },
+            { l: "78%", t: "18%", d: "1.2s", c: "#7ab8ff" },
+            { l: "32%", t: "70%", d: "2.4s", c: "#fff48a" },
+            { l: "62%", t: "82%", d: "0.6s", c: "#8fffb0" },
+            { l: "88%", t: "55%", d: "1.8s", c: "#ff8ad1" },
+            { l: "8%", t: "60%", d: "3s", c: "#7ab8ff" },
+          ].map((s, i) => (
+            <span
+              key={i}
+              className="absolute h-1.5 w-1.5 rounded-full animate-hero-twinkle"
+              style={{
+                left: s.l,
+                top: s.t,
+                backgroundColor: s.c,
+                boxShadow: `0 0 8px ${s.c}, 0 0 16px ${s.c}`,
+                animationDelay: s.d,
+              }}
+            />
+          ))}
+        </div>
+
         <div className="relative mx-auto max-w-7xl px-4 py-16 md:py-24 lg:py-28">
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
             <div>
@@ -90,18 +135,25 @@ function HomePage() {
             </div>
 
             {/* Hero neon mosaic */}
-            <div className="grid grid-cols-2 gap-4">
-              {SAMPLES.map((s) => (
+            <div className="relative grid grid-cols-2 gap-4">
+              {SAMPLES.map((s, i) => (
                 <div
                   key={s.text}
-                  className="flex aspect-square items-center justify-center rounded-2xl border border-white/10 bg-black/30 p-4 backdrop-blur"
+                  className="relative flex aspect-square items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-black/30 p-4 backdrop-blur"
                 >
                   <span
-                    className="neon-text text-3xl sm:text-4xl"
+                    className="pointer-events-none absolute inset-0"
+                    style={{
+                      background: `radial-gradient(circle at 50% 50%, ${s.glow}22, transparent 70%)`,
+                    }}
+                  />
+                  <span
+                    className="neon-text relative text-3xl sm:text-4xl animate-neon-flicker"
                     style={{
                       fontFamily: s.font,
                       color: s.color,
                       textShadow: `0 0 4px ${s.color}, 0 0 14px ${s.glow}, 0 0 28px ${s.glow}, 0 0 60px ${s.glow}`,
+                      animationDelay: `${i * 0.7}s`,
                     }}
                   >
                     {s.text}
