@@ -238,7 +238,7 @@
 .animate-hero-orb-1 { animation: hero-orb-1 9s ease-in-out infinite; }
 .animate-hero-orb-2 { animation: hero-orb-2 11s ease-in-out infinite; }
 .animate-hero-orb-3 { animation: hero-orb-3 13s ease-in-out infinite; }
-.animate-hero-rays { animation: hero-rays-spin 60s linear infinite; }
+
 .animate-hero-twinkle { animation: hero-twinkle 3s ease-in-out infinite; }
 .animate-neon-flicker { animation: neon-flicker 6s ease-in-out infinite; }
 
