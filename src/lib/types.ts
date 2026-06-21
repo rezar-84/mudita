@@ -101,6 +101,8 @@ export interface NeonDesignConfig {
   urgent: boolean;
   notes: string;
   background: BackgroundPreset;
+  customBackground?: string; // user-uploaded image as data URL (overrides background preset)
+  customBackgroundName?: string;
   // Visual preview-only options (do not affect price)
   brightness?: number; // 40 – 120, default 100
   flicker?: boolean;   // default true
