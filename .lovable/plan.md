@@ -1,130 +1,85 @@
-# Mudita Dekorasyon — Neon Tabela Konfigüratörü
+## Goals
+1. Kill horizontal scroll on mobile across the site (designer is the main offender).
+2. Keep the right-side controls in the designer readable when the preview grows (real-size mode + zoom).
+3. Add a working TR/EN language selector in the header.
+4. Tighten general designer UX (toolbar wrap, spacing, sticky behavior).
 
-Mudita Dekorasyon markası altında, Türkiye pazarına yönelik LED neon tabela tasarım ve sipariş sitesi. Custom Neon tarzı bir konfigüratör + canlı neon önizleme + dinamik TRY fiyatlandırma + teklif/sepet akışı. Ödeme entegrasyonu sonraki aşamada.
+## 1. No horizontal scroll on mobile
 
-## Marka
+Root causes found:
+- `NeonPreview` real-size mode uses `width: min(width*cmPx, 1100px)` — on a 390px mobile this pushes the page wider than the viewport.
+- Hero `conic-gradient` ray layer is `80rem` wide and only `overflow-hidden` on its section, but any nested `min-w` from preview can leak.
+- Floating preview toolbar can overflow narrow widths.
 
-- İsim: Mudita Dekorasyon — "Vazolar'dan Dekorasyona Üretim"
-- Hikaye: 2021'de iki kız kardeşin evlerinde başlattığı, el emeği, tescilli, dünya çapında gönderim yapan bir marka. Samimi, sıcak, modern.
-- Logo: yüklenen `user-uploads://logo-117x50.png` → `src/assets/logo.png` olarak projeye alınır, header + footer + OG görsellerinde kullanılır.
-- Ton: sıcak, samimi, modern e-ticaret. "Biz" dili. Hakkımızda metni `/hakkimizda` sayfasında kullanıcının verdiği metinle birebir.
-- Renk paleti: temiz beyaz/açık gri UI panelleri + koyu önizleme alanı; neon vurgu olarak elektrik pembesi/cyan gradient (CTA'larda). Logodaki sıcak ton (terracotta) ikincil aksan olarak kullanılır.
+Fixes:
+- Add a global guard in `src/routes/__root.tsx` `<body>` / `<main>`: `overflow-x-hidden` and `max-w-[100vw]`.
+- `NeonPreview` container: add `max-w-full` and clamp real-size style via `width: min(<computed>, 100%)`. Use `maxWidth: "100%"` on the inline style so cm-based width never exceeds the cell.
+- Floating quick-action toolbar in preview: make it `flex-wrap`, shrink icon padding under `sm`, and switch label "Açık/Kapalı" → icon-only under `sm` (already i18n-driven after step 3).
+- `tasarla.tsx` outer wrapper: add `overflow-x-clip` and use `min-w-0` on both grid columns.
 
-## Sayfalar (TanStack Start route'ları)
+## 2. Right-side controls when preview grows
 
-- `/` — Ana sayfa: hero ("Neon Tabelanı Tasarla"), öne çıkan örnekler, marka hikayesi özeti, galeri teaser, SSS önizleme
-- `/tasarla` — Konfigüratör (tasarımcı + canlı önizleme + sticky özet)
-- `/galeri` — İlham galerisi (mock görseller, stil filtresi)
-- `/yukle` — Logo/görsel yükleyerek özel teklif isteme
-- `/hakkimizda` — Mudita Dekorasyon hikayesi (verilen metin)
-- `/sss` — SSS akordiyon
-- `/iletisim` — İletişim / teklif formu
-- `/sepet` — Sepet (placeholder, localStorage)
-- `/odeme` — Ödeme placeholder (iyzico, PayTR, Param, Stripe, EFT, WhatsApp seçenekleri devre dışı listelenir)
-- Ortak header/footer `__root.tsx` içinde, logo + TR navigasyon
+- Change grid template from `lg:grid-cols-[1.7fr_1fr]` to `lg:grid-cols-[minmax(0,1.7fr)_minmax(320px,1fr)]` so the right column always reserves ≥320px and the preview cell can shrink.
+- Cap preview height on desktop with `lg:max-h-[70vh]` and `object-fit`-style scaling: when `realSizeMode` is on, the preview keeps its sticky behavior but scrolls vertically inside the cell instead of pushing the layout.
+- Drop `lg:sticky` while `realSizeMode` is on (it fights with tall content); switch to a normal block when real size, sticky otherwise.
+- Right column wrapper: `min-w-0` + `w-full` so the configurator panel never overflows its cell when long font labels appear.
 
-## Konfigüratör UX (`/tasarla`)
+## 3. Language selector (TR / EN)
 
-Masaüstünde iki sütun, mobilde yığılmış:
+Current `src/lib/i18n.ts` is a module-level singleton with empty EN dict and no reactivity — switching it would not re-render.
 
-```text
-┌─────────────────────────┬──────────────────┐
-│  Koyu Önizleme Canvas   │  Adım Panelleri  │
-│  (neon glow, bg toggle) │  1 Yazı          │
-│  cm boyut etiketi       │  2 Yazı Tipi     │
-│  uyarılar               │  3 Renk          │
-│                         │  4 Ölçü          │
-│                         │  5 Arka Panel    │
-├─────────────────────────┤  6 Montaj        │
-│  Sticky Fiyat Özeti     │  7 Aksesuar      │
-│  Sepete Ekle / Teklif   │  8 Notlar        │
-│  WhatsApp ile Gönder    │                  │
-└─────────────────────────┴──────────────────┘
+Refactor to a small reactive store:
+
+```ts
+// src/lib/i18n.ts
+import { useSyncExternalStore } from "react";
+
+const dict = { tr: { /* existing */ }, en: { /* full EN translations */ } };
+type Locale = keyof typeof dict;
+
+const listeners = new Set<() => void>();
+let current: Locale = (typeof localStorage !== "undefined"
+  && (localStorage.getItem("locale") as Locale)) || "tr";
+
+export function setLocale(l: Locale) {
+  current = l;
+  if (typeof localStorage !== "undefined") localStorage.setItem("locale", l);
+  if (typeof document !== "undefined") document.documentElement.lang = l;
+  listeners.forEach((fn) => fn());
+}
+export function getLocale() { return current; }
+export function t(key: keyof typeof dict.tr) {
+  return dict[current][key] ?? dict.tr[key] ?? key;
+}
+export function useLocale() {
+  return useSyncExternalStore(
+    (cb) => { listeners.add(cb); return () => listeners.delete(cb); },
+    () => current,
+    () => "tr",
+  );
+}
+export function useT() {
+  useLocale(); // subscribe
+  return t;
+}
 ```
 
-shadcn Tabs + Card; mobilde akordiyon + altta sabit fiyat barı.
+Then in `SiteHeader.tsx`:
+- Add a compact `LanguageSelector` (TR / EN toggle pill or shadcn `Select`) before the Sepet button. Mobile shows it inside the burger menu too.
+- Existing call sites that use `t(...)` directly inside components (designer, hero, etc.) get switched to `const t = useT()` so they re-render on locale change. Where `t()` is used inside non-component helpers (e.g. inline once at module load), leave as-is.
 
-## Canlı Önizleme
+Translations to populate in EN dictionary: every key currently in TR (`navHome`, `ctaDesign`, `enterText`, `livePreviewTip`, all warnings, badges, preview labels, etc.). Hard-coded Turkish strings in JSX (e.g. "Yazını Gir", "Renk Seç", "Sahne", "Sepete Ekle", nav labels in `SiteLayout`, hero `<h1>`, FAQ section titles in `index.tsx`) get moved behind `t()` so EN works end-to-end. Scope kept to the **header, designer page, hero, and global nav/footer** in this pass to keep the diff manageable; sub-pages (galeri, sss, hakkimizda) stay Turkish-only this round and we note that follow-up is needed.
 
-- CSS tabanlı neon: katmanlı `text-shadow` + `drop-shadow`, hafif flicker animasyonu
-- Çok satırlı destek (textarea)
-- Arka plan toggle: tuğla duvar, karanlık oda, düz duvar, şeffaf (dama)
-- Google Fonts: script=Pacifico, handwritten=Caveat, bold=Bungee, modern=Montserrat, block=Russo One, retro=Monoton
-- cm boyut rozeti karakter sayısı + font + preset'ten hesaplanır
-- Uyarılar: harf yüksekliği < 4cm → "Yazı çok küçük, üretim zor olabilir"; outdoor + ince script → ek uyarı
+Default locale stays `tr`. `<html lang>` updates on switch.
 
-## Fiyatlandırma Motoru (`src/lib/pricing.ts`)
+## Files touched
+- `src/lib/i18n.ts` — reactive store + EN dictionary + `useT`/`useLocale` hooks
+- `src/components/SiteLayout.tsx` — language selector in header (desktop + mobile menu), nav labels via `t()`
+- `src/components/configurator/{NeonPreview,ConfiguratorPanel,PreviewControls,FontSelector}.tsx` — switch from `t` import to `useT()` hook
+- `src/routes/tasarla.tsx` — grid template, min-w-0, overflow guard, useT
+- `src/routes/index.tsx` — useT for hero/CTA/benefits/steps copy
+- `src/routes/__root.tsx` — body/main `overflow-x-hidden`, set `<html lang>` from locale at mount
 
-Saf fonksiyon `calculatePrice(config): PriceBreakdown` → TRY cinsinden taban + kalemler:
-
-- Taban: en × yükseklik faktörü
-- Font karmaşıklığı: script 1.25, handwritten 1.2, bold 1.1, diğer 1.0
-- 1. satır sonrası ek satır ücreti
-- Renk: standart sabit, RGB/multicolor +%35
-- Outdoor / IP-rated +%25
-- Arka panel: cut-to-letter ve mirror gold/silver premium, dikdörtgen taban
-- Aksesuar: duvar kiti, asma kiti, stand, dimmer, TR/EU adaptör (sabit ek)
-- Acil üretim +%20
-- TR kargo tahmini (sabit bölge ücreti)
-- Özet panel için kalem listesi döner
-
-## Veri Modelleri (`src/lib/types.ts` + `src/data/*.ts`)
-
-TS interface + seed array (sonra Supabase tablolarına geçecek):
-
-- `Font`, `Color`, `BackboardOption`, `SizePreset`, `Accessory`, `MountingOption`
-- `PricingRule` sabitleri
-- `NeonDesignConfig` (paylaşım URL'sine kodlanan JSON)
-- `Order`, `QuoteRequest`, `UploadedFile` (sadece şekil)
-
-## State & Paylaşım
-
-- `useReducer` + `DesignerProvider` context
-- Config base64 JSON `?d=` search param'da, Zod + `fallback` ile validasyon
-- "Tasarımı Paylaş" butonu URL kopyalar; URL açıldığında konfigüratör hidrasyon
-- Sepet için localStorage
-
-## Yeniden Kullanılabilir Bileşenler (`src/components/configurator/`)
-
-`NeonPreview`, `TextControls`, `FontSelector`, `ColorSelector`, `SizeSelector`, `BackboardSelector`, `MountingSelector`, `AccessorySelector`, `PriceSummary`, `QuoteForm`, `UploadArtworkForm`, `WarningBanner`, `BackgroundToggle`.
-
-## Lokalizasyon
-
-- `src/lib/i18n.ts` — `tr` (varsayılan, dolu) + `en` (boş, sonra doldurulacak)
-- Tüm UI metinleri `t(key)` ile çekilir, bileşenlerde sabit TR string yok
-- Verilen TR etiketler aynen: Neon Tabelanı Tasarla, Yazını Gir, Yazı Tipi, Renk Seç, Ölçü, Arka Panel, Montaj Seçenekleri, Tahmini Fiyat, Teklif Al, Sepete Ekle, WhatsApp ile Gönder
-
-## CTA Akışları
-
-- **Sepete Ekle** → localStorage sepete ekler, toast, `/sepet`
-- **Teklif Al** → `QuoteForm` dialog (ad, e-posta, telefon, notlar) — Zod validasyon, mock submit + toast
-- **WhatsApp ile Gönder** → wa.me linki, encoded özet metni + paylaşım URL'i
-
-## Tasarım Sistemi
-
-- Açık UI panelleri + koyu önizleme alanı
-- CTA: elektrik pembesi → cyan gradient (neon hissi)
-- İkincil aksan: logodan terracotta tonu
-- UI fontu Inter; neon fontlar yalnızca önizlemede
-- shadcn/ui: Card, Tabs, Slider, Select, RadioGroup, Dialog, Sheet, Sonner
-- Mobil öncelikli, smooth CSS geçişleri (ek dependency yok)
-
-## Gelecek Entegrasyon Stub'ları
-
-`src/lib/integrations/` altında tipli boş istemciler: `iyzico.ts`, `paytr.ts`, `param.ts`, `stripe.ts`, `whatsapp.ts`, `email.ts`, `supabase.ts` — her biri `// TODO` ile gerçek API imzasına yakın fonksiyonlar export eder. Ödeme sayfası bunları seçili-ama-disabled olarak listeler.
-
-## Bu İterasyon Dışında
-
-- Gerçek ödeme işleme
-- Gerçek dosya yükleme depolaması (form dosya kabul eder, ad gösterir, backend yazımı yok)
-- Supabase bağlantısı (tipler hazır, client yok)
-- Admin paneli UI
-
-## Teknik Notlar
-
-- TanStack Start `src/routes/` altında file-based route
-- Her route kendi `head()` ile TR title/description/OG (logo OG image)
-- Pricing logic saf, React import'suz, kolayca test edilebilir
-- Form'lar `react-hook-form` + `zod`
-- Tailwind v4 mobile-first; önizleme `aspect-video` + iç ölçeklendirme
-- Logo `src/assets/logo.png` olarak kopyalanır, ES6 import ile kullanılır
+## Out of scope
+- Translating /galeri, /sss, /hakkimizda, /iletisim, /yukle full bodies (will be a follow-up).
+- Persisting locale to URL (e.g. /en/tasarla). Stays in `localStorage`.

@@ -2,6 +2,7 @@ import { Outlet, createRootRoute, HeadContent, Scripts } from "@tanstack/react-r
 import { SiteHeader, SiteFooter } from "@/components/SiteLayout";
 import { Toaster } from "@/components/ui/sonner";
 import { WhatsAppWidget } from "@/components/WhatsAppWidget";
+import { useLocale } from "@/lib/i18n";
 import appCss from "../styles.css?url";
 
 function NotFoundComponent() {
@@ -56,7 +57,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body>
+      <body className="overflow-x-hidden">
         {children}
         <Scripts />
       </body>
@@ -65,10 +66,12 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
+  // Subscribe to locale so the whole tree re-renders on language change.
+  useLocale();
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col overflow-x-hidden">
       <SiteHeader />
-      <main className="flex-1">
+      <main className="flex-1 overflow-x-clip">
         <Outlet />
       </main>
       <SiteFooter />
