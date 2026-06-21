@@ -227,10 +227,6 @@
   0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.8; }
   50% { transform: translate(30px, -40px) scale(1.1); opacity: 1; }
 }
-@keyframes hero-rays-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
 @keyframes hero-twinkle {
   0%, 100% { opacity: 0.2; transform: scale(0.6); }
   50% { opacity: 1; transform: scale(1.4); }
@@ -242,13 +238,13 @@
 .animate-hero-orb-1 { animation: hero-orb-1 9s ease-in-out infinite; }
 .animate-hero-orb-2 { animation: hero-orb-2 11s ease-in-out infinite; }
 .animate-hero-orb-3 { animation: hero-orb-3 13s ease-in-out infinite; }
-.animate-hero-rays { animation: hero-rays-spin 60s linear infinite; }
+
 .animate-hero-twinkle { animation: hero-twinkle 3s ease-in-out infinite; }
 .animate-neon-flicker { animation: neon-flicker 6s ease-in-out infinite; }
 
 @media (prefers-reduced-motion: reduce) {
   .animate-hero-orb-1, .animate-hero-orb-2, .animate-hero-orb-3,
-  .animate-hero-rays, .animate-hero-twinkle, .animate-neon-flicker {
+  .animate-hero-twinkle, .animate-neon-flicker {
     animation: none;
   }
 }
