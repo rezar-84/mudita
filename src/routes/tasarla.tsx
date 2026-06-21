@@ -24,15 +24,20 @@ function DesignerPage() {
         <div className="mb-6">
           <h1 className="text-2xl font-bold sm:text-3xl">Neon Tabelanı Tasarla</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Yazını gir, stilini seç ve canlı önizlemede sonucu gör.
+            Yazını gir, stilini seç ve canlı önizlemede sonucu gör. Fiyat anında güncellenir.
+          </p>
+          <p className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-accent/40 px-3 py-1 text-xs text-foreground">
+            ✅ Üretim öncesi tasarım onayı · Türkiye geneli güvenli kargo
           </p>
         </div>
 
         <div className="grid gap-6 lg:grid-cols-[1.2fr_1fr]">
           {/* LEFT: preview + summary on desktop */}
           <div className="space-y-4">
-            <NeonPreview />
-            <BackgroundToggle />
+            <div className="lg:sticky lg:top-4 lg:z-10 space-y-4">
+              <NeonPreview />
+              <BackgroundToggle />
+            </div>
             <div className="hidden lg:block">
               <PriceSummary />
             </div>
@@ -51,5 +56,6 @@ function DesignerPage() {
         </div>
       </div>
     </DesignerProvider>
+
   );
 }
