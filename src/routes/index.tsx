@@ -149,16 +149,18 @@ function HomePage() {
                     }}
                   />
                   <span
-                    className="neon-text relative text-3xl sm:text-4xl animate-neon-flicker"
+                    className="neon-text neon-mosaic relative text-3xl sm:text-4xl animate-neon-flicker"
                     style={{
                       fontFamily: s.font,
                       color: s.color,
-                      textShadow: `0 0 4px ${s.color}, 0 0 14px ${s.glow}, 0 0 28px ${s.glow}, 0 0 60px ${s.glow}`,
+                      ["--neon-color" as string]: s.color,
+                      ["--neon-glow" as string]: s.glow,
                       animationDelay: `${i * 0.7}s`,
                     }}
                   >
                     {s.text}
                   </span>
+
                 </div>
               ))}
             </div>
