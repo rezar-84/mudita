@@ -14,7 +14,10 @@ export const defaultConfig: NeonDesignConfig = {
   adapter: "tr",
   urgent: false,
   notes: "",
-  background: "brick",
+  background: "dark-room",
+  brightness: 100,
+  flicker: true,
+  zoom: 1,
 };
 
 type Action =
@@ -26,7 +29,8 @@ function reducer(state: NeonDesignConfig, action: Action): NeonDesignConfig {
     case "set":
       return { ...state, ...action.patch };
     case "replace":
-      return action.cfg;
+      // Merge with defaults so older shared URLs missing fields still work
+      return { ...defaultConfig, ...action.cfg };
   }
 }
 
@@ -50,10 +54,8 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
     return init;
   });
 
-  // sync URL when config changes (debounced via animation frame)
   useEffect(() => {
     if (typeof window === "undefined") return;
-    // no-op intentionally; share button writes URL on demand
   }, [config]);
 
   return (

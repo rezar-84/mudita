@@ -1,38 +1,36 @@
 import { useDesigner } from "./DesignerContext";
 import { cn } from "@/lib/utils";
+import { BACKGROUNDS } from "@/data/options";
 import { t } from "@/lib/i18n";
-
-const OPTS = [
-  { id: "brick", labelKey: "bgBrick" },
-  { id: "dark-room", labelKey: "bgDark" },
-  { id: "wall", labelKey: "bgWall" },
-  { id: "light-wall", labelKey: "bgLightWall" },
-  { id: "transparent", labelKey: "bgTransparent" },
-] as const;
 
 export function BackgroundToggle() {
   const { config, update } = useDesigner();
   return (
     <div>
-      <p className="mb-2 text-xs font-medium text-muted-foreground">{t("background")}</p>
-      <div className="flex flex-wrap gap-2">
-        {OPTS.map((o) => (
+      <p className="mb-2 text-xs font-medium text-muted-foreground">
+        {t("previewBackground")}
+      </p>
+      <div className="grid grid-cols-4 gap-2 sm:grid-cols-6">
+        {BACKGROUNDS.map((o) => (
           <button
             key={o.id}
             type="button"
             onClick={() => update({ background: o.id })}
+            title={o.label}
             className={cn(
-              "rounded-full border px-3 py-1.5 text-xs transition",
+              "group relative overflow-hidden rounded-lg border-2 transition",
               config.background === o.id
-                ? "border-foreground bg-foreground text-background"
-                : "border-border bg-card hover:border-foreground/40",
+                ? "border-foreground ring-2 ring-foreground/30"
+                : "border-border hover:border-foreground/40",
             )}
           >
-            {t(o.labelKey as Parameters<typeof t>[0])}
+            <div className={cn("h-12 w-full", o.thumb)} aria-hidden />
+            <div className="truncate bg-card px-1.5 py-1 text-[10px] font-medium text-foreground">
+              {o.label}
+            </div>
           </button>
         ))}
       </div>
     </div>
   );
 }
-

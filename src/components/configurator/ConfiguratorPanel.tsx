@@ -14,6 +14,10 @@ import {
 import { cn } from "@/lib/utils";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { AlertTriangle } from "lucide-react";
+import { FontSelector } from "./FontSelector";
+import { PreviewControls } from "./PreviewControls";
+import { BackgroundToggle } from "./BackgroundToggle";
+import { t } from "@/lib/i18n";
 
 export function ConfiguratorPanel() {
   const { config, update } = useDesigner();
@@ -29,7 +33,8 @@ export function ConfiguratorPanel() {
   const approxLetterCm = dims.width / Math.max(longestLine, 1);
   const tooSmall = !isEmpty && approxLetterCm < 4;
   const tooLong = trimmed.length > 30;
-  const complexFont = config.fontId === "pacifico" || config.fontId === "monoton" || config.fontId === "caveat";
+  const currentFont = FONTS.find((f) => f.id === config.fontId);
+  const complexFont = !!currentFont && (currentFont.complexity >= 1.2 || ["script", "handwritten", "retro", "elegant"].includes(currentFont.category));
   const fragile = config.outdoor && complexFont;
   const complexNote = !config.outdoor && complexFont;
 
@@ -57,10 +62,11 @@ export function ConfiguratorPanel() {
 
 
       <Tabs defaultValue="text" className="w-full">
-        <TabsList className="grid w-full grid-cols-4 gap-1">
+        <TabsList className="grid w-full grid-cols-5 gap-1">
           <TabsTrigger value="text">Yazı</TabsTrigger>
           <TabsTrigger value="style">Stil</TabsTrigger>
           <TabsTrigger value="size">Ölçü</TabsTrigger>
+          <TabsTrigger value="scene">Sahne</TabsTrigger>
           <TabsTrigger value="extras">Ekstra</TabsTrigger>
         </TabsList>
 
@@ -83,23 +89,8 @@ export function ConfiguratorPanel() {
         {/* STYLE: font + color */}
         <TabsContent value="style" className="space-y-6 pt-4">
           <div>
-            <Label className="mb-2 block text-sm font-medium">Yazı Tipi</Label>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-              {FONTS.map((f) => (
-                <button
-                  key={f.id}
-                  type="button"
-                  onClick={() => update({ fontId: f.id })}
-                  className={cn(
-                    "rounded-lg border px-3 py-3 text-left transition hover:border-foreground/40",
-                    config.fontId === f.id ? "border-foreground bg-accent/40" : "border-border",
-                  )}
-                >
-                  <div className="text-lg" style={{ fontFamily: f.family }}>Aa</div>
-                  <div className="mt-1 text-xs text-muted-foreground">{f.label}</div>
-                </button>
-              ))}
-            </div>
+            <Label className="mb-2 block text-sm font-medium">{t("fontType")}</Label>
+            <FontSelector />
           </div>
 
           <div>
@@ -186,6 +177,13 @@ export function ConfiguratorPanel() {
             </div>
             <Switch checked={config.outdoor} onCheckedChange={(v) => update({ outdoor: v })} />
           </div>
+        </TabsContent>
+
+        {/* SCENE: background + preview controls */}
+        <TabsContent value="scene" className="space-y-5 pt-4">
+          <p className="text-xs text-muted-foreground">{t("tryBgTip")}</p>
+          <BackgroundToggle />
+          <PreviewControls />
         </TabsContent>
 
         {/* EXTRAS: backboard, mounting, accessories, notes */}
