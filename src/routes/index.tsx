@@ -49,20 +49,20 @@ function HomePage() {
   return (
     <>
       {/* HERO */}
-      <section className="relative overflow-hidden">
+      <section className="relative overflow-hidden [contain:paint]">
         <div className="absolute inset-0 bg-preset-dark" aria-hidden />
 
-        {/* Animated neon glow orbs */}
+        {/* Animated neon glow orbs — lighter blur on mobile */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
-          <div className="absolute -top-32 -left-20 h-[28rem] w-[28rem] rounded-full blur-3xl animate-hero-orb-1" style={{ background: "radial-gradient(circle, rgba(255,62,181,0.45), transparent 60%)" }} />
-          <div className="absolute top-1/3 -right-24 h-[32rem] w-[32rem] rounded-full blur-3xl animate-hero-orb-2" style={{ background: "radial-gradient(circle, rgba(30,144,255,0.45), transparent 60%)" }} />
-          <div className="absolute -bottom-24 left-1/3 h-[26rem] w-[26rem] rounded-full blur-3xl animate-hero-orb-3" style={{ background: "radial-gradient(circle, rgba(0,217,107,0.35), transparent 60%)" }} />
+          <div className="hero-orb absolute -top-32 -left-20 h-72 w-72 rounded-full blur-2xl md:h-[28rem] md:w-[28rem] md:blur-3xl animate-hero-orb-1" style={{ background: "radial-gradient(circle, rgba(255,62,181,0.45), transparent 60%)" }} />
+          <div className="hero-orb absolute top-1/3 -right-24 h-80 w-80 rounded-full blur-2xl md:h-[32rem] md:w-[32rem] md:blur-3xl animate-hero-orb-2" style={{ background: "radial-gradient(circle, rgba(30,144,255,0.45), transparent 60%)" }} />
+          <div className="hero-orb absolute -bottom-24 left-1/3 hidden h-[26rem] w-[26rem] rounded-full blur-3xl md:block animate-hero-orb-3" style={{ background: "radial-gradient(circle, rgba(0,217,107,0.35), transparent 60%)" }} />
         </div>
 
-        {/* Animated rotating rays */}
-        <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2" aria-hidden>
+        {/* Animated rotating rays — desktop only (expensive conic + mask) */}
+        <div className="pointer-events-none absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 md:block" aria-hidden>
           <div
-            className="h-[80rem] w-[80rem] opacity-[0.18] animate-hero-rays"
+            className="hero-orb h-[80rem] w-[80rem] opacity-[0.18] animate-hero-rays"
             style={{
               background:
                 "conic-gradient(from 0deg, transparent 0deg, rgba(255,62,181,0.6) 6deg, transparent 12deg, transparent 40deg, rgba(30,144,255,0.55) 46deg, transparent 52deg, transparent 90deg, rgba(255,212,0,0.5) 96deg, transparent 102deg, transparent 150deg, rgba(0,217,107,0.5) 156deg, transparent 162deg, transparent 220deg, rgba(255,62,181,0.55) 226deg, transparent 232deg, transparent 290deg, rgba(30,144,255,0.5) 296deg, transparent 302deg, transparent 360deg)",
@@ -72,29 +72,30 @@ function HomePage() {
           />
         </div>
 
-        {/* Twinkling sparkle dots */}
+        {/* Twinkling sparkle dots — fewer on mobile */}
         <div className="pointer-events-none absolute inset-0" aria-hidden>
           {[
-            { l: "12%", t: "22%", d: "0s", c: "#ff8ad1" },
-            { l: "78%", t: "18%", d: "1.2s", c: "#7ab8ff" },
-            { l: "32%", t: "70%", d: "2.4s", c: "#fff48a" },
-            { l: "62%", t: "82%", d: "0.6s", c: "#8fffb0" },
-            { l: "88%", t: "55%", d: "1.8s", c: "#ff8ad1" },
-            { l: "8%", t: "60%", d: "3s", c: "#7ab8ff" },
+            { l: "12%", t: "22%", d: "0s", c: "#ff8ad1", m: true },
+            { l: "78%", t: "18%", d: "1.2s", c: "#7ab8ff", m: true },
+            { l: "32%", t: "70%", d: "2.4s", c: "#fff48a", m: false },
+            { l: "62%", t: "82%", d: "0.6s", c: "#8fffb0", m: true },
+            { l: "88%", t: "55%", d: "1.8s", c: "#ff8ad1", m: false },
+            { l: "8%", t: "60%", d: "3s", c: "#7ab8ff", m: false },
           ].map((s, i) => (
             <span
               key={i}
-              className="absolute h-1.5 w-1.5 rounded-full animate-hero-twinkle"
+              className={`absolute h-1.5 w-1.5 rounded-full animate-hero-twinkle ${s.m ? "" : "hidden md:block"}`}
               style={{
                 left: s.l,
                 top: s.t,
                 backgroundColor: s.c,
-                boxShadow: `0 0 8px ${s.c}, 0 0 16px ${s.c}`,
+                boxShadow: `0 0 6px ${s.c}`,
                 animationDelay: s.d,
               }}
             />
           ))}
         </div>
+
 
         <div className="relative mx-auto max-w-7xl px-4 py-16 md:py-24 lg:py-28">
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
