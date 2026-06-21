@@ -191,13 +191,13 @@ export function NeonPreview() {
         )}
         {/* Floating quick-action toolbar */}
         <div
-          className="absolute top-3 left-1/2 z-10 flex -translate-x-1/2 items-center gap-1 rounded-full border border-white/15 bg-black/55 px-1.5 py-1 text-white shadow-soft backdrop-blur"
+          className="absolute top-3 left-1/2 z-10 flex max-w-[calc(100%-1.5rem)] -translate-x-1/2 flex-wrap items-center justify-center gap-1 rounded-full border border-white/15 bg-black/55 px-1.5 py-1 text-white shadow-soft backdrop-blur"
           onPointerDown={(e) => e.stopPropagation()}
         >
           <button
             type="button"
-            aria-label={isLightOn ? "Işığı kapat" : "Işığı aç"}
-            title={isLightOn ? "Işığı kapat" : "Işığı aç"}
+            aria-label={isLightOn ? t("lightOffAria") : t("lightOnAria")}
+            title={isLightOn ? t("lightOffAria") : t("lightOnAria")}
             onClick={() => update({ isLightOn: !isLightOn })}
             className={cn(
               "inline-flex h-8 items-center gap-1.5 rounded-full px-2.5 text-xs font-medium transition",
@@ -205,8 +205,9 @@ export function NeonPreview() {
             )}
           >
             {isLightOn ? <Lightbulb className="h-3.5 w-3.5" /> : <LightbulbOff className="h-3.5 w-3.5" />}
-            <span>{isLightOn ? "Açık" : "Kapalı"}</span>
+            <span className="hidden sm:inline">{isLightOn ? t("on") : t("off")}</span>
           </button>
+
           <div className="mx-0.5 h-5 w-px bg-white/15" aria-hidden />
           <button
             type="button"
