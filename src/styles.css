@@ -156,6 +156,7 @@
 }
 .bg-preset-dark { background: radial-gradient(circle at 50% 40%, #1f1530 0%, #0a0612 80%); }
 .bg-preset-wall { background: linear-gradient(180deg, #2a2a2e 0%, #18181b 100%); }
+.bg-preset-light-wall { background: linear-gradient(180deg, #efeae3 0%, #d9d1c5 100%); }
 .bg-preset-transparent {
   background-image:
     linear-gradient(45deg, #2a2a2e 25%, transparent 25%),
