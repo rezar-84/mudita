@@ -227,10 +227,6 @@
   0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.8; }
   50% { transform: translate(30px, -40px) scale(1.1); opacity: 1; }
 }
-@keyframes hero-rays-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
 @keyframes hero-twinkle {
   0%, 100% { opacity: 0.2; transform: scale(0.6); }
   50% { opacity: 1; transform: scale(1.4); }
