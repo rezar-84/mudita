@@ -33,7 +33,8 @@ export function ConfiguratorPanel() {
   const approxLetterCm = dims.width / Math.max(longestLine, 1);
   const tooSmall = !isEmpty && approxLetterCm < 4;
   const tooLong = trimmed.length > 30;
-  const complexFont = config.fontId === "pacifico" || config.fontId === "monoton" || config.fontId === "caveat";
+  const currentFont = FONTS.find((f) => f.id === config.fontId);
+  const complexFont = !!currentFont && (currentFont.complexity >= 1.2 || ["script", "handwritten", "retro", "elegant"].includes(currentFont.category));
   const fragile = config.outdoor && complexFont;
   const complexNote = !config.outdoor && complexFont;
 
