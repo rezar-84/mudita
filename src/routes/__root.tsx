@@ -73,6 +73,7 @@ function RootComponent() {
       </main>
       <SiteFooter />
       <Toaster richColors position="top-center" />
+      <WhatsAppWidget />
     </div>
   );
 }
