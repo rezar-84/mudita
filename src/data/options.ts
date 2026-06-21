@@ -5,15 +5,69 @@ import type {
   BackboardOption,
   MountingOption,
   AccessoryOption,
+  FontCategory,
 } from "@/lib/types";
 
+export const FONT_CATEGORY_LABEL: Record<FontCategory, string> = {
+  script: "Script",
+  handwritten: "El Yazısı",
+  modern: "Modern",
+  bold: "Kalın",
+  block: "Blok",
+  retro: "Retro",
+  elegant: "Zarif",
+  minimal: "Minimal",
+  playful: "Eğlenceli",
+  "logo-style": "Logo Tarzı",
+};
+
+export const FONT_CATEGORY_ORDER: FontCategory[] = [
+  "script",
+  "handwritten",
+  "elegant",
+  "modern",
+  "minimal",
+  "bold",
+  "block",
+  "playful",
+  "retro",
+  "logo-style",
+];
+
 export const FONTS: FontOption[] = [
-  { id: "pacifico", label: "El Yazısı (Script)", family: "'Pacifico', cursive", category: "script", complexity: 1.25 },
-  { id: "caveat", label: "Doğal El Yazısı", family: "'Caveat', cursive", category: "handwritten", complexity: 1.2 },
-  { id: "bungee", label: "Kalın", family: "'Bungee', sans-serif", category: "bold", complexity: 1.1 },
-  { id: "montserrat", label: "Modern", family: "'Montserrat', sans-serif", category: "modern", complexity: 1.0 },
-  { id: "russo", label: "Blok", family: "'Russo One', sans-serif", category: "block", complexity: 1.05 },
-  { id: "monoton", label: "Retro", family: "'Monoton', cursive", category: "retro", complexity: 1.15 },
+  // Script
+  { id: "pacifico", label: "Pacifico", family: "'Pacifico', cursive", category: "script", complexity: 1.25, badges: ["popular"] },
+  { id: "lobster", label: "Lobster", family: "'Lobster', cursive", category: "script", complexity: 1.2, badges: ["popular"] },
+  { id: "great-vibes", label: "Great Vibes", family: "'Great Vibes', cursive", category: "script", complexity: 1.3, badges: ["premium"] },
+  { id: "satisfy", label: "Satisfy", family: "'Satisfy', cursive", category: "script", complexity: 1.22 },
+  { id: "sacramento", label: "Sacramento", family: "'Sacramento', cursive", category: "script", complexity: 1.25 },
+
+  // Handwritten
+  { id: "caveat", label: "Caveat", family: "'Caveat', cursive", category: "handwritten", complexity: 1.18 },
+  { id: "dancing-script", label: "Dancing Script", family: "'Dancing Script', cursive", category: "handwritten", complexity: 1.2 },
+
+  // Elegant
+  { id: "playfair", label: "Playfair Display", family: "'Playfair Display', serif", category: "elegant", complexity: 1.15, badges: ["logo"] },
+
+  // Modern
+  { id: "montserrat", label: "Montserrat", family: "'Montserrat', sans-serif", category: "modern", complexity: 1.0, badges: ["popular"] },
+  { id: "poppins", label: "Poppins", family: "'Poppins', sans-serif", category: "modern", complexity: 1.0 },
+
+  // Minimal
+  { id: "quicksand", label: "Quicksand", family: "'Quicksand', sans-serif", category: "minimal", complexity: 1.0 },
+
+  // Bold
+  { id: "bungee", label: "Bungee", family: "'Bungee', sans-serif", category: "bold", complexity: 1.1 },
+
+  // Block
+  { id: "russo", label: "Russo One", family: "'Russo One', sans-serif", category: "block", complexity: 1.05, badges: ["logo"] },
+  { id: "bebas-neue", label: "Bebas Neue", family: "'Bebas Neue', sans-serif", category: "block", complexity: 1.05, badges: ["popular", "logo"] },
+
+  // Playful
+  { id: "righteous", label: "Righteous", family: "'Righteous', sans-serif", category: "playful", complexity: 1.1, badges: ["logo"] },
+
+  // Retro
+  { id: "monoton", label: "Monoton", family: "'Monoton', cursive", category: "retro", complexity: 1.2, badges: ["premium"] },
 ];
 
 export const COLORS: ColorOption[] = [
@@ -55,4 +109,19 @@ export const MOUNTINGS: MountingOption[] = [
 
 export const ACCESSORIES: AccessoryOption[] = [
   { id: "dimmer", label: "Uzaktan Kumandalı Dimmer", price: 300 },
+];
+
+export const BACKGROUNDS: { id: import("@/lib/types").BackgroundPreset; label: string; thumb: string }[] = [
+  { id: "dark-room", label: "Koyu Oda", thumb: "bg-preset-dark" },
+  { id: "brick", label: "Tuğla Duvar", thumb: "bg-preset-brick" },
+  { id: "concrete", label: "Beton Duvar", thumb: "bg-preset-concrete" },
+  { id: "white-wall", label: "Beyaz Duvar", thumb: "bg-preset-white-wall" },
+  { id: "wall", label: "Koyu Duvar", thumb: "bg-preset-wall" },
+  { id: "light-wall", label: "Açık Duvar", thumb: "bg-preset-light-wall" },
+  { id: "salon", label: "Salon", thumb: "bg-preset-salon" },
+  { id: "cafe", label: "Kafe", thumb: "bg-preset-cafe" },
+  { id: "store", label: "Mağaza", thumb: "bg-preset-store" },
+  { id: "wood", label: "Ahşap Panel", thumb: "bg-preset-wood" },
+  { id: "transparent", label: "Şeffaf", thumb: "bg-preset-transparent" },
+  { id: "checker", label: "Dama Şeffaflık", thumb: "bg-preset-checker" },
 ];

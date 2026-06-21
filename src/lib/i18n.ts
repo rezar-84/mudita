@@ -47,13 +47,24 @@ const tr: Dict = {
   urgent: "Acil Üretim",
   adapter: "Güç Adaptörü",
 
-  // Backgrounds
-  background: "Arka Plan",
-  bgBrick: "Tuğla Duvar",
-  bgDark: "Karanlık Oda",
-  bgWall: "Koyu Duvar",
-  bgLightWall: "Açık Duvar",
-  bgTransparent: "Şeffaf",
+  // Preview / Backgrounds
+  previewBackground: "Önizleme Arka Planı",
+  brightness: "Parlaklık",
+  flicker: "Titreme Efekti",
+  zoom: "Yakınlaştır",
+  realSizePreview: "Gerçek Boyut Önizlemesi",
+
+  // Helper copy
+  livePreviewTip: "Tasarımını canlı olarak gör",
+  tryBgTip: "Neon etkisini arka planda dene",
+  fontMoodTip: "Yazı tipini seç, ışığın havasını değiştir",
+  approvalTip: "Üretim öncesi tasarım onayı alırsın",
+  logoSuitableTip: "Bu yazı tipi logo ve marka tabelaları için uygundur",
+
+  // Font badges
+  badgePopular: "Popüler",
+  badgePremium: "Premium",
+  badgeLogo: "Logo İçin Uygun",
 
   // Warnings
   warningSmall: "Yazı çok küçük, üretim zor olabilir. Daha büyük ölçü öneririz.",

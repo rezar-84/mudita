@@ -1,4 +1,16 @@
-export type FontCategory = "script" | "handwritten" | "bold" | "modern" | "block" | "retro";
+export type FontCategory =
+  | "script"
+  | "handwritten"
+  | "modern"
+  | "bold"
+  | "block"
+  | "retro"
+  | "elegant"
+  | "minimal"
+  | "playful"
+  | "logo-style";
+
+export type FontBadge = "popular" | "premium" | "logo";
 
 export interface FontOption {
   id: string;
@@ -6,6 +18,8 @@ export interface FontOption {
   family: string;
   category: FontCategory;
   complexity: number; // pricing multiplier
+  badges?: FontBadge[];
+  preview?: string; // sample word
 }
 
 export interface ColorOption {
@@ -58,7 +72,19 @@ export interface AccessoryOption {
 
 export type PowerAdapter = "tr" | "eu";
 
-export type BackgroundPreset = "brick" | "dark-room" | "wall" | "light-wall" | "transparent";
+export type BackgroundPreset =
+  | "dark-room"
+  | "brick"
+  | "concrete"
+  | "white-wall"
+  | "wall"
+  | "light-wall"
+  | "salon"
+  | "cafe"
+  | "store"
+  | "wood"
+  | "transparent"
+  | "checker";
 
 export interface NeonDesignConfig {
   text: string;
@@ -75,6 +101,10 @@ export interface NeonDesignConfig {
   urgent: boolean;
   notes: string;
   background: BackgroundPreset;
+  // Visual preview-only options (do not affect price)
+  brightness?: number; // 40 – 120, default 100
+  flicker?: boolean;   // default true
+  zoom?: number;       // 0.6 – 1.4, default 1
 }
 
 export interface PriceLineItem {
