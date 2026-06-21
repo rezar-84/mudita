@@ -229,11 +229,48 @@ export function ConfiguratorPanel() {
             </RadioGroup>
           </div>
 
-          <div className="space-y-2 rounded-lg border border-border p-3">
+          <div className="space-y-3 rounded-lg border border-border p-3">
             <div className="flex items-center justify-between">
-              <span className="text-sm">Uzaktan Kumandalı Dimmer</span>
+              <div className="min-w-0">
+                <p className="text-sm">Uzaktan Kumandalı Dimmer</p>
+                <p className="text-[11px] text-muted-foreground">
+                  Parlaklığı ve titreşim modunu uzaktan kumandayla ayarla.
+                </p>
+              </div>
               <Switch checked={config.dimmer} onCheckedChange={(v) => update({ dimmer: v })} />
             </div>
+
+            {config.dimmer && (
+              <div className="space-y-3 rounded-md border border-dashed border-foreground/20 bg-secondary/30 p-3">
+                <p className="text-[11px] text-muted-foreground">
+                  ✨ Dimmer simülasyonu: aşağıdaki ayarlar uzaktan kumandayla gerçek hayatta da yapılabilir.
+                </p>
+                <div>
+                  <Label className="mb-2 flex items-center justify-between text-xs">
+                    <span className="font-medium">{t("brightness")}</span>
+                    <span className="text-muted-foreground">{config.brightness ?? 100}%</span>
+                  </Label>
+                  <Slider
+                    min={40}
+                    max={120}
+                    step={5}
+                    value={[config.brightness ?? 100]}
+                    onValueChange={([v]) => update({ brightness: v })}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="min-w-0">
+                    <p className="text-xs font-medium">{t("flicker")}</p>
+                    <p className="text-[11px] text-muted-foreground">Hafif neon titreşim efekti</p>
+                  </div>
+                  <Switch
+                    checked={config.flicker ?? true}
+                    onCheckedChange={(v) => update({ flicker: v })}
+                  />
+                </div>
+              </div>
+            )}
+
             <div className="flex items-center justify-between">
               <span className="text-sm">Acil Üretim (3-5 gün)</span>
               <Switch checked={config.urgent} onCheckedChange={(v) => update({ urgent: v })} />
