@@ -118,13 +118,13 @@ function GalleryPage() {
             <div className="space-y-2 p-4">
               <h3 className="font-semibold">{it.title}</h3>
               <p className="text-xs text-muted-foreground">{it.useCase}</p>
-              <Link
-                to="/tasarla"
-                search={{ d: buildDesignUrl(it).split("d=")[1] } as never}
+              <a
+                href={buildDesignUrl(it)}
                 className="mt-1 inline-flex w-full items-center justify-center rounded-full bg-gradient-neon px-4 py-2 text-xs font-semibold text-white shadow-glow"
               >
                 Benzerini Tasarla
-              </Link>
+              </a>
+
             </div>
           </div>
         ))}
