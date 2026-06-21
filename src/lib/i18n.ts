@@ -52,7 +52,15 @@ const tr: Dict = {
   brightness: "Parlaklık",
   flicker: "Titreme Efekti",
   zoom: "Yakınlaştır",
-  realSizePreview: "Gerçek Boyut Önizlemesi",
+  realSizePreview: "Gerçek Boyut Hissi",
+  lightOn: "Neon Işığı",
+  rotate: "Döndür",
+  reset: "Sıfırla",
+  center: "Ortala",
+  resetView: "Görünümü Sıfırla",
+  dragTip: "Tabelayı duvarda konumlandırmak için sürükleyebilirsin.",
+  lightTip: "Işığı kapatıp açarak gündüz/gece etkisini görebilirsin.",
+  rotateTip: "Döndürme ve yakınlaştırma sadece önizleme içindir, fiyatı değiştirmez.",
 
   // Helper copy
   livePreviewTip: "Tasarımını canlı olarak gör",

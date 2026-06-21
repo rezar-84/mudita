@@ -68,6 +68,14 @@ export const FONTS: FontOption[] = [
 
   // Retro
   { id: "monoton", label: "Monoton", family: "'Monoton', cursive", category: "retro", complexity: 1.2, badges: ["premium"] },
+  { id: "abril-fatface", label: "Abril Fatface", family: "'Abril Fatface', serif", category: "retro", complexity: 1.15 },
+  { id: "permanent-marker", label: "Permanent Marker", family: "'Permanent Marker', cursive", category: "retro", complexity: 1.2 },
+
+  // Elegant additions
+  { id: "cinzel", label: "Cinzel", family: "'Cinzel', serif", category: "elegant", complexity: 1.18, badges: ["logo"] },
+
+  // Minimal additions
+  { id: "comfortaa", label: "Comfortaa", family: "'Comfortaa', sans-serif", category: "minimal", complexity: 1.0 },
 ];
 
 export const COLORS: ColorOption[] = [

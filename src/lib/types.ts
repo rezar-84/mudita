@@ -104,9 +104,14 @@ export interface NeonDesignConfig {
   customBackground?: string; // user-uploaded image as data URL (overrides background preset)
   customBackgroundName?: string;
   // Visual preview-only options (do not affect price)
-  brightness?: number; // 40 – 120, default 100
-  flicker?: boolean;   // default true
-  zoom?: number;       // 0.6 – 1.4, default 1
+  brightness?: number;   // 40 – 120, default 100
+  flicker?: boolean;     // default true
+  zoom?: number;         // 0.6 – 1.4, default 1
+  isLightOn?: boolean;   // default true — turns glow off when false
+  positionX?: number;    // -45..45 percent offset, default 0
+  positionY?: number;    // -45..45 percent offset, default 0
+  rotationDeg?: number;  // -15..15 deg, default 0
+  realSizeMode?: boolean;// default false — show a cm ruler
 }
 
 export interface PriceLineItem {

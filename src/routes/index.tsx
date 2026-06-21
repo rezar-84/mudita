@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Sparkles, Truck, ShieldCheck, Pencil, FileCheck2, Factory, PackageCheck, Heart } from "lucide-react";
+import { Sparkles, Truck, ShieldCheck, Pencil, FileCheck2, Factory, PackageCheck, Heart, Home, Baby, GlassWater, Store, Scissors, Gamepad2, Briefcase, Plug, Package, Settings2, Palette, Wifi, MessageCircle } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -165,6 +165,114 @@ function HomePage() {
               className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-6 py-3 text-sm font-semibold"
             >
               Logonu Yükle, Teklif Al
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* USE CASES */}
+      <section className="mx-auto max-w-7xl px-4 py-16">
+        <div className="mb-8 text-center">
+          <h2 className="text-2xl font-bold sm:text-3xl">Her Mekana Uygun Neon</h2>
+          <p className="mx-auto mt-2 max-w-xl text-muted-foreground">
+            Ev, kafe, mağaza, düğün — ilham al, kendi tasarımına geç.
+          </p>
+        </div>
+        <div className="flex gap-3 overflow-x-auto pb-2 [scrollbar-width:thin]">
+          {[
+            { icon: Home, t: "Ev Dekorasyonu" },
+            { icon: Baby, t: "Bebek Odası" },
+            { icon: Heart, t: "Düğün & Nişan" },
+            { icon: GlassWater, t: "Kafe & Restoran" },
+            { icon: Scissors, t: "Güzellik Salonu" },
+            { icon: Store, t: "Mağaza Vitrini" },
+            { icon: Gamepad2, t: "Oyun Odası" },
+            { icon: Briefcase, t: "Ofis & Stüdyo" },
+          ].map((u) => (
+            <div key={u.t} className="flex w-40 shrink-0 flex-col items-center gap-2 rounded-2xl border border-border bg-card p-4 text-center shadow-soft">
+              <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-neon text-white">
+                <u.icon className="h-5 w-5" />
+              </div>
+              <p className="text-sm font-medium">{u.t}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* WHAT'S INCLUDED */}
+      <section className="bg-secondary/40 py-16">
+        <div className="mx-auto max-w-7xl px-4">
+          <div className="mb-8 text-center">
+            <h2 className="text-2xl font-bold sm:text-3xl">Paketinde Neler Var?</h2>
+            <p className="mx-auto mt-2 max-w-xl text-muted-foreground">
+              Her sipariş tam set olarak gelir — montaja hazır.
+            </p>
+          </div>
+          <div className="flex gap-3 overflow-x-auto pb-2 [scrollbar-width:thin]">
+            {[
+              { icon: Sparkles, t: "Kişiye özel LED neon tabela" },
+              { icon: Palette, t: "Şeffaf akrilik arka panel" },
+              { icon: Settings2, t: "Montaj aparatı" },
+              { icon: Plug, t: "Güç adaptörü" },
+              { icon: Wifi, t: "Dimmer / kumanda seçeneği" },
+              { icon: FileCheck2, t: "Üretim öncesi tasarım onayı" },
+              { icon: Package, t: "Güvenli paketleme" },
+              { icon: Truck, t: "Türkiye geneli kargo" },
+            ].map((i) => (
+              <div key={i.t} className="flex w-56 shrink-0 items-start gap-3 rounded-2xl bg-card p-4 shadow-soft">
+                <div className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-neon text-white">
+                  <i.icon className="h-4 w-4" />
+                </div>
+                <p className="text-sm font-medium">{i.t}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* TRUST BADGES */}
+      <section className="mx-auto max-w-7xl px-4 py-12">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+          {[
+            { icon: FileCheck2, t: "Üretim Öncesi Tasarım Onayı" },
+            { icon: Truck, t: "Türkiye Geneli Kargo" },
+            { icon: ShieldCheck, t: "İç / Dış Mekan Seçenekleri" },
+            { icon: Sparkles, t: "Güvenli LED Teknolojisi" },
+            { icon: MessageCircle, t: "WhatsApp ile Hızlı Teklif" },
+          ].map((b) => (
+            <div key={b.t} className="flex items-center gap-2 rounded-xl border border-border bg-card p-3 text-xs font-medium shadow-soft">
+              <b.icon className="h-4 w-4 shrink-0 text-foreground/80" />
+              <span>{b.t}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* SIZE GUIDE TEASER */}
+      <section className="bg-secondary/40 py-16">
+        <div className="mx-auto max-w-5xl px-4">
+          <div className="mb-8 text-center">
+            <h2 className="text-2xl font-bold sm:text-3xl">Hangi Ölçü Sana Uygun?</h2>
+            <p className="mx-auto mt-2 max-w-xl text-muted-foreground">
+              Mekanına göre öneri rehberi.
+            </p>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              { s: "40–60 cm", d: "Masa, raf, küçük odalar" },
+              { s: "60–90 cm", d: "Ev dekorasyonu, hediye, oda duvarı" },
+              { s: "90–120 cm", d: "Kafe, salon, ofis" },
+              { s: "120 cm+", d: "Mağaza, vitrin, büyük duvar" },
+            ].map((g) => (
+              <div key={g.s} className="rounded-2xl border border-border bg-card p-5 shadow-soft">
+                <p className="text-lg font-bold">{g.s}</p>
+                <p className="mt-1 text-sm text-muted-foreground">{g.d}</p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-8 text-center">
+            <Link to="/tasarla" className="inline-block rounded-full bg-gradient-neon px-6 py-3 text-sm font-semibold text-white shadow-glow">
+              Ölçünü Birlikte Belirleyelim
             </Link>
           </div>
         </div>
