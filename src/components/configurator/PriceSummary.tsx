@@ -39,14 +39,18 @@ export function PriceSummary() {
 
   const onWhatsapp = () => {
     const lines = [
-      "Merhaba Mudita Dekorasyon, neon tabela teklifi almak istiyorum.",
-      `Yazı: ${config.text.replace(/\n/g, " / ")}`,
-      `Yazı tipi: ${font.label}`,
-      `Renk: ${color.label}`,
-      `Ölçü: ${breakdown.items[0].label}`,
-      `Arka panel: ${backboard.label}`,
-      `Tahmini fiyat: ${formatTRY(breakdown.total)}`,
-      `Tasarım: ${buildShareUrl()}`,
+      "Merhaba Mudita Dekorasyon 👋",
+      "Aşağıdaki neon tabela tasarımı için fiyat teklifi ve üretim süresi öğrenmek istiyorum.",
+      "",
+      `✍️ Yazı: ${config.text.replace(/\n/g, " / ") || "(henüz girilmedi)"}`,
+      `🔤 Yazı tipi: ${font.label}`,
+      `🎨 Renk: ${color.label}`,
+      `📐 Ölçü: ${breakdown.items[0].label}`,
+      `🖼️ Arka panel: ${backboard.label}`,
+      `💡 Kullanım: ${config.outdoor ? "Dış mekan (IP65)" : "İç mekan"}`,
+      `💰 Tahmini fiyat: ${formatTRY(breakdown.total)}`,
+      "",
+      `🔗 Canlı tasarım: ${buildShareUrl()}`,
     ];
     const url = `https://wa.me/?text=${encodeURIComponent(lines.join("\n"))}`;
     window.open(url, "_blank");
@@ -60,33 +64,31 @@ export function PriceSummary() {
 
   return (
     <div className="rounded-2xl border border-border bg-card p-5 shadow-soft">
-      <div className="mb-3 flex items-center justify-between">
-        <h3 className="text-base font-semibold">Tahmini Fiyat</h3>
-        <button onClick={onShare} className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
-          <Share2 className="h-3.5 w-3.5" /> Paylaş
-        </button>
+      <div className="mb-1 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+        Tahmini Fiyat
+      </div>
+      <div className="mb-4 flex items-baseline justify-between gap-3">
+        <span className="text-3xl font-bold tabular-nums">{formatTRY(breakdown.total)}</span>
+        <span className="text-xs text-muted-foreground">KDV dahil · kargo dahil</span>
       </div>
 
-      <ul className="mb-3 space-y-1.5 text-sm">
+      <ul className="mb-4 space-y-1.5 border-t border-border pt-3 text-sm">
         {breakdown.items.map((it, i) => (
           <li key={i} className="flex justify-between gap-3 text-muted-foreground">
             <span className="truncate">{it.label}</span>
             <span className="shrink-0 tabular-nums">{formatTRY(it.amount)}</span>
           </li>
         ))}
-        <li className="flex justify-between border-t border-border pt-2 text-foreground">
+        <li className="flex justify-between text-muted-foreground">
           <span>Kargo (Türkiye)</span>
           <span className="tabular-nums">{formatTRY(breakdown.shipping)}</span>
         </li>
       </ul>
 
-      <div className="mb-4 rounded-lg bg-secondary p-3">
-        <div className="flex items-baseline justify-between">
-          <span className="text-sm">Toplam</span>
-          <span className="text-2xl font-bold tabular-nums">{formatTRY(breakdown.total)}</span>
-        </div>
-        <div className="mt-1 text-xs text-muted-foreground">
-          Üretim süresi: {breakdown.productionDays}
+      <div className="mb-4 rounded-lg bg-secondary/60 p-3 text-xs">
+        <div className="flex items-center justify-between">
+          <span className="text-muted-foreground">Üretim süresi</span>
+          <span className="font-medium text-foreground">{breakdown.productionDays}</span>
         </div>
       </div>
 
@@ -95,14 +97,23 @@ export function PriceSummary() {
           <ShoppingCart className="mr-2 h-4 w-4" /> Sepete Ekle
         </Button>
         <Button onClick={() => setQuoteOpen(true)} variant="outline" className="w-full">
-          <FileText className="mr-2 h-4 w-4" /> Teklif Al
+          <FileText className="mr-2 h-4 w-4" /> Ücretsiz Teklif Al
         </Button>
         <Button onClick={onWhatsapp} variant="secondary" className="w-full">
-          <MessageCircle className="mr-2 h-4 w-4" /> WhatsApp ile Gönder
+          <MessageCircle className="mr-2 h-4 w-4" /> WhatsApp’tan Gönder
+        </Button>
+        <Button onClick={onShare} variant="ghost" className="w-full">
+          <Share2 className="mr-2 h-4 w-4" /> Tasarımı Paylaş
         </Button>
       </div>
+
+      <p className="mt-4 rounded-lg border border-border bg-accent/30 p-3 text-xs leading-relaxed text-muted-foreground">
+        ✅ Üretime başlamadan önce <span className="font-medium text-foreground">tasarım onayınızı</span> alıyoruz.
+        Renk, ölçü veya font değiştirmek istersen birlikte revize ederiz.
+      </p>
 
       <QuoteDialog open={quoteOpen} onOpenChange={setQuoteOpen} price={breakdown.total} />
     </div>
   );
 }
+

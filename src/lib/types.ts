@@ -58,7 +58,7 @@ export interface AccessoryOption {
 
 export type PowerAdapter = "tr" | "eu";
 
-export type BackgroundPreset = "brick" | "dark-room" | "wall" | "transparent";
+export type BackgroundPreset = "brick" | "dark-room" | "wall" | "light-wall" | "transparent";
 
 export interface NeonDesignConfig {
   text: string;
