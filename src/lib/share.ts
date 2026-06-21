@@ -1,7 +1,9 @@
 import type { NeonDesignConfig } from "./types";
 
 export function encodeConfig(cfg: NeonDesignConfig): string {
-  const json = JSON.stringify(cfg);
+  // Strip customBackground (data URL) from share to keep URL small
+  const { customBackground: _omit, ...rest } = cfg;
+  const json = JSON.stringify(rest);
   if (typeof window === "undefined") return Buffer.from(json).toString("base64");
   return btoa(unescape(encodeURIComponent(json)));
 }
