@@ -37,7 +37,7 @@ function DesignerPage() {
           </p>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-[1.2fr_1fr]">
+        <div className="grid gap-6 lg:grid-cols-[1.7fr_1fr]">
           {/* LEFT: preview + desktop summary */}
           <div className="space-y-4 order-1">
             <div className="lg:sticky lg:top-4 lg:z-10 space-y-4">
