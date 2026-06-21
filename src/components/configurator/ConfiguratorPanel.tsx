@@ -178,6 +178,13 @@ export function ConfiguratorPanel() {
           </div>
         </TabsContent>
 
+        {/* SCENE: background + preview controls */}
+        <TabsContent value="scene" className="space-y-5 pt-4">
+          <p className="text-xs text-muted-foreground">{t("tryBgTip")}</p>
+          <BackgroundToggle />
+          <PreviewControls />
+        </TabsContent>
+
         {/* EXTRAS: backboard, mounting, accessories, notes */}
         <TabsContent value="extras" className="space-y-5 pt-4">
           <div>
