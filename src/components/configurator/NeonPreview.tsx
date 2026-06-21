@@ -101,11 +101,17 @@ export function NeonPreview() {
   }, []);
 
   const previewStyle: React.CSSProperties = realSize
-    ? { width: `${Math.min(width * cmPx, 1100)}px`, height: `${Math.min(height * cmPx, 700)}px`, minHeight: 280 }
-    : { aspectRatio: `${width}/${Math.max(height, 30)}`, minHeight: 280 };
+    ? {
+        width: `${Math.min(width * cmPx, 1100)}px`,
+        maxWidth: "100%",
+        height: `${Math.min(height * cmPx, 700)}px`,
+        minHeight: 280,
+        maxHeight: "70vh",
+      }
+    : { aspectRatio: `${width}/${Math.max(height, 30)}`, minHeight: 280, maxHeight: "70vh" };
 
   return (
-    <div className="space-y-2">
+    <div className="w-full max-w-full space-y-2">
       <div
         ref={containerRef}
         onPointerDown={onPointerDown}
@@ -113,7 +119,7 @@ export function NeonPreview() {
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerUp}
         className={cn(
-          "relative w-full overflow-hidden rounded-2xl border border-border shadow-soft touch-none select-none",
+          "relative w-full max-w-full overflow-hidden rounded-2xl border border-border shadow-soft touch-none select-none",
           dragging ? "cursor-grabbing" : "cursor-grab",
           !hasCustomBg && BG_CLASS[config.background],
         )}
@@ -126,6 +132,7 @@ export function NeonPreview() {
           }),
         }}
       >
+
         {/* Ambient glow halo on dark backgrounds — wall reflection */}
         {!isLight && isLightOn && (
           <div

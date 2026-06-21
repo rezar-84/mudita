@@ -26,21 +26,21 @@ export const Route = createFileRoute("/tasarla")({
 function DesignerPage() {
   return (
     <DesignerProvider>
-      <div className="mx-auto max-w-7xl px-4 py-6 pb-28 md:py-10 lg:pb-10">
+      <div className="mx-auto w-full max-w-7xl overflow-x-clip px-4 py-6 pb-28 md:py-10 lg:pb-10">
         <div className="mb-6">
-          <h1 className="text-2xl font-bold sm:text-3xl">Neon Tabelanı Tasarla</h1>
+          <h1 className="text-2xl font-bold sm:text-3xl">{t("designerTitle")}</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            {t("livePreviewTip")} · Yazını gir, stilini seç, fiyat anında güncellenir.
+            {t("livePreviewTip")} · {t("designerSubtitle")}
           </p>
           <p className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-accent/40 px-3 py-1 text-xs text-foreground">
-            ✅ {t("approvalTip")} · Türkiye geneli güvenli kargo
+            ✅ {t("approvalTip")} · {t("shippingTip")}
           </p>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-[1.7fr_1fr]">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1.7fr)_minmax(320px,1fr)]">
           {/* LEFT: preview + desktop summary */}
-          <div className="space-y-4 order-1">
-            <div className="lg:sticky lg:top-4 lg:z-10 space-y-4">
+          <div className="order-1 min-w-0 space-y-4">
+            <div className="space-y-4 lg:sticky lg:top-4 lg:z-10">
               <NeonPreview />
             </div>
             <div className="hidden lg:block">
@@ -49,8 +49,8 @@ function DesignerPage() {
           </div>
 
           {/* RIGHT: config panel */}
-          <div className="space-y-4 order-2">
-            <div className="rounded-2xl border border-border bg-card p-4 sm:p-5 shadow-soft">
+          <div className="order-2 min-w-0 space-y-4">
+            <div className="rounded-2xl border border-border bg-card p-4 shadow-soft sm:p-5">
               <ConfiguratorPanel />
             </div>
             <div className="hidden md:block lg:hidden">
@@ -73,7 +73,7 @@ function MobilePriceBar() {
 
   const onAdd = () => {
     addToCart(config, breakdown.total);
-    toast.success("Ürün sepete eklendi");
+    toast.success(t("productAddedToCart"));
     setTimeout(() => navigate({ to: "/sepet" }), 400);
   };
 
@@ -92,7 +92,7 @@ function MobilePriceBar() {
           onClick={onAdd}
           className="shrink-0 bg-gradient-neon text-white shadow-glow hover:opacity-90"
         >
-          <ShoppingCart className="mr-2 h-4 w-4" /> Sepete Ekle
+          <ShoppingCart className="mr-2 h-4 w-4" /> {t("ctaAddToCart")}
         </Button>
       </div>
     </div>
