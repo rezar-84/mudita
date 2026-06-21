@@ -40,14 +40,23 @@ export function NeonPreview() {
   ].join(", ");
 
   const isLight = LIGHT_BACKGROUNDS.has(config.background);
+  const hasCustomBg = !!config.customBackground;
 
   return (
     <div
       className={cn(
         "relative w-full overflow-hidden rounded-2xl border border-border shadow-soft",
-        BG_CLASS[config.background],
+        !hasCustomBg && BG_CLASS[config.background],
       )}
-      style={{ aspectRatio: `${width}/${Math.max(height, 30)}`, minHeight: 280 }}
+      style={{
+        aspectRatio: `${width}/${Math.max(height, 30)}`,
+        minHeight: 280,
+        ...(hasCustomBg && {
+          backgroundImage: `url(${config.customBackground})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }),
+      }}
     >
       {/* Ambient glow halo on dark backgrounds — wall reflection */}
       {!isLight && (
@@ -55,7 +64,7 @@ export function NeonPreview() {
           className="pointer-events-none absolute inset-0"
           style={{
             background: `radial-gradient(ellipse at 50% 55%, ${glow}${Math.round(brightness * 38).toString(16).padStart(2, "0")} 0%, transparent 62%)`,
-            opacity: 0.9,
+            opacity: hasCustomBg ? 0.6 : 0.9,
           }}
           aria-hidden
         />
