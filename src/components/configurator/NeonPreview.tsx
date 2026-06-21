@@ -1,7 +1,9 @@
+import { useEffect, useRef, useState } from "react";
 import { useDesigner } from "./DesignerContext";
 import { COLORS, FONTS, BACKGROUNDS } from "@/data/options";
 import { getDimensions } from "@/lib/pricing";
 import { cn } from "@/lib/utils";
+import { t } from "@/lib/i18n";
 
 const BG_CLASS: Record<string, string> = Object.fromEntries(
   BACKGROUNDS.map((b) => [b.id, b.thumb]),
@@ -9,8 +11,12 @@ const BG_CLASS: Record<string, string> = Object.fromEntries(
 
 const LIGHT_BACKGROUNDS = new Set(["light-wall", "white-wall"]);
 
+function clamp(v: number, lo: number, hi: number) {
+  return Math.max(lo, Math.min(hi, v));
+}
+
 export function NeonPreview() {
-  const { config } = useDesigner();
+  const { config, update } = useDesigner();
   const font = FONTS.find((f) => f.id === config.fontId) ?? FONTS[0];
   const color = COLORS.find((c) => c.id === config.colorId) ?? COLORS[0];
   const { width, height } = getDimensions(config);
@@ -24,91 +30,172 @@ export function NeonPreview() {
   const brightness = (config.brightness ?? 100) / 100;
   const zoom = config.zoom ?? 1;
   const flicker = config.flicker ?? true;
+  const isLightOn = config.isLightOn ?? true;
+  const posX = config.positionX ?? 0;
+  const posY = config.positionY ?? 0;
+  const rotation = config.rotationDeg ?? 0;
+  const realSize = config.realSizeMode ?? false;
 
   const glow = color.glow;
   const fill = color.hex;
 
-  // Brightness scales glow opacity by shrinking shadow radii slightly + opacity
   const g = (px: number) => Math.round(px * brightness);
-  const textShadow = [
-    `0 0 2px ${fill}`,
-    `0 0 ${g(6)}px ${fill}`,
-    `0 0 ${g(14)}px ${glow}`,
-    `0 0 ${g(30)}px ${glow}`,
-    `0 0 ${g(60)}px ${glow}`,
-    `0 0 ${g(100)}px ${glow}`,
-  ].join(", ");
+  const textShadow = isLightOn
+    ? [
+        `0 0 2px ${fill}`,
+        `0 0 ${g(6)}px ${fill}`,
+        `0 0 ${g(14)}px ${glow}`,
+        `0 0 ${g(30)}px ${glow}`,
+        `0 0 ${g(60)}px ${glow}`,
+        `0 0 ${g(100)}px ${glow}`,
+      ].join(", ")
+    : "none";
 
   const isLight = LIGHT_BACKGROUNDS.has(config.background);
   const hasCustomBg = !!config.customBackground;
 
-  return (
-    <div
-      className={cn(
-        "relative w-full overflow-hidden rounded-2xl border border-border shadow-soft",
-        !hasCustomBg && BG_CLASS[config.background],
-      )}
-      style={{
-        aspectRatio: `${width}/${Math.max(height, 30)}`,
-        minHeight: 280,
-        ...(hasCustomBg && {
-          backgroundImage: `url(${config.customBackground})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }),
-      }}
-    >
-      {/* Ambient glow halo on dark backgrounds — wall reflection */}
-      {!isLight && (
-        <div
-          className="pointer-events-none absolute inset-0"
-          style={{
-            background: `radial-gradient(ellipse at 50% 55%, ${glow}${Math.round(brightness * 38).toString(16).padStart(2, "0")} 0%, transparent 62%)`,
-            opacity: hasCustomBg ? 0.6 : 0.9,
-          }}
-          aria-hidden
-        />
-      )}
+  // Drag-to-move
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [dragging, setDragging] = useState(false);
+  const dragState = useRef<{ startX: number; startY: number; baseX: number; baseY: number; w: number; h: number } | null>(null);
 
+  function onPointerDown(e: React.PointerEvent) {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    (e.target as Element).setPointerCapture?.(e.pointerId);
+    dragState.current = {
+      startX: e.clientX,
+      startY: e.clientY,
+      baseX: posX,
+      baseY: posY,
+      w: rect.width,
+      h: rect.height,
+    };
+    setDragging(true);
+  }
+  function onPointerMove(e: React.PointerEvent) {
+    if (!dragState.current) return;
+    const s = dragState.current;
+    const dx = ((e.clientX - s.startX) / s.w) * 100;
+    const dy = ((e.clientY - s.startY) / s.h) * 100;
+    update({
+      positionX: clamp(Math.round(s.baseX + dx), -45, 45),
+      positionY: clamp(Math.round(s.baseY + dy), -45, 45),
+    });
+  }
+  function onPointerUp() {
+    dragState.current = null;
+    setDragging(false);
+  }
+
+  // Real-size feel: try to render at ~1cm per CSS cm using device-cm hint
+  const [cmPx, setCmPx] = useState<number>(37.8); // ~1cm @ 96dpi
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const probe = document.createElement("div");
+    probe.style.cssText = "position:absolute;visibility:hidden;width:1cm;height:1cm;";
+    document.body.appendChild(probe);
+    setCmPx(probe.getBoundingClientRect().width || 37.8);
+    document.body.removeChild(probe);
+  }, []);
+
+  const previewStyle: React.CSSProperties = realSize
+    ? { width: `${Math.min(width * cmPx, 1100)}px`, height: `${Math.min(height * cmPx, 700)}px`, minHeight: 280 }
+    : { aspectRatio: `${width}/${Math.max(height, 30)}`, minHeight: 280 };
+
+  return (
+    <div className="space-y-2">
       <div
-        className="absolute inset-0 flex items-center justify-center px-6 py-10"
-        style={{ transform: `scale(${zoom})`, transformOrigin: "center" }}
+        ref={containerRef}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
+        className={cn(
+          "relative w-full overflow-hidden rounded-2xl border border-border shadow-soft touch-none select-none",
+          dragging ? "cursor-grabbing" : "cursor-grab",
+          !hasCustomBg && BG_CLASS[config.background],
+        )}
+        style={{
+          ...previewStyle,
+          ...(hasCustomBg && {
+            backgroundImage: `url(${config.customBackground})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }),
+        }}
       >
+        {/* Ambient glow halo on dark backgrounds — wall reflection */}
+        {!isLight && isLightOn && (
+          <div
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background: `radial-gradient(ellipse at ${50 + posX}% ${55 + posY}%, ${glow}${Math.round(brightness * 38).toString(16).padStart(2, "0")} 0%, transparent 62%)`,
+              opacity: hasCustomBg ? 0.6 : 0.9,
+              transition: "background 120ms linear",
+            }}
+            aria-hidden
+          />
+        )}
+
+        {/* Night dim overlay when light is off */}
+        {!isLightOn && (
+          <div className="pointer-events-none absolute inset-0 bg-black/45" aria-hidden />
+        )}
+
         <div
-          className={cn(
-            "text-center select-none transition-opacity",
-            color.rgb ? "neon-rgb" : "neon-text",
-            !flicker && "neon-no-flicker",
-            isEmpty && "opacity-40",
-          )}
+          className="absolute inset-0 flex items-center justify-center px-6 py-10"
           style={{
-            fontFamily: font.family,
-            fontSize: `${fontSize}px`,
-            color: fill,
-            textShadow,
-            filter: `drop-shadow(0 0 ${g(18)}px ${glow})`,
-            opacity: Math.min(1, 0.55 + brightness * 0.5),
-            whiteSpace: "pre-wrap",
-            wordBreak: "break-word",
+            transform: `translate(${posX}%, ${posY}%) scale(${zoom}) rotate(${rotation}deg)`,
+            transformOrigin: "center",
+            transition: dragging ? "none" : "transform 120ms ease-out",
           }}
         >
-          {displayText}
+          <div
+            className={cn(
+              "text-center select-none transition-opacity",
+              isLightOn && color.rgb ? "neon-rgb" : isLightOn ? "neon-text" : "",
+              (!flicker || !isLightOn) && "neon-no-flicker",
+              isEmpty && "opacity-40",
+            )}
+            style={{
+              fontFamily: font.family,
+              fontSize: `${fontSize}px`,
+              color: isLightOn ? fill : "rgba(255,255,255,0.18)",
+              textShadow,
+              filter: isLightOn ? `drop-shadow(0 0 ${g(18)}px ${glow})` : "none",
+              opacity: isLightOn ? Math.min(1, 0.55 + brightness * 0.5) : 0.6,
+              whiteSpace: "pre-wrap",
+              wordBreak: "break-word",
+            }}
+          >
+            {displayText}
+          </div>
         </div>
+
+        <div className="pointer-events-none absolute bottom-3 left-3 rounded-md bg-black/60 px-2 py-1 text-xs font-medium text-white backdrop-blur">
+          ≈ {width} × {height} cm {realSize && <span className="ml-1 opacity-70">· gerçek boyut</span>}
+        </div>
+        {config.outdoor && (
+          <div className="pointer-events-none absolute top-3 right-3 rounded-md bg-neon-cyan/90 px-2 py-1 text-xs font-medium text-black">
+            Dış Mekan · IP65
+          </div>
+        )}
+        {!isLightOn && (
+          <div className="pointer-events-none absolute top-3 left-3 rounded-md bg-white/10 px-2 py-1 text-[10px] font-medium text-white/80 backdrop-blur">
+            Işık Kapalı
+          </div>
+        )}
+        {isEmpty && (
+          <div className="pointer-events-none absolute inset-x-0 bottom-12 text-center text-xs text-white/70">
+            Sağdaki kutuya yazını yaz, önizleme canlansın ✨
+          </div>
+        )}
       </div>
 
-      <div className="absolute bottom-3 left-3 rounded-md bg-black/60 px-2 py-1 text-xs font-medium text-white backdrop-blur">
-        ≈ {width} × {height} cm
-      </div>
-      {config.outdoor && (
-        <div className="absolute top-3 right-3 rounded-md bg-neon-cyan/90 px-2 py-1 text-xs font-medium text-black">
-          Dış Mekan · IP65
-        </div>
-      )}
-      {isEmpty && (
-        <div className="absolute inset-x-0 bottom-12 text-center text-xs text-white/70">
-          Sağdaki kutuya yazını yaz, önizleme canlansın ✨
-        </div>
-      )}
+      <p className="text-[11px] text-muted-foreground">
+        💡 {t("dragTip")} {t("rotateTip")}
+      </p>
     </div>
   );
 }
