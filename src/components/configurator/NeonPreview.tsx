@@ -3,12 +3,13 @@ import { COLORS, FONTS } from "@/data/options";
 import { getDimensions } from "@/lib/pricing";
 import { cn } from "@/lib/utils";
 
-const BG_CLASS = {
+const BG_CLASS: Record<string, string> = {
   brick: "bg-preset-brick",
   "dark-room": "bg-preset-dark",
   wall: "bg-preset-wall",
+  "light-wall": "bg-preset-light-wall",
   transparent: "bg-preset-transparent",
-} as const;
+};
 
 export function NeonPreview() {
   const { config } = useDesigner();

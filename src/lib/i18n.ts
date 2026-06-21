@@ -2,7 +2,7 @@ type Dict = Record<string, string>;
 
 const tr: Dict = {
   brand: "Mudita Dekorasyon",
-  brandTagline: "Vazolar'dan Dekorasyona Üretim",
+  brandTagline: "El emeğiyle, kalbimizle üretiyoruz",
   navHome: "Ana Sayfa",
   navDesign: "Tasarla",
   navGallery: "Galeri",
@@ -11,7 +11,24 @@ const tr: Dict = {
   navFaq: "S.S.S.",
   navContact: "İletişim",
   navCart: "Sepet",
+
+  // CTAs
   ctaDesign: "Neon Tabelanı Tasarla",
+  ctaDesignNow: "Hemen Tasarla",
+  ctaFreeQuote: "Ücretsiz Teklif Al",
+  ctaUploadLogo: "Logonu Yükle, Teklif Al",
+  ctaWhatsapp: "WhatsApp’tan Gönder",
+  ctaAddToCart: "Sepete Ekle",
+  ctaShareDesign: "Tasarımı Paylaş",
+  ctaSimilar: "Benzerini Tasarla",
+
+  // Trust
+  trustApproval: "Üretime başlamadan önce tasarım onayınızı alıyoruz.",
+  trustIndoorOutdoor: "İç ve dış mekana uygun seçenekler sunuyoruz.",
+  trustShipping: "Türkiye geneli güvenli kargo ile gönderiyoruz.",
+  trustCustom: "Ölçü, renk ve arka panel seçenekleriyle tamamen size özel üretim yapıyoruz.",
+
+  // Configurator labels
   enterText: "Yazını Gir",
   fontType: "Yazı Tipi",
   pickColor: "Renk Seç",
@@ -24,22 +41,26 @@ const tr: Dict = {
   productionTime: "Üretim Süresi",
   shipping: "Kargo",
   total: "Toplam",
-  addToCart: "Sepete Ekle",
-  getQuote: "Teklif Al",
-  sendWhatsapp: "WhatsApp ile Gönder",
-  shareDesign: "Tasarımı Paylaş",
   outdoor: "Dış Mekan (IP Korumalı)",
   indoor: "İç Mekan",
   dimmer: "Uzaktan Kumandalı Dimmer",
   urgent: "Acil Üretim",
   adapter: "Güç Adaptörü",
+
+  // Backgrounds
   background: "Arka Plan",
   bgBrick: "Tuğla Duvar",
   bgDark: "Karanlık Oda",
-  bgWall: "Düz Duvar",
+  bgWall: "Koyu Duvar",
+  bgLightWall: "Açık Duvar",
   bgTransparent: "Şeffaf",
-  warningSmall: "Yazı çok küçük, üretim zor olabilir.",
-  warningOutdoorScript: "İnce yazı tipi dış mekanda dayanıksız olabilir.",
+
+  // Warnings
+  warningSmall: "Yazı çok küçük, üretim zor olabilir. Daha büyük ölçü öneririz.",
+  warningOutdoorScript: "İnce/script yazı tipi dış mekanda dayanıksız olabilir.",
+  warningLongText: "Yazı uzun — okunaklık için ölçüyü büyütmeyi düşünebilirsin.",
+  warningComplexFont: "Bu yazı tipi karmaşık; üretim süresi ve maliyeti artabilir.",
+  warningEmptyText: "Tasarımına başlamak için yukarıdaki kutuya yazını gir.",
 };
 
 const en: Dict = {};
