@@ -1,6 +1,7 @@
 import { Outlet, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { SiteHeader, SiteFooter } from "@/components/SiteLayout";
 import { Toaster } from "@/components/ui/sonner";
+import { WhatsAppWidget } from "@/components/WhatsAppWidget";
 import appCss from "../styles.css?url";
 
 function NotFoundComponent() {
