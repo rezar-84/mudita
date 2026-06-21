@@ -252,3 +252,25 @@
     animation: none;
   }
 }
+
+/* Hero perf: GPU-promote animated layers, lighter shadows on mobile */
+.hero-orb {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+.neon-mosaic {
+  text-shadow:
+    0 0 3px var(--neon-color),
+    0 0 10px var(--neon-glow),
+    0 0 20px var(--neon-glow);
+}
+@media (min-width: 768px) {
+  .neon-mosaic {
+    text-shadow:
+      0 0 4px var(--neon-color),
+      0 0 14px var(--neon-glow),
+      0 0 28px var(--neon-glow),
+      0 0 60px var(--neon-glow);
+  }
+}
