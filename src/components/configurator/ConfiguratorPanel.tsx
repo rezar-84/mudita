@@ -21,25 +21,40 @@ export function ConfiguratorPanel() {
   const customH = config.customHeight ?? 40;
 
   // Warnings
+  const trimmed = config.text.trim();
+  const isEmpty = trimmed.length === 0;
   const longestLine = Math.max(1, ...config.text.split("\n").map((l) => l.length));
   const dims = config.sizeId === "custom" ? { width: customW, height: customH }
     : SIZES.find((s) => s.id === config.sizeId)!;
   const approxLetterCm = dims.width / Math.max(longestLine, 1);
-  const tooSmall = approxLetterCm < 4;
-  const fragile =
-    config.outdoor && (config.fontId === "pacifico" || config.fontId === "caveat" || config.fontId === "monoton");
+  const tooSmall = !isEmpty && approxLetterCm < 4;
+  const tooLong = trimmed.length > 30;
+  const complexFont = config.fontId === "pacifico" || config.fontId === "monoton" || config.fontId === "caveat";
+  const fragile = config.outdoor && complexFont;
+  const complexNote = !config.outdoor && complexFont;
+
+  const warnings: string[] = [];
+  if (tooSmall) warnings.push("Yazı çok küçük olabilir, üretim zorlaşır. Daha büyük ölçü öneririz.");
+  if (tooLong) warnings.push("Yazı uzun — okunaklık için ölçüyü büyütmeyi düşünebilirsin.");
+  if (fragile) warnings.push("İnce/script yazı tipi dış mekanda dayanıksız olabilir, kalın bir font öneririz.");
+  if (complexNote) warnings.push("Bu yazı tipi karmaşık; üretim biraz daha uzun sürebilir.");
 
   return (
     <div className="space-y-6">
-      {(tooSmall || fragile) && (
+      {isEmpty && (
+        <div className="rounded-lg border border-dashed border-border bg-secondary/40 p-3 text-sm text-muted-foreground">
+          Tasarımına başlamak için aşağıdaki kutuya yazını gir.
+        </div>
+      )}
+      {warnings.length > 0 && (
         <div className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
           <ul className="space-y-1">
-            {tooSmall && <li>Yazı çok küçük olabilir, üretim zorlaşır. Daha büyük ölçü öneririz.</li>}
-            {fragile && <li>İnce yazı tipi dış mekanda dayanıksız olabilir.</li>}
+            {warnings.map((w, i) => <li key={i}>{w}</li>)}
           </ul>
         </div>
       )}
+
 
       <Tabs defaultValue="text" className="w-full">
         <TabsList className="grid w-full grid-cols-4 gap-1">
