@@ -182,11 +182,65 @@ export function NeonPreview() {
             Dış Mekan · IP65
           </div>
         )}
-        {!isLightOn && (
-          <div className="pointer-events-none absolute top-3 left-3 rounded-md bg-white/10 px-2 py-1 text-[10px] font-medium text-white/80 backdrop-blur">
-            Işık Kapalı
-          </div>
-        )}
+        {/* Floating quick-action toolbar */}
+        <div
+          className="absolute top-3 left-1/2 z-10 flex -translate-x-1/2 items-center gap-1 rounded-full border border-white/15 bg-black/55 px-1.5 py-1 text-white shadow-soft backdrop-blur"
+          onPointerDown={(e) => e.stopPropagation()}
+        >
+          <button
+            type="button"
+            aria-label={isLightOn ? "Işığı kapat" : "Işığı aç"}
+            title={isLightOn ? "Işığı kapat" : "Işığı aç"}
+            onClick={() => update({ isLightOn: !isLightOn })}
+            className={cn(
+              "inline-flex h-8 items-center gap-1.5 rounded-full px-2.5 text-xs font-medium transition",
+              isLightOn ? "bg-yellow-400/90 text-black hover:bg-yellow-300" : "bg-white/10 hover:bg-white/20",
+            )}
+          >
+            {isLightOn ? <Lightbulb className="h-3.5 w-3.5" /> : <LightbulbOff className="h-3.5 w-3.5" />}
+            <span>{isLightOn ? "Açık" : "Kapalı"}</span>
+          </button>
+          <div className="mx-0.5 h-5 w-px bg-white/15" aria-hidden />
+          <button
+            type="button"
+            aria-label="Uzaklaştır"
+            title="Uzaklaştır"
+            onClick={() => update({ zoom: Math.max(0.6, Math.round(((config.zoom ?? 1) - 0.1) * 10) / 10) })}
+            className="inline-flex h-8 w-8 items-center justify-center rounded-full hover:bg-white/15"
+          >
+            <ZoomOut className="h-4 w-4" />
+          </button>
+          <button
+            type="button"
+            aria-label="Yakınlaştır"
+            title="Yakınlaştır"
+            onClick={() => update({ zoom: Math.min(1.4, Math.round(((config.zoom ?? 1) + 0.1) * 10) / 10) })}
+            className="inline-flex h-8 w-8 items-center justify-center rounded-full hover:bg-white/15"
+          >
+            <ZoomIn className="h-4 w-4" />
+          </button>
+          <button
+            type="button"
+            aria-label={t("center")}
+            title={t("center")}
+            onClick={() => update({ positionX: 0, positionY: 0 })}
+            className="inline-flex h-8 w-8 items-center justify-center rounded-full hover:bg-white/15"
+          >
+            <Crosshair className="h-4 w-4" />
+          </button>
+          <button
+            type="button"
+            aria-label={t("resetView")}
+            title={t("resetView")}
+            onClick={() =>
+              update({ positionX: 0, positionY: 0, rotationDeg: 0, zoom: 1, brightness: 100 })
+            }
+            className="inline-flex h-8 w-8 items-center justify-center rounded-full hover:bg-white/15"
+          >
+            <RotateCcw className="h-4 w-4" />
+          </button>
+        </div>
+
         {isEmpty && (
           <div className="pointer-events-none absolute inset-x-0 bottom-12 text-center text-xs text-white/70">
             Sağdaki kutuya yazını yaz, önizleme canlansın ✨
