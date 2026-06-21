@@ -59,18 +59,6 @@ function HomePage() {
           <div className="hero-orb absolute -bottom-24 left-1/3 hidden h-[26rem] w-[26rem] rounded-full blur-3xl md:block animate-hero-orb-3" style={{ background: "radial-gradient(circle, rgba(0,217,107,0.35), transparent 60%)" }} />
         </div>
 
-        {/* Animated rotating rays — desktop only (expensive conic + mask) */}
-        <div className="pointer-events-none absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 md:block" aria-hidden>
-          <div
-            className="hero-orb h-[80rem] w-[80rem] opacity-[0.18] animate-hero-rays"
-            style={{
-              background:
-                "conic-gradient(from 0deg, transparent 0deg, rgba(255,62,181,0.6) 6deg, transparent 12deg, transparent 40deg, rgba(30,144,255,0.55) 46deg, transparent 52deg, transparent 90deg, rgba(255,212,0,0.5) 96deg, transparent 102deg, transparent 150deg, rgba(0,217,107,0.5) 156deg, transparent 162deg, transparent 220deg, rgba(255,62,181,0.55) 226deg, transparent 232deg, transparent 290deg, rgba(30,144,255,0.5) 296deg, transparent 302deg, transparent 360deg)",
-              maskImage: "radial-gradient(circle, black 0%, transparent 65%)",
-              WebkitMaskImage: "radial-gradient(circle, black 0%, transparent 65%)",
-            }}
-          />
-        </div>
 
         {/* Twinkling sparkle dots — fewer on mobile */}
         <div className="pointer-events-none absolute inset-0" aria-hidden>
