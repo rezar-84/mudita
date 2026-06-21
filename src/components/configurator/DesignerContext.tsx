@@ -18,6 +18,11 @@ export const defaultConfig: NeonDesignConfig = {
   brightness: 100,
   flicker: true,
   zoom: 1,
+  isLightOn: true,
+  positionX: 0,
+  positionY: 0,
+  rotationDeg: 0,
+  realSizeMode: false,
 };
 
 type Action =
