@@ -183,6 +183,9 @@ export function NeonPreview() {
           </div>
         </div>
 
+        {/* Measurement overlays (width/height/backboard/safe area) */}
+        <MeasurementOverlay />
+
         <div className="pointer-events-none absolute bottom-3 left-3 rounded-md bg-black/60 px-2 py-1 text-xs font-medium text-white backdrop-blur">
           ≈ {width} × {height} cm {realSize && <span className="ml-1 opacity-70">· gerçek boyut</span>}
         </div>
@@ -199,7 +202,7 @@ export function NeonPreview() {
           <button
             type="button"
             aria-label={isLightOn ? t("lightOffAria") : t("lightOnAria")}
-            title={isLightOn ? t("lightOffAria") : t("lightOnAria")}
+            title={isLightOn ? "Işığı Kapat" : "Işığı Aç"}
             onClick={() => update({ isLightOn: !isLightOn })}
             className={cn(
               "inline-flex h-8 items-center gap-1.5 rounded-full px-2.5 text-xs font-medium transition",
@@ -224,7 +227,7 @@ export function NeonPreview() {
             type="button"
             aria-label="Yakınlaştır"
             title="Yakınlaştır"
-            onClick={() => update({ zoom: Math.min(1.4, Math.round(((config.zoom ?? 1) + 0.1) * 10) / 10) })}
+            onClick={() => update({ zoom: Math.min(1.8, Math.round(((config.zoom ?? 1) + 0.1) * 10) / 10) })}
             className="inline-flex h-8 w-8 items-center justify-center rounded-full hover:bg-white/15"
           >
             <ZoomIn className="h-4 w-4" />
@@ -232,7 +235,7 @@ export function NeonPreview() {
           <button
             type="button"
             aria-label={t("center")}
-            title={t("center")}
+            title="Ortala"
             onClick={() => update({ positionX: 0, positionY: 0 })}
             className="inline-flex h-8 w-8 items-center justify-center rounded-full hover:bg-white/15"
           >
@@ -241,7 +244,7 @@ export function NeonPreview() {
           <button
             type="button"
             aria-label={t("resetView")}
-            title={t("resetView")}
+            title="Sıfırla"
             onClick={() =>
               update({ positionX: 0, positionY: 0, rotationDeg: 0, zoom: 1, brightness: 100 })
             }
@@ -249,7 +252,54 @@ export function NeonPreview() {
           >
             <RotateCcw className="h-4 w-4" />
           </button>
+
+          <div className="mx-0.5 h-5 w-px bg-white/15" aria-hidden />
+          <button
+            type="button"
+            aria-label="Ölçüleri Göster"
+            title="Ölçüler"
+            onClick={() => update({ showMeasurements: !(config.showMeasurements ?? false) })}
+            className={cn(
+              "inline-flex h-8 w-8 items-center justify-center rounded-full transition",
+              (config.showMeasurements ?? false) ? "bg-neon-cyan/90 text-black hover:bg-neon-cyan" : "hover:bg-white/15",
+            )}
+          >
+            <Ruler className="h-4 w-4" />
+          </button>
+          <button
+            type="button"
+            aria-label="Arka Plan"
+            title="Arka Plan"
+            onClick={() => {
+              const ids = BACKGROUNDS.map((b) => b.id);
+              const i = Math.max(0, ids.indexOf(config.background));
+              const next = ids[(i + 1) % ids.length];
+              update({ background: next, customBackground: undefined, customBackgroundName: undefined });
+            }}
+            className="inline-flex h-8 w-8 items-center justify-center rounded-full hover:bg-white/15"
+          >
+            <ImageIcon className="h-4 w-4" />
+          </button>
+          <button
+            type="button"
+            aria-label="Tam Ekran"
+            title="Tam Ekran"
+            onClick={() => window.dispatchEvent(new CustomEvent("mudita:fullscreen-toggle"))}
+            className="inline-flex h-8 w-8 items-center justify-center rounded-full hover:bg-white/15"
+          >
+            <Maximize2 className="h-4 w-4" />
+          </button>
+          <button
+            type="button"
+            aria-label="Mockup Al"
+            title="Mockup Al"
+            onClick={() => toast.info("Mockup indirme özelliği sonraki aşamada eklenecek.")}
+            className="inline-flex h-8 w-8 items-center justify-center rounded-full hover:bg-white/15"
+          >
+            <Camera className="h-4 w-4" />
+          </button>
         </div>
+
 
         {isEmpty && (
           <div className="pointer-events-none absolute inset-x-0 bottom-12 text-center text-xs text-white/70">
