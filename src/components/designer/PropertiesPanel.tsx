@@ -1,6 +1,7 @@
 import { useDesigner } from "@/components/configurator/DesignerContext";
 import { ConfiguratorPanel } from "@/components/configurator/ConfiguratorPanel";
 import { DecorationProperties } from "./DecorationProperties";
+import { TextLayerProperties } from "./TextLayerProperties";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, ChevronLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
