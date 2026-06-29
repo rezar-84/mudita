@@ -92,6 +92,7 @@ export function PreviewControls() {
             checked={config.showSizeBadge ?? true}
             onCheckedChange={(v) => update({ showSizeBadge: v })}
           />
+        </div>
         <p className="text-[10px] text-muted-foreground">
           Ölçüler yaklaşık üretim ölçüsünü göstermek için hesaplanır.
         </p>
