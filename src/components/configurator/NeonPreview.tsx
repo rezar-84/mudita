@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { MeasurementOverlay } from "./MeasurementOverlay";
+import { DecorationOverlay } from "@/components/designer/DecorationOverlay";
 
 const BG_CLASS: Record<string, string> = Object.fromEntries(
   BACKGROUNDS.map((b) => [b.id, b.thumb]),
@@ -32,7 +33,7 @@ function clamp(v: number, lo: number, hi: number) {
 }
 
 export function NeonPreview() {
-  const { config, update } = useDesigner();
+  const { config, update, setSelection } = useDesigner();
   const font = FONTS.find((f) => f.id === config.fontId) ?? FONTS[0];
   const color = COLORS.find((c) => c.id === config.colorId) ?? COLORS[0];
   const { width, height } = getDimensions(config);
@@ -76,6 +77,8 @@ export function NeonPreview() {
   const dragState = useRef<{ startX: number; startY: number; baseX: number; baseY: number; w: number; h: number } | null>(null);
 
   function onPointerDown(e: React.PointerEvent) {
+    // Click on bare canvas selects the text layer (deselects decoration)
+    setSelection({ kind: "text" });
     if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
     (e.target as Element).setPointerCapture?.(e.pointerId);
@@ -195,6 +198,9 @@ export function NeonPreview() {
             {displayText}
           </div>
         </div>
+
+        {/* Decoration / SVG layers */}
+        <DecorationOverlay />
 
         {/* Measurement overlays (width/height/backboard/safe area) */}
         <MeasurementOverlay />
