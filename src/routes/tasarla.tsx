@@ -26,17 +26,35 @@ export const Route = createFileRoute("/tasarla")({
 });
 
 function DesignerPage() {
+  const [fullscreen, setFullscreen] = useState(false);
+
+  useEffect(() => {
+    const handler = () => setFullscreen((v) => !v);
+    window.addEventListener("mudita:fullscreen-toggle", handler);
+    return () => window.removeEventListener("mudita:fullscreen-toggle", handler);
+  }, []);
+
   return (
     <DesignerProvider>
       <div className="mx-auto w-full max-w-7xl overflow-x-clip px-4 py-6 pb-28 md:py-10 lg:pb-10">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold sm:text-3xl">{t("designerTitle")}</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {t("livePreviewTip")} · {t("designerSubtitle")}
-          </p>
-          <p className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-accent/40 px-3 py-1 text-xs text-foreground">
-            ✅ {t("approvalTip")} · {t("shippingTip")}
-          </p>
+        <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+          <div className="min-w-0">
+            <h1 className="text-2xl font-bold sm:text-3xl">{t("designerTitle")}</h1>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {t("livePreviewTip")} · {t("designerSubtitle")}
+            </p>
+            <p className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-accent/40 px-3 py-1 text-xs text-foreground">
+              ✅ {t("approvalTip")} · {t("shippingTip")}
+            </p>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setFullscreen(true)}
+            className="shrink-0"
+          >
+            <Maximize2 className="mr-1.5 h-3.5 w-3.5" /> Tam Ekran Tasarla
+          </Button>
         </div>
 
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1.7fr)_minmax(320px,1fr)]">
@@ -63,6 +81,8 @@ function DesignerPage() {
 
         {/* Mobile sticky price bar */}
         <MobilePriceBar />
+
+        {fullscreen && <FullscreenDesigner onExit={() => setFullscreen(false)} />}
       </div>
     </DesignerProvider>
   );
