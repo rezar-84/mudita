@@ -73,7 +73,13 @@ export function PropertiesPanel({
         </Button>
       </div>
       <div className="min-h-0 flex-1 overflow-auto p-3 sm:p-4">
-        {isDecoration ? <DecorationProperties /> : <ConfiguratorPanel />}
+        {isDecoration ? (
+          <DecorationProperties />
+        ) : isTextLayer ? (
+          <TextLayerProperties />
+        ) : (
+          <ConfiguratorPanel />
+        )}
       </div>
     </aside>
   );
