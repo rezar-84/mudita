@@ -63,6 +63,34 @@ export function PreviewControls() {
         <Switch checked={realSize} onCheckedChange={(v) => update({ realSizeMode: v })} />
       </div>
 
+      <div className="space-y-2 rounded-lg border border-dashed border-border p-3">
+        <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Ölçü & Kılavuzlar</p>
+        <div className="flex items-center justify-between">
+          <Label className="text-xs">Ölçüleri Göster</Label>
+          <Switch
+            checked={config.showMeasurements ?? false}
+            onCheckedChange={(v) => update({ showMeasurements: v })}
+          />
+        </div>
+        <div className="flex items-center justify-between">
+          <Label className="text-xs">Panel Sınırını Göster</Label>
+          <Switch
+            checked={config.showBackboardBounds ?? false}
+            onCheckedChange={(v) => update({ showBackboardBounds: v })}
+          />
+        </div>
+        <div className="flex items-center justify-between">
+          <Label className="text-xs">Güvenli Alanı Göster</Label>
+          <Switch
+            checked={config.showSafeArea ?? false}
+            onCheckedChange={(v) => update({ showSafeArea: v })}
+          />
+        </div>
+        <p className="text-[10px] text-muted-foreground">
+          Ölçüler yaklaşık üretim ölçüsünü göstermek için hesaplanır.
+        </p>
+      </div>
+
       <div className="flex flex-wrap gap-2 pt-1">
         <Button
           type="button"
