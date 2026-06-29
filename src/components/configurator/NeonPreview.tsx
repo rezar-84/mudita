@@ -274,68 +274,8 @@ export function NeonPreview() {
           >
             <Maximize2 className="h-4 w-4" />
           </button>
-          <Popover>
-            <PopoverTrigger asChild>
-              <button
-                type="button"
-                aria-label="Daha fazla araç"
-                title="Daha fazla"
-                className="inline-flex h-8 w-8 items-center justify-center rounded-full hover:bg-white/15"
-              >
-                <MoreHorizontal className="h-4 w-4" />
-              </button>
-            </PopoverTrigger>
-            <PopoverContent
-              align="end"
-              sideOffset={8}
-              className="w-56 p-2"
-              onPointerDown={(e) => e.stopPropagation()}
-            >
-              <button
-                type="button"
-                onClick={() => update({ showMeasurements: !(config.showMeasurements ?? false) })}
-                className={cn(
-                  "flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm hover:bg-accent",
-                  (config.showMeasurements ?? false) && "bg-accent",
-                )}
-              >
-                <Ruler className="h-4 w-4" />
-                Ölçüleri {config.showMeasurements ? "Gizle" : "Göster"}
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  const ids = BACKGROUNDS.map((b) => b.id);
-                  const i = Math.max(0, ids.indexOf(config.background));
-                  const next = ids[(i + 1) % ids.length];
-                  update({ background: next, customBackground: undefined, customBackgroundName: undefined });
-                }}
-                className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm hover:bg-accent"
-              >
-                <ImageIcon className="h-4 w-4" />
-                Arka Planı Değiştir
-              </button>
-              <button
-                type="button"
-                onClick={() =>
-                  update({ positionX: 0, positionY: 0, rotationDeg: 0, zoom: 1, brightness: 100 })
-                }
-                className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm hover:bg-accent"
-              >
-                <RotateCcw className="h-4 w-4" />
-                Görünümü Sıfırla
-              </button>
-              <button
-                type="button"
-                onClick={() => toast.info("Mockup indirme özelliği sonraki aşamada eklenecek.")}
-                className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm hover:bg-accent"
-              >
-                <Camera className="h-4 w-4" />
-                Mockup Al
-              </button>
-            </PopoverContent>
-          </Popover>
         </div>
+
 
 
         {isEmpty && (
