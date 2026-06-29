@@ -83,9 +83,28 @@ export function ToolRail({ onPickDecoration }: { onPickDecoration: () => void })
     {
       id: "text",
       icon: Type,
-      label: "Metin",
+      label: "Ana Metin",
       onClick: handleTextTool,
       active: selection.kind === "text",
+    },
+    {
+      id: "new-text-layer",
+      icon: TextCursorInput,
+      label: "Yeni Metin Katmanı",
+      onClick: () => {
+        const id = `tl-${Date.now()}`;
+        addTextLayer({
+          id,
+          text: "Yeni Yazı",
+          fontId: config.fontId,
+          colorId: config.colorId,
+          sizePct: 14,
+          x: 0,
+          y: 15,
+          rotation: 0,
+        });
+        toast.success("Metin katmanı eklendi");
+      },
     },
     {
       id: "decoration",
