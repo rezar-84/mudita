@@ -112,6 +112,9 @@ export interface NeonDesignConfig {
   positionY?: number;    // -45..45 percent offset, default 0
   rotationDeg?: number;  // -15..15 deg, default 0
   realSizeMode?: boolean;// default false — show a cm ruler
+  showMeasurements?: boolean;    // default false — width/height overlays
+  showBackboardBounds?: boolean; // default false — backboard box overlay
+  showSafeArea?: boolean;        // default false — inner safe-area guide
 }
 
 export interface PriceLineItem {
