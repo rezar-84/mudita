@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useState } from "react";
 import { useDesigner } from "@/components/configurator/DesignerContext";
 import { NeonPreview } from "@/components/configurator/NeonPreview";
 import { ToolRail } from "./ToolRail";
@@ -8,16 +8,13 @@ import { DecorationPickerDialog } from "./DecorationPickerDialog";
 import { cn } from "@/lib/utils";
 
 /**
- * Figma / Inkscape-style editor shell:
- *  ┌──────────────────────────────────────────────┐
- *  │  Top bar: title · undo/redo · price · cart    │
- *  ├──┬───────────────────────────────────────┬───┤
- *  │T │                                       │ P │
- *  │o │              Canvas                   │ r │
- *  │o │       (NeonPreview + overlays)        │ o │
- *  │l │                                       │ p │
- *  │  │                                       │ . │
- *  └──┴───────────────────────────────────────┴───┘
+ * Figma / Inkscape-style editor shell.
+ * Layout:
+ *  - Top bar (full width)
+ *  - Body (flex):
+ *      Tool rail (horizontal scroll on mobile, vertical on lg+)
+ *      Canvas
+ *      Properties panel (stacked below on mobile, side panel on lg+)
  */
 export function EditorShell({
   variant = "page",
@@ -30,19 +27,21 @@ export function EditorShell({
   const [pickerOpen, setPickerOpen] = useState(false);
   const [rightOpen, setRightOpen] = useState(true);
 
-  // Open decoration picker via a custom event from the tool rail (works in
-  // both portal-fullscreen and inline page modes).
   useEffect(() => {
     const handler = () => setPickerOpen(true);
     window.addEventListener("mudita:open-decoration-picker", handler);
     return () => window.removeEventListener("mudita:open-decoration-picker", handler);
   }, []);
 
-  // Keyboard shortcut: V = select text, ESC = deselect
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement | null;
-      if (target && (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable))
+      if (
+        target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.isContentEditable)
+      )
         return;
       if (e.key === "Escape") setSelection({ kind: "canvas" });
       if (e.key.toLowerCase() === "v") setSelection({ kind: "text" });
@@ -56,8 +55,10 @@ export function EditorShell({
   return (
     <div
       className={cn(
-        "flex w-full flex-col bg-background text-foreground",
-        isFullscreen ? "fixed inset-0 z-[100] h-screen" : "h-[calc(100vh-4rem)] min-h-[640px] rounded-2xl border border-border shadow-soft overflow-hidden",
+        "flex w-full flex-col overflow-hidden bg-background text-foreground",
+        isFullscreen
+          ? "fixed inset-0 z-[100] h-screen"
+          : "min-h-[640px] rounded-2xl border border-border shadow-soft lg:h-[calc(100vh-7rem)]",
       )}
     >
       <EditorTopBar
@@ -67,19 +68,20 @@ export function EditorShell({
         rightPanelOpen={rightOpen}
       />
 
-      <div className="flex min-h-0 flex-1">
+      {/* Body: stacks on mobile, splits on lg+ */}
+      <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
         <ToolRail onPickDecoration={() => setPickerOpen(true)} />
 
         {/* Canvas */}
-        <div className="relative min-w-0 flex-1 overflow-auto bg-canvas/40">
-          <div className="mx-auto flex h-full max-w-5xl items-center justify-center p-4 sm:p-6">
+        <div className="relative min-h-[320px] min-w-0 flex-1 overflow-auto bg-canvas/40">
+          <div className="mx-auto flex h-full max-w-5xl items-center justify-center p-3 sm:p-5">
             <div className="w-full">
               <NeonPreview />
             </div>
           </div>
         </div>
 
-        {/* Right properties panel */}
+        {/* Properties */}
         <PropertiesPanel
           open={rightOpen}
           onClose={() => setRightOpen(false)}
@@ -90,8 +92,4 @@ export function EditorShell({
       <DecorationPickerDialog open={pickerOpen} onOpenChange={setPickerOpen} />
     </div>
   );
-}
-
-export function CanvasArea({ children }: { children: ReactNode }) {
-  return <div className="relative min-w-0 flex-1 overflow-auto bg-canvas/40">{children}</div>;
 }

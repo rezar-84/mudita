@@ -6,7 +6,6 @@ import {
 } from "@/components/configurator/DesignerContext";
 import { EditorShell } from "@/components/designer/EditorShell";
 import { FullscreenDesigner } from "@/components/configurator/FullscreenDesigner";
-import { PriceSummary } from "@/components/configurator/PriceSummary";
 import { calculatePrice, formatTRY } from "@/lib/pricing";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart } from "lucide-react";
@@ -48,15 +47,7 @@ function DesignerPage() {
           </div>
         </div>
 
-        {/* Desktop / tablet: full Figma-like editor */}
-        <div className="hidden md:block">
-          <EditorShell variant="page" />
-        </div>
-
-        {/* Mobile: stacked preview + properties (no side rails) */}
-        <div className="md:hidden">
-          <MobileEditor />
-        </div>
+        <EditorShell variant="page" />
 
         <MobilePriceBar />
 
@@ -64,14 +55,6 @@ function DesignerPage() {
       </div>
     </DesignerProvider>
   );
-}
-
-function MobileEditor() {
-  // On mobile we want a simple stacked layout that still uses the shell, but
-  // collapsing the tool rail and forcing the panel below the canvas. The
-  // existing EditorShell handles this via flex; for the smallest viewport we
-  // import the same component so behaviour stays consistent.
-  return <EditorShell variant="page" />;
 }
 
 function MobilePriceBar() {
@@ -86,30 +69,23 @@ function MobilePriceBar() {
   };
 
   return (
-    <>
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-card/95 px-4 py-3 shadow-soft backdrop-blur md:hidden">
-        <div className="mx-auto flex max-w-7xl items-center gap-3">
-          <div className="min-w-0 flex-1">
-            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
-              {t("estimatedPrice")}
-            </div>
-            <div className="truncate text-lg font-bold tabular-nums">
-              {formatTRY(breakdown.total)}
-            </div>
+    <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-card/95 px-4 py-3 shadow-soft backdrop-blur md:hidden">
+      <div className="mx-auto flex max-w-7xl items-center gap-3">
+        <div className="min-w-0 flex-1">
+          <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+            {t("estimatedPrice")}
           </div>
-          <Button
-            onClick={onAdd}
-            className="shrink-0 bg-gradient-neon text-white shadow-glow hover:opacity-90"
-          >
-            <ShoppingCart className="mr-2 h-4 w-4" /> {t("ctaAddToCart")}
-          </Button>
+          <div className="truncate text-lg font-bold tabular-nums">
+            {formatTRY(breakdown.total)}
+          </div>
         </div>
+        <Button
+          onClick={onAdd}
+          className="shrink-0 bg-gradient-neon text-white shadow-glow hover:opacity-90"
+        >
+          <ShoppingCart className="mr-2 h-4 w-4" /> {t("ctaAddToCart")}
+        </Button>
       </div>
-      {/* Hidden helper so we can still surface the full price breakdown on a
-         tasarla sub-page if needed without forcing it into the shell. */}
-      <div className="hidden">
-        <PriceSummary />
-      </div>
-    </>
+    </div>
   );
 }

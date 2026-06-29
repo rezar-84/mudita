@@ -122,7 +122,14 @@ export function ToolRail({ onPickDecoration }: { onPickDecoration: () => void })
   ];
 
   return (
-    <div className="flex w-12 shrink-0 flex-col items-center gap-1 border-r border-border bg-card/60 py-2 sm:w-14">
+    <div
+      className={cn(
+        // Horizontal scroll strip on mobile (above canvas), vertical column on lg+
+        "flex shrink-0 items-center gap-1 border-border bg-card/70 px-1 py-1",
+        "overflow-x-auto border-b lg:overflow-visible",
+        "lg:w-14 lg:flex-col lg:gap-1 lg:border-b-0 lg:border-r lg:px-0 lg:py-2",
+      )}
+    >
       {tools.map((tool) => (
         <button
           key={tool.id}
@@ -131,7 +138,7 @@ export function ToolRail({ onPickDecoration }: { onPickDecoration: () => void })
           title={tool.label}
           aria-label={tool.label}
           className={cn(
-            "inline-flex h-10 w-10 items-center justify-center rounded-lg text-muted-foreground transition hover:bg-accent hover:text-foreground",
+            "inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition hover:bg-accent hover:text-foreground",
             tool.active && "bg-accent text-foreground ring-1 ring-inset ring-neon-cyan/40",
           )}
         >
