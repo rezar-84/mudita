@@ -28,7 +28,8 @@ interface Tool {
  * tooltips via title attr. Tools dispatch immediate actions or open dialogs.
  */
 export function ToolRail({ onPickDecoration }: { onPickDecoration: () => void }) {
-  const { config, update, selection, setSelection, addDecoration } = useDesigner();
+  const { config, update, selection, setSelection, addDecoration, addTextLayer } =
+    useDesigner();
   const fileRef = useRef<HTMLInputElement>(null);
 
   function handleSelectTool() {
