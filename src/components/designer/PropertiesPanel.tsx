@@ -25,6 +25,7 @@ export function PropertiesPanel({
 }) {
   const { selection } = useDesigner();
   const isDecoration = selection.kind === "decoration";
+  const isTextLayer = selection.kind === "textLayer";
 
   if (!open) {
     return (
