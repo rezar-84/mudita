@@ -1,11 +1,13 @@
+import { useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { DesignerProvider, useDesigner } from "@/components/configurator/DesignerContext";
 import { NeonPreview } from "@/components/configurator/NeonPreview";
 import { ConfiguratorPanel } from "@/components/configurator/ConfiguratorPanel";
 import { PriceSummary } from "@/components/configurator/PriceSummary";
+import { FullscreenDesigner } from "@/components/configurator/FullscreenDesigner";
 import { calculatePrice, formatTRY } from "@/lib/pricing";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart } from "lucide-react";
+import { Maximize2, ShoppingCart } from "lucide-react";
 import { addToCart } from "@/lib/cart";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
