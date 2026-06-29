@@ -54,7 +54,13 @@ export function PropertiesPanel({
     >
       <div className="flex shrink-0 items-center justify-between border-b border-border px-3 py-2">
         <p className="truncate text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          {isDecoration ? "Süsleme" : selection.kind === "text" ? "Metin / Tasarım" : "Sahne"}
+          {isDecoration
+            ? "Süsleme"
+            : isTextLayer
+              ? "Metin Katmanı"
+              : selection.kind === "text"
+                ? "Metin / Tasarım"
+                : "Sahne"}
         </p>
         <Button
           variant="ghost"
