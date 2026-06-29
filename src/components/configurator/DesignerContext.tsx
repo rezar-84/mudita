@@ -23,6 +23,9 @@ export const defaultConfig: NeonDesignConfig = {
   positionY: 0,
   rotationDeg: 0,
   realSizeMode: false,
+  showMeasurements: false,
+  showBackboardBounds: false,
+  showSafeArea: false,
 };
 
 type Action =

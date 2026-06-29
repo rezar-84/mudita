@@ -17,6 +17,7 @@ import { AlertTriangle } from "lucide-react";
 import { FontSelector } from "./FontSelector";
 import { PreviewControls } from "./PreviewControls";
 import { BackgroundToggle } from "./BackgroundToggle";
+import { AiIdeaPanel } from "./AiIdeaPanel";
 import { t } from "@/lib/i18n";
 
 export function ConfiguratorPanel() {
@@ -184,6 +185,7 @@ export function ConfiguratorPanel() {
           <p className="text-xs text-muted-foreground">{t("tryBgTip")}</p>
           <BackgroundToggle />
           <PreviewControls />
+          <AiIdeaPanel />
         </TabsContent>
 
         {/* EXTRAS: backboard, mounting, accessories, notes */}
