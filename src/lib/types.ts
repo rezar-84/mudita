@@ -152,6 +152,8 @@ export interface NeonDesignConfig {
   customBackgroundName?: string;
   /** Decoration / SVG layers on top of the text. */
   decorations?: Decoration[];
+  /** Additional text layers (multi-text support). */
+  textLayers?: TextLayer[];
   // Visual preview-only options (do not affect price)
   brightness?: number;   // 40 – 120, default 100
   flicker?: boolean;     // default true
@@ -164,12 +166,14 @@ export interface NeonDesignConfig {
   showMeasurements?: boolean;    // default false — width/height overlays
   showBackboardBounds?: boolean; // default false — backboard box overlay
   showSafeArea?: boolean;        // default false — inner safe-area guide
+  showSizeBadge?: boolean;       // default true — toggles the W×H badge on the canvas
 }
 
 /** Editor selection: which object the properties panel edits. */
 export type EditorSelection =
   | { kind: "canvas" }
   | { kind: "text" }
+  | { kind: "textLayer"; id: string }
   | { kind: "decoration"; id: string };
 
 export interface PriceLineItem {
