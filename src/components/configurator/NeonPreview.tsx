@@ -196,12 +196,17 @@ export function NeonPreview() {
         {/* Decoration / SVG layers */}
         <DecorationOverlay />
 
+        {/* Additional text layers (multi-text) */}
+        <TextLayerOverlay />
+
         {/* Measurement overlays (width/height/backboard/safe area) */}
         <MeasurementOverlay />
 
-        <div className="pointer-events-none absolute bottom-3 left-3 rounded-md bg-black/60 px-2 py-1 text-xs font-medium text-white backdrop-blur">
-          ≈ {width} × {height} cm {realSize && <span className="ml-1 opacity-70">· gerçek boyut</span>}
-        </div>
+        {(config.showSizeBadge ?? true) && (
+          <div className="pointer-events-none absolute bottom-3 left-3 rounded-md bg-black/60 px-2 py-1 text-xs font-medium text-white backdrop-blur">
+            ≈ {width} × {height} cm {realSize && <span className="ml-1 opacity-70">· gerçek boyut</span>}
+          </div>
+        )}
         {config.outdoor && (
           <div className="pointer-events-none absolute bottom-3 right-3 rounded-md bg-neon-cyan/90 px-2 py-1 text-xs font-medium text-black">
             Dış Mekan · IP65
