@@ -51,20 +51,20 @@ interface Ctx {
 const DesignerCtx = createContext<Ctx | null>(null);
 
 export function DesignerProvider({ children }: { children: ReactNode }) {
-  const [config, dispatch] = useReducer(reducer, defaultConfig, (init) => {
-    if (typeof window === "undefined") return init;
-    const params = new URLSearchParams(window.location.search);
-    const d = params.get("d");
-    if (d) {
-      const decoded = decodeConfig(d);
-      if (decoded) return { ...init, ...decoded };
-    }
-    return init;
-  });
+  // Always initialize with defaults so SSR and the first client render match.
+  // URL-shared config is applied in an effect after hydration.
+  const [config, dispatch] = useReducer(reducer, defaultConfig);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-  }, [config]);
+    const params = new URLSearchParams(window.location.search);
+    const d = params.get("d");
+    if (!d) return;
+    const decoded = decodeConfig(d);
+    if (decoded) dispatch({ type: "replace", cfg: decoded });
+    // run once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <DesignerCtx.Provider
