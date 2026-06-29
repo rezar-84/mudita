@@ -68,6 +68,7 @@ export function TextLayerOverlay() {
     <div
       ref={containerRef}
       className="pointer-events-none absolute inset-0"
+      style={{ containerType: "inline-size" }}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
