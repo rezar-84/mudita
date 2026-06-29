@@ -105,8 +105,30 @@ export interface Decoration {
   rotation: number;
   /** Size as % of canvas min-dim, 5..40. */
   sizePct: number;
+  /** Mirror horizontally / vertically. */
+  flipX?: boolean;
+  flipY?: boolean;
   /** Glow intensity multiplier 60..140 (default 100). */
   glow?: number;
+  hidden?: boolean;
+  locked?: boolean;
+}
+
+/** Additional text layer on the canvas (multi-text support). */
+export interface TextLayer {
+  id: string;
+  text: string;
+  fontId: string;
+  colorId: string;
+  /** Font size as % of canvas width, 6..40. */
+  sizePct: number;
+  /** -45..45 percent offset from canvas centre. */
+  x: number;
+  y: number;
+  /** -180..180 deg. */
+  rotation: number;
+  flipX?: boolean;
+  flipY?: boolean;
   hidden?: boolean;
   locked?: boolean;
 }
