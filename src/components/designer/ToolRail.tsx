@@ -6,11 +6,13 @@ import { cn } from "@/lib/utils";
 import {
   MousePointer2,
   Type,
+  TextCursorInput,
   Sparkles,
   Upload,
   Image as ImageIcon,
   Ruler,
   RotateCcw,
+  Wand2,
 } from "lucide-react";
 
 interface Tool {
