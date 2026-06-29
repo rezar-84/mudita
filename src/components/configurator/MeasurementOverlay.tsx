@@ -2,9 +2,9 @@ import { useDesigner } from "./DesignerContext";
 import { getDimensions } from "@/lib/pricing";
 
 /**
- * Subtle SVG overlay rendering width/height measurement lines,
- * an optional backboard bounding box, and an optional safe-area guide.
- * Purely visual — does not affect price.
+ * Lightweight overlay using absolute-positioned divs (no SVG stretching).
+ * Renders width/height ruler ticks, optional backboard outline, and optional
+ * inner safe area. Visual-only — does not affect price or layout.
  */
 export function MeasurementOverlay() {
   const { config } = useDesigner();
@@ -16,118 +16,82 @@ export function MeasurementOverlay() {
 
   if (!showM && !showB && !showS) return null;
 
-  // Approximate area the neon "fits" — keep it as a percent box relative to canvas.
-  // The actual on-canvas text scales with the parent, so this overlay just
-  // sits inside a padded inner box that visually frames the sign.
-  const PAD = 8; // percent margin from canvas edges
-  const inner = { x: PAD, y: PAD, w: 100 - 2 * PAD, h: 100 - 2 * PAD };
-  const safePad = 4; // additional inner safe-area inset (percent)
+  // Inner padded box that frames the sign within the preview canvas.
+  const PAD = 8; // % from canvas edges
+  const SAFE = 4; // % inset for safe area inside backboard
 
   return (
-    <svg
-      className="pointer-events-none absolute inset-0 h-full w-full"
-      viewBox="0 0 100 100"
-      preserveAspectRatio="none"
-      aria-hidden
-    >
+    <div className="pointer-events-none absolute inset-0" aria-hidden>
       {/* Backboard outline */}
       {showB && (
-        <rect
-          x={inner.x}
-          y={inner.y}
-          width={inner.w}
-          height={inner.h}
-          fill="none"
-          stroke="rgba(255,255,255,0.55)"
-          strokeWidth={0.35}
-          strokeDasharray="0.8 0.8"
-          vectorEffect="non-scaling-stroke"
+        <div
+          className="absolute rounded-sm border border-dashed border-white/55"
+          style={{
+            top: `${PAD}%`,
+            left: `${PAD}%`,
+            right: `${PAD}%`,
+            bottom: `${PAD}%`,
+          }}
         />
       )}
+
       {/* Safe area */}
       {showS && (
-        <rect
-          x={inner.x + safePad}
-          y={inner.y + safePad}
-          width={inner.w - 2 * safePad}
-          height={inner.h - 2 * safePad}
-          fill="none"
-          stroke="rgba(0,229,255,0.7)"
-          strokeWidth={0.3}
-          strokeDasharray="0.5 0.6"
-          vectorEffect="non-scaling-stroke"
+        <div
+          className="absolute rounded-sm border border-dashed border-neon-cyan/70"
+          style={{
+            top: `${PAD + SAFE}%`,
+            left: `${PAD + SAFE}%`,
+            right: `${PAD + SAFE}%`,
+            bottom: `${PAD + SAFE}%`,
+          }}
         />
       )}
-      {/* Measurement lines */}
+
+      {/* Measurement: width ruler at bottom */}
       {showM && (
         <>
-          {/* Width — bottom */}
-          <line
-            x1={inner.x}
-            y1={100 - 3}
-            x2={inner.x + inner.w}
-            y2={100 - 3}
-            stroke="rgba(255,255,255,0.85)"
-            strokeWidth={0.3}
-            vectorEffect="non-scaling-stroke"
+          <div
+            className="absolute h-px bg-white/80"
+            style={{ left: `${PAD}%`, right: `${PAD}%`, bottom: "14px" }}
           />
-          <line x1={inner.x} y1={100 - 4.2} x2={inner.x} y2={100 - 1.8} stroke="rgba(255,255,255,0.85)" strokeWidth={0.3} vectorEffect="non-scaling-stroke" />
-          <line x1={inner.x + inner.w} y1={100 - 4.2} x2={inner.x + inner.w} y2={100 - 1.8} stroke="rgba(255,255,255,0.85)" strokeWidth={0.3} vectorEffect="non-scaling-stroke" />
-          {/* Height — right */}
-          <line
-            x1={100 - 3}
-            y1={inner.y}
-            x2={100 - 3}
-            y2={inner.y + inner.h}
-            stroke="rgba(255,255,255,0.85)"
-            strokeWidth={0.3}
-            vectorEffect="non-scaling-stroke"
+          {/* end ticks */}
+          <div
+            className="absolute w-px bg-white/80"
+            style={{ left: `${PAD}%`, bottom: "10px", height: "8px" }}
           />
-          <line x1={100 - 4.2} y1={inner.y} x2={100 - 1.8} y2={inner.y} stroke="rgba(255,255,255,0.85)" strokeWidth={0.3} vectorEffect="non-scaling-stroke" />
-          <line x1={100 - 4.2} y1={inner.y + inner.h} x2={100 - 1.8} y2={inner.y + inner.h} stroke="rgba(255,255,255,0.85)" strokeWidth={0.3} vectorEffect="non-scaling-stroke" />
+          <div
+            className="absolute w-px bg-white/80"
+            style={{ right: `${PAD}%`, bottom: "10px", height: "8px" }}
+          />
+          <div
+            className="absolute -translate-x-1/2 rounded-md border border-white/15 bg-black/65 px-2 py-0.5 text-[11px] font-medium tabular-nums text-white backdrop-blur"
+            style={{ left: "50%", bottom: "20px" }}
+          >
+            {width} cm
+          </div>
+
+          {/* Measurement: height ruler on right */}
+          <div
+            className="absolute w-px bg-white/80"
+            style={{ top: `${PAD}%`, bottom: `${PAD}%`, right: "14px" }}
+          />
+          <div
+            className="absolute h-px bg-white/80"
+            style={{ right: "10px", top: `${PAD}%`, width: "8px" }}
+          />
+          <div
+            className="absolute h-px bg-white/80"
+            style={{ right: "10px", bottom: `${PAD}%`, width: "8px" }}
+          />
+          <div
+            className="absolute -translate-y-1/2 rounded-md border border-white/15 bg-black/65 px-2 py-0.5 text-[11px] font-medium tabular-nums text-white backdrop-blur"
+            style={{ right: "22px", top: "50%" }}
+          >
+            {height} cm
+          </div>
         </>
       )}
-      {/* Labels as foreignObject so text isn't squished by preserveAspectRatio=none */}
-      {showM && (
-        <>
-          <foreignObject x={inner.x + inner.w / 2 - 10} y={100 - 8} width={20} height={5}>
-            <div
-              style={{
-                fontSize: "10px",
-                color: "white",
-                background: "rgba(0,0,0,0.55)",
-                padding: "1px 6px",
-                borderRadius: 4,
-                textAlign: "center",
-                backdropFilter: "blur(4px)",
-                width: "fit-content",
-                margin: "0 auto",
-                fontVariantNumeric: "tabular-nums",
-              }}
-            >
-              {width} cm
-            </div>
-          </foreignObject>
-          <foreignObject x={100 - 10} y={inner.y + inner.h / 2 - 2.5} width={9} height={5}>
-            <div
-              style={{
-                fontSize: "10px",
-                color: "white",
-                background: "rgba(0,0,0,0.55)",
-                padding: "1px 5px",
-                borderRadius: 4,
-                textAlign: "center",
-                backdropFilter: "blur(4px)",
-                width: "fit-content",
-                marginLeft: "auto",
-                fontVariantNumeric: "tabular-nums",
-              }}
-            >
-              {height} cm
-            </div>
-          </foreignObject>
-        </>
-      )}
-    </svg>
+    </div>
   );
 }

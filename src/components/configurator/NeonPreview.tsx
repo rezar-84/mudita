@@ -5,7 +5,20 @@ import { getDimensions } from "@/lib/pricing";
 import { cn } from "@/lib/utils";
 import { t } from "@/lib/i18n";
 import { toast } from "sonner";
-import { Lightbulb, LightbulbOff, Crosshair, ZoomIn, ZoomOut, RotateCcw, Maximize2, Ruler, Image as ImageIcon, Camera } from "lucide-react";
+import {
+  Lightbulb,
+  LightbulbOff,
+  Crosshair,
+  ZoomIn,
+  ZoomOut,
+  RotateCcw,
+  Maximize2,
+  Ruler,
+  Image as ImageIcon,
+  Camera,
+  MoreHorizontal,
+} from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { MeasurementOverlay } from "./MeasurementOverlay";
 
 const BG_CLASS: Record<string, string> = Object.fromEntries(
@@ -190,13 +203,13 @@ export function NeonPreview() {
           ≈ {width} × {height} cm {realSize && <span className="ml-1 opacity-70">· gerçek boyut</span>}
         </div>
         {config.outdoor && (
-          <div className="pointer-events-none absolute top-3 right-3 rounded-md bg-neon-cyan/90 px-2 py-1 text-xs font-medium text-black">
+          <div className="pointer-events-none absolute bottom-3 right-3 rounded-md bg-neon-cyan/90 px-2 py-1 text-xs font-medium text-black">
             Dış Mekan · IP65
           </div>
         )}
-        {/* Floating quick-action toolbar */}
+        {/* LEFT dock — essentials only: light + zoom + center */}
         <div
-          className="absolute top-3 left-1/2 z-10 flex max-w-[calc(100%-1.5rem)] -translate-x-1/2 flex-wrap items-center justify-center gap-1 rounded-full border border-white/15 bg-black/55 px-1.5 py-1 text-white shadow-soft backdrop-blur"
+          className="absolute top-3 left-3 z-10 flex items-center gap-1 rounded-full border border-white/15 bg-black/55 px-1.5 py-1 text-white shadow-soft backdrop-blur"
           onPointerDown={(e) => e.stopPropagation()}
         >
           <button
@@ -212,7 +225,6 @@ export function NeonPreview() {
             {isLightOn ? <Lightbulb className="h-3.5 w-3.5" /> : <LightbulbOff className="h-3.5 w-3.5" />}
             <span className="hidden sm:inline">{isLightOn ? t("on") : t("off")}</span>
           </button>
-
           <div className="mx-0.5 h-5 w-px bg-white/15" aria-hidden />
           <button
             type="button"
@@ -241,45 +253,13 @@ export function NeonPreview() {
           >
             <Crosshair className="h-4 w-4" />
           </button>
-          <button
-            type="button"
-            aria-label={t("resetView")}
-            title="Sıfırla"
-            onClick={() =>
-              update({ positionX: 0, positionY: 0, rotationDeg: 0, zoom: 1, brightness: 100 })
-            }
-            className="inline-flex h-8 w-8 items-center justify-center rounded-full hover:bg-white/15"
-          >
-            <RotateCcw className="h-4 w-4" />
-          </button>
+        </div>
 
-          <div className="mx-0.5 h-5 w-px bg-white/15" aria-hidden />
-          <button
-            type="button"
-            aria-label="Ölçüleri Göster"
-            title="Ölçüler"
-            onClick={() => update({ showMeasurements: !(config.showMeasurements ?? false) })}
-            className={cn(
-              "inline-flex h-8 w-8 items-center justify-center rounded-full transition",
-              (config.showMeasurements ?? false) ? "bg-neon-cyan/90 text-black hover:bg-neon-cyan" : "hover:bg-white/15",
-            )}
-          >
-            <Ruler className="h-4 w-4" />
-          </button>
-          <button
-            type="button"
-            aria-label="Arka Plan"
-            title="Arka Plan"
-            onClick={() => {
-              const ids = BACKGROUNDS.map((b) => b.id);
-              const i = Math.max(0, ids.indexOf(config.background));
-              const next = ids[(i + 1) % ids.length];
-              update({ background: next, customBackground: undefined, customBackgroundName: undefined });
-            }}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-full hover:bg-white/15"
-          >
-            <ImageIcon className="h-4 w-4" />
-          </button>
+        {/* RIGHT dock — fullscreen + "more" popover for secondary actions */}
+        <div
+          className="absolute top-3 right-3 z-10 flex items-center gap-1 rounded-full border border-white/15 bg-black/55 px-1.5 py-1 text-white shadow-soft backdrop-blur"
+          onPointerDown={(e) => e.stopPropagation()}
+        >
           <button
             type="button"
             aria-label="Tam Ekran"
@@ -289,15 +269,67 @@ export function NeonPreview() {
           >
             <Maximize2 className="h-4 w-4" />
           </button>
-          <button
-            type="button"
-            aria-label="Mockup Al"
-            title="Mockup Al"
-            onClick={() => toast.info("Mockup indirme özelliği sonraki aşamada eklenecek.")}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-full hover:bg-white/15"
-          >
-            <Camera className="h-4 w-4" />
-          </button>
+          <Popover>
+            <PopoverTrigger asChild>
+              <button
+                type="button"
+                aria-label="Daha fazla araç"
+                title="Daha fazla"
+                className="inline-flex h-8 w-8 items-center justify-center rounded-full hover:bg-white/15"
+              >
+                <MoreHorizontal className="h-4 w-4" />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent
+              align="end"
+              sideOffset={8}
+              className="w-56 p-2"
+              onPointerDown={(e) => e.stopPropagation()}
+            >
+              <button
+                type="button"
+                onClick={() => update({ showMeasurements: !(config.showMeasurements ?? false) })}
+                className={cn(
+                  "flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm hover:bg-accent",
+                  (config.showMeasurements ?? false) && "bg-accent",
+                )}
+              >
+                <Ruler className="h-4 w-4" />
+                Ölçüleri {config.showMeasurements ? "Gizle" : "Göster"}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const ids = BACKGROUNDS.map((b) => b.id);
+                  const i = Math.max(0, ids.indexOf(config.background));
+                  const next = ids[(i + 1) % ids.length];
+                  update({ background: next, customBackground: undefined, customBackgroundName: undefined });
+                }}
+                className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm hover:bg-accent"
+              >
+                <ImageIcon className="h-4 w-4" />
+                Arka Planı Değiştir
+              </button>
+              <button
+                type="button"
+                onClick={() =>
+                  update({ positionX: 0, positionY: 0, rotationDeg: 0, zoom: 1, brightness: 100 })
+                }
+                className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm hover:bg-accent"
+              >
+                <RotateCcw className="h-4 w-4" />
+                Görünümü Sıfırla
+              </button>
+              <button
+                type="button"
+                onClick={() => toast.info("Mockup indirme özelliği sonraki aşamada eklenecek.")}
+                className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm hover:bg-accent"
+              >
+                <Camera className="h-4 w-4" />
+                Mockup Al
+              </button>
+            </PopoverContent>
+          </Popover>
         </div>
 
 
