@@ -96,7 +96,7 @@ export function DecorationOverlay() {
               top: `${50 + d.y}%`,
               width: `${d.sizePct}%`,
               aspectRatio: "1 / 1",
-              transform: `translate(-50%, -50%) rotate(${d.rotation}deg)`,
+              transform: `translate(-50%, -50%) rotate(${d.rotation}deg) scale(${d.flipX ? -1 : 1}, ${d.flipY ? -1 : 1})`,
               color: isLightOn ? color.hex : "rgba(255,255,255,0.18)",
               filter: glowFilter,
               opacity: isLightOn ? Math.min(1, 0.65 + brightness * 0.4) : 0.6,
