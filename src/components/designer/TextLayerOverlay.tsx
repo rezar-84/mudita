@@ -105,13 +105,12 @@ export function TextLayerOverlay() {
               top: `${50 + l.y}%`,
               transform: `translate(-50%, -50%) rotate(${l.rotation}deg) scale(${scaleX}, ${scaleY})`,
               fontFamily: font.family,
-              fontSize: `clamp(18px, ${l.sizePct}cqi, 220px)`,
+              fontSize: `clamp(18px, ${l.sizePct}cqw, 260px)`,
               color: isLightOn ? color.hex : "rgba(255,255,255,0.18)",
               textShadow,
               whiteSpace: "pre",
               lineHeight: 1.05,
               opacity: isLightOn ? Math.min(1, 0.55 + brightness * 0.5) : 0.6,
-              containerType: "inline-size",
             }}
             aria-label={l.text || "Metin katmanı"}
           >
