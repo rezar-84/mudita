@@ -5,7 +5,20 @@ import { getDimensions } from "@/lib/pricing";
 import { cn } from "@/lib/utils";
 import { t } from "@/lib/i18n";
 import { toast } from "sonner";
-import { Lightbulb, LightbulbOff, Crosshair, ZoomIn, ZoomOut, RotateCcw, Maximize2, Ruler, Image as ImageIcon, Camera } from "lucide-react";
+import {
+  Lightbulb,
+  LightbulbOff,
+  Crosshair,
+  ZoomIn,
+  ZoomOut,
+  RotateCcw,
+  Maximize2,
+  Ruler,
+  Image as ImageIcon,
+  Camera,
+  MoreHorizontal,
+} from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { MeasurementOverlay } from "./MeasurementOverlay";
 
 const BG_CLASS: Record<string, string> = Object.fromEntries(
