@@ -185,6 +185,7 @@ export function ConfiguratorPanel() {
           <p className="text-xs text-muted-foreground">{t("tryBgTip")}</p>
           <BackgroundToggle />
           <PreviewControls />
+          <AiIdeaPanel />
         </TabsContent>
 
         {/* EXTRAS: backboard, mounting, accessories, notes */}
