@@ -9,7 +9,7 @@ export function WhatsAppWidget() {
   const href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(DEFAULT_MSG)}`;
 
   return (
-    <div className="fixed bottom-4 right-4 z-40 flex flex-col items-end gap-2 print:hidden md:bottom-6 md:right-6">
+    <div className="fixed bottom-4 left-4 z-40 flex flex-col items-start gap-2 print:hidden md:bottom-6 md:left-6">
       {open && (
         <div className="w-72 animate-fade-in rounded-2xl border border-border bg-card p-4 shadow-soft">
           <div className="mb-2 flex items-start justify-between gap-2">
