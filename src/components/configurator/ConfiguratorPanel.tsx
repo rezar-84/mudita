@@ -17,6 +17,7 @@ import { AlertTriangle } from "lucide-react";
 import { FontSelector } from "./FontSelector";
 import { PreviewControls } from "./PreviewControls";
 import { BackgroundToggle } from "./BackgroundToggle";
+import { AiIdeaPanel } from "./AiIdeaPanel";
 import { t } from "@/lib/i18n";
 
 export function ConfiguratorPanel() {
