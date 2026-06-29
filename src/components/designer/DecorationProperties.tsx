@@ -4,7 +4,18 @@ import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { Copy, Trash2, Lock, Unlock, Eye, EyeOff } from "lucide-react";
+import {
+  Copy,
+  Trash2,
+  Lock,
+  Unlock,
+  Eye,
+  EyeOff,
+  FlipHorizontal2,
+  FlipVertical2,
+  RotateCw,
+  RotateCcw,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
