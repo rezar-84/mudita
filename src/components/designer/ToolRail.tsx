@@ -135,6 +135,15 @@ export function ToolRail({ onPickDecoration }: { onPickDecoration: () => void })
       active: !!config.showMeasurements,
     },
     {
+      id: "ai-mockup",
+      icon: Wand2,
+      label: "AI Mockup (yakında)",
+      onClick: () =>
+        toast.info(
+          "AI Mockup yakında! Tasarımını gerçek ortam fotoğraflarında önizleyebileceksin.",
+        ),
+    },
+    {
       id: "reset",
       icon: RotateCcw,
       label: "Görünümü Sıfırla",
