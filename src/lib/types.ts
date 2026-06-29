@@ -86,6 +86,31 @@ export type BackgroundPreset =
   | "transparent"
   | "checker";
 
+/** Decoration / SVG layer (preset icon or user-uploaded SVG). */
+export interface Decoration {
+  id: string;
+  source: "preset" | "upload";
+  /** Preset id from DECORATIONS table (when source === "preset"). */
+  presetId?: string;
+  /** Sanitised inline SVG markup (when source === "upload"). */
+  svgMarkup?: string;
+  /** Display label, e.g. preset label or "Yüklenen SVG". */
+  label?: string;
+  /** Color id from COLORS. */
+  colorId: string;
+  /** -45..45 percent offset from canvas centre. */
+  x: number;
+  y: number;
+  /** -180..180 deg. */
+  rotation: number;
+  /** Size as % of canvas min-dim, 5..40. */
+  sizePct: number;
+  /** Glow intensity multiplier 60..140 (default 100). */
+  glow?: number;
+  hidden?: boolean;
+  locked?: boolean;
+}
+
 export interface NeonDesignConfig {
   text: string;
   fontId: string;
@@ -103,6 +128,8 @@ export interface NeonDesignConfig {
   background: BackgroundPreset;
   customBackground?: string; // user-uploaded image as data URL (overrides background preset)
   customBackgroundName?: string;
+  /** Decoration / SVG layers on top of the text. */
+  decorations?: Decoration[];
   // Visual preview-only options (do not affect price)
   brightness?: number;   // 40 – 120, default 100
   flicker?: boolean;     // default true
@@ -116,6 +143,12 @@ export interface NeonDesignConfig {
   showBackboardBounds?: boolean; // default false — backboard box overlay
   showSafeArea?: boolean;        // default false — inner safe-area guide
 }
+
+/** Editor selection: which object the properties panel edits. */
+export type EditorSelection =
+  | { kind: "canvas" }
+  | { kind: "text" }
+  | { kind: "decoration"; id: string };
 
 export interface PriceLineItem {
   label: string;

@@ -9,6 +9,9 @@ const EXTRA_LINE_FEE = 250;
 const ADAPTER_PRICE = { tr: 0, eu: 120 };
 const SHIPPING_TR = 250;
 
+const DECORATION_PRESET_BASE = 120;
+const DECORATION_UPLOAD_BASE = 250;
+
 export function getDimensions(cfg: NeonDesignConfig) {
   if (cfg.sizeId === "custom") {
     return {
@@ -61,6 +64,32 @@ export function calculatePrice(cfg: NeonDesignConfig): PriceBreakdown {
   if (cfg.dimmer) items.push({ label: "Uzaktan kumandalı dimmer", amount: 300 });
   if (ADAPTER_PRICE[cfg.adapter] > 0)
     items.push({ label: "AB tipi adaptör", amount: ADAPTER_PRICE[cfg.adapter] });
+
+  // Decoration layers
+  const decorations = cfg.decorations ?? [];
+  if (decorations.length) {
+    let presetCount = 0;
+    let uploadCount = 0;
+    let total = 0;
+    for (const d of decorations) {
+      const ratio = Math.max(5, Math.min(40, d.sizePct)) / 100;
+      const cm2 = area * ratio * ratio;
+      const sizeAdd = cm2 * BASE_RATE_PER_CM2 * 0.6;
+      if (d.source === "preset") {
+        presetCount++;
+        total += DECORATION_PRESET_BASE + sizeAdd;
+      } else {
+        uploadCount++;
+        total += DECORATION_UPLOAD_BASE + sizeAdd;
+      }
+    }
+    const label = presetCount && uploadCount
+      ? `Süslemeler (${presetCount}+${uploadCount} SVG)`
+      : presetCount
+        ? `Süslemeler (${presetCount} adet)`
+        : `SVG süsleme (${uploadCount} adet)`;
+    items.push({ label, amount: Math.round(total) });
+  }
 
   const subtotalBeforeUrgent = items.reduce((s, i) => s + i.amount, 0);
   let subtotal = subtotalBeforeUrgent;
