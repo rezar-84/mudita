@@ -203,7 +203,7 @@ export function NeonPreview() {
           ≈ {width} × {height} cm {realSize && <span className="ml-1 opacity-70">· gerçek boyut</span>}
         </div>
         {config.outdoor && (
-          <div className="pointer-events-none absolute top-3 right-3 rounded-md bg-neon-cyan/90 px-2 py-1 text-xs font-medium text-black">
+          <div className="pointer-events-none absolute bottom-3 right-3 rounded-md bg-neon-cyan/90 px-2 py-1 text-xs font-medium text-black">
             Dış Mekan · IP65
           </div>
         )}
