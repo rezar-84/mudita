@@ -4,7 +4,9 @@ import { COLORS, FONTS, BACKGROUNDS } from "@/data/options";
 import { getDimensions } from "@/lib/pricing";
 import { cn } from "@/lib/utils";
 import { t } from "@/lib/i18n";
-import { Lightbulb, LightbulbOff, Crosshair, ZoomIn, ZoomOut, RotateCcw } from "lucide-react";
+import { toast } from "sonner";
+import { Lightbulb, LightbulbOff, Crosshair, ZoomIn, ZoomOut, RotateCcw, Maximize2, Ruler, Image as ImageIcon, Camera } from "lucide-react";
+import { MeasurementOverlay } from "./MeasurementOverlay";
 
 const BG_CLASS: Record<string, string> = Object.fromEntries(
   BACKGROUNDS.map((b) => [b.id, b.thumb]),
