@@ -8,7 +8,12 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import type { Decoration, EditorSelection, NeonDesignConfig } from "@/lib/types";
+import type {
+  Decoration,
+  EditorSelection,
+  NeonDesignConfig,
+  TextLayer,
+} from "@/lib/types";
 import { decodeConfig } from "@/lib/share";
 
 export const defaultConfig: NeonDesignConfig = {
@@ -25,6 +30,7 @@ export const defaultConfig: NeonDesignConfig = {
   notes: "",
   background: "dark-room",
   decorations: [],
+  textLayers: [],
   brightness: 100,
   flicker: true,
   zoom: 1,
@@ -36,6 +42,7 @@ export const defaultConfig: NeonDesignConfig = {
   showMeasurements: false,
   showBackboardBounds: false,
   showSafeArea: false,
+  showSizeBadge: true,
 };
 
 type Action =
@@ -43,14 +50,22 @@ type Action =
   | { type: "replace"; cfg: NeonDesignConfig }
   | { type: "addDecoration"; decoration: Decoration }
   | { type: "updateDecoration"; id: string; patch: Partial<Decoration> }
-  | { type: "removeDecoration"; id: string };
+  | { type: "removeDecoration"; id: string }
+  | { type: "addTextLayer"; layer: TextLayer }
+  | { type: "updateTextLayer"; id: string; patch: Partial<TextLayer> }
+  | { type: "removeTextLayer"; id: string };
 
 function reducer(state: NeonDesignConfig, action: Action): NeonDesignConfig {
   switch (action.type) {
     case "set":
       return { ...state, ...action.patch };
     case "replace":
-      return { ...defaultConfig, ...action.cfg, decorations: action.cfg.decorations ?? [] };
+      return {
+        ...defaultConfig,
+        ...action.cfg,
+        decorations: action.cfg.decorations ?? [],
+        textLayers: action.cfg.textLayers ?? [],
+      };
     case "addDecoration":
       return { ...state, decorations: [...(state.decorations ?? []), action.decoration] };
     case "updateDecoration":
@@ -65,6 +80,20 @@ function reducer(state: NeonDesignConfig, action: Action): NeonDesignConfig {
         ...state,
         decorations: (state.decorations ?? []).filter((d) => d.id !== action.id),
       };
+    case "addTextLayer":
+      return { ...state, textLayers: [...(state.textLayers ?? []), action.layer] };
+    case "updateTextLayer":
+      return {
+        ...state,
+        textLayers: (state.textLayers ?? []).map((l) =>
+          l.id === action.id ? { ...l, ...action.patch } : l,
+        ),
+      };
+    case "removeTextLayer":
+      return {
+        ...state,
+        textLayers: (state.textLayers ?? []).filter((l) => l.id !== action.id),
+      };
   }
 }
 
@@ -75,6 +104,9 @@ interface Ctx {
   addDecoration: (decoration: Decoration) => void;
   updateDecoration: (id: string, patch: Partial<Decoration>) => void;
   removeDecoration: (id: string) => void;
+  addTextLayer: (layer: TextLayer) => void;
+  updateTextLayer: (id: string, patch: Partial<TextLayer>) => void;
+  removeTextLayer: (id: string) => void;
   selection: EditorSelection;
   setSelection: (sel: EditorSelection) => void;
 }
@@ -109,6 +141,18 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
     dispatch({ type: "removeDecoration", id });
     setSelection({ kind: "text" });
   }, []);
+  const addTextLayer = useCallback((layer: TextLayer) => {
+    dispatch({ type: "addTextLayer", layer });
+    setSelection({ kind: "textLayer", id: layer.id });
+  }, []);
+  const updateTextLayer = useCallback(
+    (id: string, patch: Partial<TextLayer>) => dispatch({ type: "updateTextLayer", id, patch }),
+    [],
+  );
+  const removeTextLayer = useCallback((id: string) => {
+    dispatch({ type: "removeTextLayer", id });
+    setSelection({ kind: "text" });
+  }, []);
 
   const value = useMemo<Ctx>(
     () => ({
@@ -118,10 +162,24 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
       addDecoration,
       updateDecoration,
       removeDecoration,
+      addTextLayer,
+      updateTextLayer,
+      removeTextLayer,
       selection,
       setSelection,
     }),
-    [config, update, replace, addDecoration, updateDecoration, removeDecoration, selection],
+    [
+      config,
+      update,
+      replace,
+      addDecoration,
+      updateDecoration,
+      removeDecoration,
+      addTextLayer,
+      updateTextLayer,
+      removeTextLayer,
+      selection,
+    ],
   );
 
   return <DesignerCtx.Provider value={value}>{children}</DesignerCtx.Provider>;
