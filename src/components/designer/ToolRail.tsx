@@ -6,11 +6,13 @@ import { cn } from "@/lib/utils";
 import {
   MousePointer2,
   Type,
+  TextCursorInput,
   Sparkles,
   Upload,
   Image as ImageIcon,
   Ruler,
   RotateCcw,
+  Wand2,
 } from "lucide-react";
 
 interface Tool {
@@ -26,7 +28,8 @@ interface Tool {
  * tooltips via title attr. Tools dispatch immediate actions or open dialogs.
  */
 export function ToolRail({ onPickDecoration }: { onPickDecoration: () => void }) {
-  const { config, update, selection, setSelection, addDecoration } = useDesigner();
+  const { config, update, selection, setSelection, addDecoration, addTextLayer } =
+    useDesigner();
   const fileRef = useRef<HTMLInputElement>(null);
 
   function handleSelectTool() {
@@ -80,9 +83,28 @@ export function ToolRail({ onPickDecoration }: { onPickDecoration: () => void })
     {
       id: "text",
       icon: Type,
-      label: "Metin",
+      label: "Ana Metin",
       onClick: handleTextTool,
       active: selection.kind === "text",
+    },
+    {
+      id: "new-text-layer",
+      icon: TextCursorInput,
+      label: "Yeni Metin Katmanı",
+      onClick: () => {
+        const id = `tl-${Date.now()}`;
+        addTextLayer({
+          id,
+          text: "Yeni Yazı",
+          fontId: config.fontId,
+          colorId: config.colorId,
+          sizePct: 14,
+          x: 0,
+          y: 15,
+          rotation: 0,
+        });
+        toast.success("Metin katmanı eklendi");
+      },
     },
     {
       id: "decoration",
@@ -111,6 +133,15 @@ export function ToolRail({ onPickDecoration }: { onPickDecoration: () => void })
       label: "Ölçüleri Göster/Gizle",
       onClick: () => update({ showMeasurements: !(config.showMeasurements ?? false) }),
       active: !!config.showMeasurements,
+    },
+    {
+      id: "ai-mockup",
+      icon: Wand2,
+      label: "AI Mockup (yakında)",
+      onClick: () =>
+        toast.info(
+          "AI Mockup yakında! Tasarımını gerçek ortam fotoğraflarında önizleyebileceksin.",
+        ),
     },
     {
       id: "reset",

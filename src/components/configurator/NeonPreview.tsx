@@ -4,23 +4,17 @@ import { COLORS, FONTS, BACKGROUNDS } from "@/data/options";
 import { getDimensions } from "@/lib/pricing";
 import { cn } from "@/lib/utils";
 import { t } from "@/lib/i18n";
-import { toast } from "sonner";
 import {
   Lightbulb,
   LightbulbOff,
   Crosshair,
   ZoomIn,
   ZoomOut,
-  RotateCcw,
   Maximize2,
-  Ruler,
-  Image as ImageIcon,
-  Camera,
-  MoreHorizontal,
 } from "lucide-react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { MeasurementOverlay } from "./MeasurementOverlay";
 import { DecorationOverlay } from "@/components/designer/DecorationOverlay";
+import { TextLayerOverlay } from "@/components/designer/TextLayerOverlay";
 
 const BG_CLASS: Record<string, string> = Object.fromEntries(
   BACKGROUNDS.map((b) => [b.id, b.thumb]),
@@ -202,12 +196,17 @@ export function NeonPreview() {
         {/* Decoration / SVG layers */}
         <DecorationOverlay />
 
+        {/* Additional text layers (multi-text) */}
+        <TextLayerOverlay />
+
         {/* Measurement overlays (width/height/backboard/safe area) */}
         <MeasurementOverlay />
 
-        <div className="pointer-events-none absolute bottom-3 left-3 rounded-md bg-black/60 px-2 py-1 text-xs font-medium text-white backdrop-blur">
-          ≈ {width} × {height} cm {realSize && <span className="ml-1 opacity-70">· gerçek boyut</span>}
-        </div>
+        {(config.showSizeBadge ?? true) && (
+          <div className="pointer-events-none absolute bottom-3 left-3 rounded-md bg-black/60 px-2 py-1 text-xs font-medium text-white backdrop-blur">
+            ≈ {width} × {height} cm {realSize && <span className="ml-1 opacity-70">· gerçek boyut</span>}
+          </div>
+        )}
         {config.outdoor && (
           <div className="pointer-events-none absolute bottom-3 right-3 rounded-md bg-neon-cyan/90 px-2 py-1 text-xs font-medium text-black">
             Dış Mekan · IP65
@@ -275,68 +274,8 @@ export function NeonPreview() {
           >
             <Maximize2 className="h-4 w-4" />
           </button>
-          <Popover>
-            <PopoverTrigger asChild>
-              <button
-                type="button"
-                aria-label="Daha fazla araç"
-                title="Daha fazla"
-                className="inline-flex h-8 w-8 items-center justify-center rounded-full hover:bg-white/15"
-              >
-                <MoreHorizontal className="h-4 w-4" />
-              </button>
-            </PopoverTrigger>
-            <PopoverContent
-              align="end"
-              sideOffset={8}
-              className="w-56 p-2"
-              onPointerDown={(e) => e.stopPropagation()}
-            >
-              <button
-                type="button"
-                onClick={() => update({ showMeasurements: !(config.showMeasurements ?? false) })}
-                className={cn(
-                  "flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm hover:bg-accent",
-                  (config.showMeasurements ?? false) && "bg-accent",
-                )}
-              >
-                <Ruler className="h-4 w-4" />
-                Ölçüleri {config.showMeasurements ? "Gizle" : "Göster"}
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  const ids = BACKGROUNDS.map((b) => b.id);
-                  const i = Math.max(0, ids.indexOf(config.background));
-                  const next = ids[(i + 1) % ids.length];
-                  update({ background: next, customBackground: undefined, customBackgroundName: undefined });
-                }}
-                className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm hover:bg-accent"
-              >
-                <ImageIcon className="h-4 w-4" />
-                Arka Planı Değiştir
-              </button>
-              <button
-                type="button"
-                onClick={() =>
-                  update({ positionX: 0, positionY: 0, rotationDeg: 0, zoom: 1, brightness: 100 })
-                }
-                className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm hover:bg-accent"
-              >
-                <RotateCcw className="h-4 w-4" />
-                Görünümü Sıfırla
-              </button>
-              <button
-                type="button"
-                onClick={() => toast.info("Mockup indirme özelliği sonraki aşamada eklenecek.")}
-                className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm hover:bg-accent"
-              >
-                <Camera className="h-4 w-4" />
-                Mockup Al
-              </button>
-            </PopoverContent>
-          </Popover>
         </div>
+
 
 
         {isEmpty && (

@@ -1,6 +1,7 @@
 import { useDesigner } from "@/components/configurator/DesignerContext";
 import { ConfiguratorPanel } from "@/components/configurator/ConfiguratorPanel";
 import { DecorationProperties } from "./DecorationProperties";
+import { TextLayerProperties } from "./TextLayerProperties";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, ChevronLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -24,6 +25,7 @@ export function PropertiesPanel({
 }) {
   const { selection } = useDesigner();
   const isDecoration = selection.kind === "decoration";
+  const isTextLayer = selection.kind === "textLayer";
 
   if (!open) {
     return (
@@ -52,7 +54,13 @@ export function PropertiesPanel({
     >
       <div className="flex shrink-0 items-center justify-between border-b border-border px-3 py-2">
         <p className="truncate text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          {isDecoration ? "Süsleme" : selection.kind === "text" ? "Metin / Tasarım" : "Sahne"}
+          {isDecoration
+            ? "Süsleme"
+            : isTextLayer
+              ? "Metin Katmanı"
+              : selection.kind === "text"
+                ? "Metin / Tasarım"
+                : "Sahne"}
         </p>
         <Button
           variant="ghost"
@@ -65,7 +73,13 @@ export function PropertiesPanel({
         </Button>
       </div>
       <div className="min-h-0 flex-1 overflow-auto p-3 sm:p-4">
-        {isDecoration ? <DecorationProperties /> : <ConfiguratorPanel />}
+        {isDecoration ? (
+          <DecorationProperties />
+        ) : isTextLayer ? (
+          <TextLayerProperties />
+        ) : (
+          <ConfiguratorPanel />
+        )}
       </div>
     </aside>
   );

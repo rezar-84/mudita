@@ -105,8 +105,30 @@ export interface Decoration {
   rotation: number;
   /** Size as % of canvas min-dim, 5..40. */
   sizePct: number;
+  /** Mirror horizontally / vertically. */
+  flipX?: boolean;
+  flipY?: boolean;
   /** Glow intensity multiplier 60..140 (default 100). */
   glow?: number;
+  hidden?: boolean;
+  locked?: boolean;
+}
+
+/** Additional text layer on the canvas (multi-text support). */
+export interface TextLayer {
+  id: string;
+  text: string;
+  fontId: string;
+  colorId: string;
+  /** Font size as % of canvas width, 6..40. */
+  sizePct: number;
+  /** -45..45 percent offset from canvas centre. */
+  x: number;
+  y: number;
+  /** -180..180 deg. */
+  rotation: number;
+  flipX?: boolean;
+  flipY?: boolean;
   hidden?: boolean;
   locked?: boolean;
 }
@@ -130,6 +152,8 @@ export interface NeonDesignConfig {
   customBackgroundName?: string;
   /** Decoration / SVG layers on top of the text. */
   decorations?: Decoration[];
+  /** Additional text layers (multi-text support). */
+  textLayers?: TextLayer[];
   // Visual preview-only options (do not affect price)
   brightness?: number;   // 40 – 120, default 100
   flicker?: boolean;     // default true
@@ -142,12 +166,14 @@ export interface NeonDesignConfig {
   showMeasurements?: boolean;    // default false — width/height overlays
   showBackboardBounds?: boolean; // default false — backboard box overlay
   showSafeArea?: boolean;        // default false — inner safe-area guide
+  showSizeBadge?: boolean;       // default true — toggles the W×H badge on the canvas
 }
 
 /** Editor selection: which object the properties panel edits. */
 export type EditorSelection =
   | { kind: "canvas" }
   | { kind: "text" }
+  | { kind: "textLayer"; id: string }
   | { kind: "decoration"; id: string };
 
 export interface PriceLineItem {

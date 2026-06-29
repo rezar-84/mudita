@@ -86,6 +86,13 @@ export function PreviewControls() {
             onCheckedChange={(v) => update({ showSafeArea: v })}
           />
         </div>
+        <div className="flex items-center justify-between">
+          <Label className="text-xs">Boyut Rozetini Göster</Label>
+          <Switch
+            checked={config.showSizeBadge ?? true}
+            onCheckedChange={(v) => update({ showSizeBadge: v })}
+          />
+        </div>
         <p className="text-[10px] text-muted-foreground">
           Ölçüler yaklaşık üretim ölçüsünü göstermek için hesaplanır.
         </p>

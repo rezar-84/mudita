@@ -4,7 +4,18 @@ import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { Copy, Trash2, Lock, Unlock, Eye, EyeOff } from "lucide-react";
+import {
+  Copy,
+  Trash2,
+  Lock,
+  Unlock,
+  Eye,
+  EyeOff,
+  FlipHorizontal2,
+  FlipVertical2,
+  RotateCw,
+  RotateCcw,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
@@ -122,6 +133,58 @@ export function DecorationProperties() {
           value={[d.rotation]}
           onValueChange={([v]) => updateDecoration(d.id, { rotation: v })}
         />
+        <div className="mt-2 flex flex-wrap gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() =>
+              updateDecoration(d.id, {
+                rotation: ((d.rotation - 90 + 540) % 360) - 180,
+              })
+            }
+          >
+            <RotateCcw className="mr-1 h-3.5 w-3.5" /> -90°
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() =>
+              updateDecoration(d.id, {
+                rotation: ((d.rotation + 90 + 540) % 360) - 180,
+              })
+            }
+          >
+            <RotateCw className="mr-1 h-3.5 w-3.5" /> +90°
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => updateDecoration(d.id, { rotation: 0 })}
+          >
+            0°
+          </Button>
+        </div>
+      </div>
+
+      {/* Transform */}
+      <div>
+        <Label className="mb-2 block text-sm font-medium">Dönüşüm</Label>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant={d.flipX ? "default" : "outline"}
+            size="sm"
+            onClick={() => updateDecoration(d.id, { flipX: !d.flipX })}
+          >
+            <FlipHorizontal2 className="mr-1 h-3.5 w-3.5" /> Yatay
+          </Button>
+          <Button
+            variant={d.flipY ? "default" : "outline"}
+            size="sm"
+            onClick={() => updateDecoration(d.id, { flipY: !d.flipY })}
+          >
+            <FlipVertical2 className="mr-1 h-3.5 w-3.5" /> Dikey
+          </Button>
+        </div>
       </div>
 
       {/* Position */}
