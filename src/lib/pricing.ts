@@ -91,6 +91,21 @@ export function calculatePrice(cfg: NeonDesignConfig): PriceBreakdown {
     items.push({ label, amount: Math.round(total) });
   }
 
+  // Additional text layers (multi-text)
+  const textLayers = (cfg.textLayers ?? []).filter((l) => !l.hidden && l.text.trim().length);
+  if (textLayers.length) {
+    let total = 0;
+    for (const l of textLayers) {
+      const ratio = Math.max(6, Math.min(40, l.sizePct)) / 100;
+      const cm2 = area * ratio * ratio * 1.4; // text uses more tubing per area
+      const chars = Math.max(1, l.text.trim().length);
+      total += cm2 * BASE_RATE_PER_CM2 * 0.7 + chars * 18;
+    }
+    items.push({
+      label: `Ek metin katmanları (${textLayers.length})`,
+      amount: Math.round(total),
+    });
+
   const subtotalBeforeUrgent = items.reduce((s, i) => s + i.amount, 0);
   let subtotal = subtotalBeforeUrgent;
   if (cfg.urgent) {
