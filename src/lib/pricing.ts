@@ -105,6 +105,9 @@ export function calculatePrice(cfg: NeonDesignConfig): PriceBreakdown {
       label: `Ek metin katmanları (${textLayers.length})`,
       amount: Math.round(total),
     });
+  }
+
+
 
   const subtotalBeforeUrgent = items.reduce((s, i) => s + i.amount, 0);
   let subtotal = subtotalBeforeUrgent;
