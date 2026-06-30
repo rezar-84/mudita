@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { encodeConfig } from "@/lib/share";
 import type { NeonDesignConfig } from "@/lib/types";
 import { defaultConfig } from "@/components/configurator/DesignerContext";
+import { useT, type TKey } from "@/lib/i18n";
 
 export const Route = createFileRoute("/galeri")({
   head: () => ({
@@ -18,6 +19,17 @@ export const Route = createFileRoute("/galeri")({
 });
 
 type Category = "Tümü" | "Ev" | "Ofis" | "Kafe" | "Düğün" | "Bebek Odası" | "Logo" | "Mağaza";
+
+const categoryKeys: Record<Category, string> = {
+  "Tümü": "categoryAll",
+  "Ev": "categoryHome",
+  "Ofis": "categoryOffice",
+  "Kafe": "categoryCafe",
+  "Düğün": "categoryWedding",
+  "Bebek Odası": "categoryBaby",
+  "Logo": "categoryLogo",
+  "Mağaza": "categoryShop"
+};
 
 interface Item {
   text: string;
@@ -59,6 +71,7 @@ function buildDesignUrl(item: Item): string {
 }
 
 function GalleryPage() {
+  const t = useT();
   const [active, setActive] = useState<Category>("Tümü");
   const filtered = useMemo(
     () => (active === "Tümü" ? ITEMS : ITEMS.filter((i) => i.cat === active)),
@@ -68,9 +81,9 @@ function GalleryPage() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-10">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold sm:text-4xl">İlham Galerisi</h1>
+        <h1 className="text-3xl font-bold sm:text-4xl">{t("galleryTitle")}</h1>
         <p className="mt-2 max-w-xl text-muted-foreground">
-          Daha önce ürettiğimiz tasarımlardan ilham al. Beğendiğin tarzın benzerini birkaç tıkla kendi yazınla tasarla.
+          {t("gallerySubtitle")}
         </p>
       </div>
 
@@ -87,7 +100,7 @@ function GalleryPage() {
                 : "border-border bg-card hover:border-foreground/40",
             )}
           >
-            {c}
+            {t(categoryKeys[c] as TKey)}
           </button>
         ))}
       </div>

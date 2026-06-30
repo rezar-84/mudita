@@ -6,6 +6,7 @@ import type { CartItem } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Trash2, ShoppingBag } from "lucide-react";
 import { FONTS, COLORS } from "@/data/options";
+import { useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/sepet")({
   head: () => ({
@@ -18,6 +19,7 @@ export const Route = createFileRoute("/sepet")({
 });
 
 function CartPage() {
+  const t = useT();
   const [items, setItems] = useState<CartItem[]>([]);
   const refresh = () => setItems(getCart());
   useEffect(() => { refresh(); }, []);
@@ -28,10 +30,10 @@ function CartPage() {
     return (
       <div className="mx-auto max-w-3xl px-4 py-20 text-center">
         <ShoppingBag className="mx-auto h-12 w-12 text-muted-foreground" />
-        <h1 className="mt-4 text-2xl font-bold">Sepetiniz boş</h1>
-        <p className="mt-2 text-muted-foreground">Hadi ilk neon tabelanızı tasarlayın.</p>
+        <h1 className="mt-4 text-2xl font-bold">{t("cartEmptyTitle")}</h1>
+        <p className="mt-2 text-muted-foreground">{t("cartEmptySubtitle")}</p>
         <Link to="/tasarla" className="mt-6 inline-block rounded-full bg-gradient-neon px-6 py-3 text-sm font-semibold text-white shadow-glow">
-          Tasarlamaya Başla
+          {t("cartStartDesigning")}
         </Link>
       </div>
     );
@@ -39,7 +41,7 @@ function CartPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10">
-      <h1 className="text-3xl font-bold">Sepetim</h1>
+      <h1 className="text-3xl font-bold">{t("cartTitle")}</h1>
       <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_320px]">
         <ul className="space-y-3">
           {items.map((it) => {
@@ -60,7 +62,7 @@ function CartPage() {
                   </span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="font-medium truncate">{it.config.text.replace(/\n/g, " / ") || "Yazısız"}</div>
+                  <div className="font-medium truncate">{it.config.text.replace(/\n/g, " / ") || t("cartTextless")}</div>
                   <div className="text-sm text-muted-foreground">{font.label} · {color.label}</div>
                 </div>
                 <div className="text-right">
@@ -69,7 +71,7 @@ function CartPage() {
                     onClick={() => { removeFromCart(it.id); refresh(); }}
                     className="mt-1 inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive"
                   >
-                    <Trash2 className="h-3 w-3" /> Kaldır
+                    <Trash2 className="h-3 w-3" /> {t("cartRemoveBtn")}
                   </button>
                 </div>
               </li>
@@ -78,23 +80,24 @@ function CartPage() {
         </ul>
 
         <aside className="h-fit rounded-2xl border border-border bg-card p-5 shadow-soft">
-          <h3 className="font-semibold">Sipariş Özeti</h3>
+          <h3 className="font-semibold">{t("cartOrderSummary")}</h3>
           <div className="mt-3 flex justify-between text-sm text-muted-foreground">
-            <span>Ara toplam</span>
+            <span>{t("cartSubtotal")}</span>
             <span>{formatTRY(total)}</span>
           </div>
           <div className="mt-3 border-t border-border pt-3 flex justify-between text-base font-bold">
-            <span>Toplam</span>
+            <span>{t("cartTotal")}</span>
             <span>{formatTRY(total)}</span>
           </div>
           <Link to="/odeme" className="mt-4 block">
-            <Button className="w-full bg-gradient-neon text-white shadow-glow">Ödemeye Geç</Button>
+            <Button className="w-full bg-gradient-neon text-white shadow-glow">{t("cartCheckoutBtn")}</Button>
           </Link>
           <button onClick={() => { clearCart(); refresh(); }} className="mt-2 w-full text-xs text-muted-foreground hover:text-destructive">
-            Sepeti boşalt
+            {t("cartClearBtn")}
           </button>
         </aside>
       </div>
     </div>
   );
 }
+
