@@ -25,6 +25,7 @@ export interface FontOption {
 export interface ColorOption {
   id: string;
   label: string;
+  labelEn?: string;
   hex: string;
   glow: string;
   rgb?: boolean;
@@ -35,6 +36,7 @@ export type SizePresetId = "small" | "medium" | "large" | "custom";
 export interface SizePreset {
   id: SizePresetId;
   label: string;
+  labelEn?: string;
   width: number; // cm
   height: number; // cm
 }
@@ -52,6 +54,7 @@ export type BackboardType =
 export interface BackboardOption {
   id: BackboardType;
   label: string;
+  labelEn?: string;
   priceMultiplier: number;
   flatAdd: number;
 }
@@ -61,12 +64,14 @@ export type MountingType = "wall" | "hanging" | "stand";
 export interface MountingOption {
   id: MountingType;
   label: string;
+  labelEn?: string;
   price: number;
 }
 
 export interface AccessoryOption {
   id: string;
   label: string;
+  labelEn?: string;
   price: number;
 }
 
