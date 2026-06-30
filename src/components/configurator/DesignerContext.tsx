@@ -105,7 +105,12 @@ export type AlignDirection =
 
 export type AlignReference = "page" | "first" | "last" | "biggest";
 
-
+export type AlignmentGuide = {
+  dir: AlignDirection;
+  reference: AlignReference;
+  ref: { cx: number; cy: number; half: number };
+  ts: number;
+};
 
 interface Ctx {
   config: NeonDesignConfig;
@@ -120,6 +125,8 @@ interface Ctx {
   /** Reorder layers within their own array. delta: +1 forward, -1 back, +Inf to front, -Inf to back. */
   reorder: (kind: LayerKind, id: string, delta: number) => void;
   alignSelected: (dir: AlignDirection, reference?: AlignReference) => void;
+  /** Delete currently selected layer(s), honoring the at-least-one-visible guard. */
+  deleteSelection: () => void;
   resetDesign: () => void;
   undo: () => void;
   redo: () => void;
@@ -127,6 +134,8 @@ interface Ctx {
   canRedo: boolean;
   selection: EditorSelection;
   setSelection: (sel: EditorSelection) => void;
+  /** Most recent alignment reference, briefly shown as a guideline overlay. Null when no overlay should render. */
+  alignmentGuide: AlignmentGuide | null;
 }
 
 const DesignerCtx = createContext<Ctx | null>(null);
@@ -151,6 +160,19 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
       if (selHistoryRef.current.length > 12) selHistoryRef.current.shift();
     }
   }, []);
+
+  // Transient alignment guideline overlay.
+  const [alignmentGuide, setAlignmentGuide] = useState<AlignmentGuide | null>(null);
+  const alignGuideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const flashAlignmentGuide = useCallback((g: AlignmentGuide) => {
+    setAlignmentGuide(g);
+    if (alignGuideTimerRef.current) clearTimeout(alignGuideTimerRef.current);
+    alignGuideTimerRef.current = setTimeout(() => setAlignmentGuide(null), 900);
+  }, []);
+  useEffect(() => () => {
+    if (alignGuideTimerRef.current) clearTimeout(alignGuideTimerRef.current);
+  }, []);
+
 
 
   // history of snapshots
@@ -416,9 +438,41 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
         }
       }
       commit(nextCur);
+      flashAlignmentGuide({ dir, reference, ref: refBounds, ts: Date.now() });
     },
-    [selection, commit],
+    [selection, commit, flashAlignmentGuide],
   );
+
+  const deleteSelection = useCallback(() => {
+    const cur = configRef.current;
+    const sel = selection;
+    let ids: string[] = [];
+    let kinds: ("decoration" | "textLayer")[] = [];
+    if (sel.kind === "decoration" || sel.kind === "textLayer") {
+      ids = [sel.id];
+      kinds = [sel.kind];
+    } else if (sel.kind === "multi") {
+      ids = [...sel.ids];
+      kinds = [...sel.kinds];
+    } else {
+      return;
+    }
+    const decoIds = new Set(ids.filter((_, i) => kinds[i] === "decoration"));
+    const textIds = new Set(ids.filter((_, i) => kinds[i] === "textLayer"));
+    const nextDecos = (cur.decorations ?? []).filter((d) => !decoIds.has(d.id));
+    const nextTexts = (cur.textLayers ?? []).filter((l) => !textIds.has(l.id));
+    const nextCfg: NeonDesignConfig = {
+      ...cur,
+      decorations: nextDecos,
+      textLayers: nextTexts,
+    };
+    if (visibleLayerCount(nextCfg) === 0) {
+      toast.error("Tasarımda en az bir görünür katman olmalı.");
+      return;
+    }
+    commit(nextCfg);
+    setSelection({ kind: "canvas" });
+  }, [selection, commit, setSelection]);
 
 
   const resetDesign = useCallback(() => {
@@ -460,11 +514,23 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
       } else if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "y") {
         e.preventDefault();
         redo();
+      } else if (e.key === "Delete" || e.key === "Backspace") {
+        // Only act when a layer is selected; ignore on canvas/none to avoid
+        // hijacking browser back navigation on Backspace.
+        const sel = selection;
+        if (
+          sel.kind === "decoration" ||
+          sel.kind === "textLayer" ||
+          sel.kind === "multi"
+        ) {
+          e.preventDefault();
+          deleteSelection();
+        }
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [undo, redo]);
+  }, [undo, redo, deleteSelection, selection]);
 
   const canUndo = pastRef.current.length > 0;
   const canRedo = futureRef.current.length > 0;
@@ -482,6 +548,7 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
       removeTextLayer,
       reorder,
       alignSelected,
+      deleteSelection,
       resetDesign,
       undo,
       redo,
@@ -489,6 +556,7 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
       canRedo,
       selection,
       setSelection,
+      alignmentGuide,
     }),
     // historyTick included so canUndo/canRedo refresh
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -504,10 +572,12 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
       removeTextLayer,
       reorder,
       alignSelected,
+      deleteSelection,
       resetDesign,
       undo,
       redo,
       selection,
+      alignmentGuide,
       historyTick,
     ],
   );

@@ -15,6 +15,7 @@ import {
 import { MeasurementOverlay } from "./MeasurementOverlay";
 import { DecorationOverlay } from "@/components/designer/DecorationOverlay";
 import { TextLayerOverlay } from "@/components/designer/TextLayerOverlay";
+import { AlignmentGuides } from "@/components/designer/AlignmentGuides";
 
 const BG_CLASS: Record<string, string> = Object.fromEntries(
   BACKGROUNDS.map((b) => [b.id, b.thumb]),
@@ -136,6 +137,7 @@ export function NeonPreview() {
 
         {/* Measurement overlays (width/height/backboard/safe area) */}
         <MeasurementOverlay />
+        <AlignmentGuides />
 
         {(config.showSizeBadge ?? true) && (
           <div className="pointer-events-none absolute bottom-3 left-3 rounded-md bg-black/60 px-2 py-1 text-xs font-medium text-white backdrop-blur">
