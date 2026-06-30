@@ -22,20 +22,25 @@ import { useT } from "@/lib/i18n";
 
 export function ConfiguratorPanel() {
   const t = useT();
-  const { config, update } = useDesigner();
+  const { config, update, addTextLayer, setSelection } = useDesigner();
   const customW = config.customWidth ?? 80;
   const customH = config.customHeight ?? 40;
 
-  // Warnings
-  const trimmed = config.text.trim();
-  const isEmpty = trimmed.length === 0;
-  const longestLine = Math.max(1, ...config.text.split("\n").map((l) => l.length));
+  // Warnings derived from the visible text layers (no global text anymore).
+  const visibleLayers = (config.textLayers ?? []).filter((l) => !l.hidden && l.text.trim().length);
+  const isEmpty = visibleLayers.length === 0;
+  const longestLine = Math.max(
+    1,
+    ...visibleLayers.flatMap((l) => l.text.split("\n").map((line) => line.length)),
+  );
   const dims = config.sizeId === "custom" ? { width: customW, height: customH }
     : SIZES.find((s) => s.id === config.sizeId)!;
   const approxLetterCm = dims.width / Math.max(longestLine, 1);
+  const totalChars = visibleLayers.reduce((s, l) => s + l.text.length, 0);
   const tooSmall = !isEmpty && approxLetterCm < 4;
-  const tooLong = trimmed.length > 30;
-  const currentFont = FONTS.find((f) => f.id === config.fontId);
+  const tooLong = totalChars > 60;
+  const primaryFontId = visibleLayers[0]?.fontId ?? config.fontId;
+  const currentFont = FONTS.find((f) => f.id === primaryFontId);
   const complexFont = !!currentFont && (currentFont.complexity >= 1.2 || ["script", "handwritten", "retro", "elegant"].includes(currentFont.category));
   const fragile = config.outdoor && complexFont;
   const complexNote = !config.outdoor && complexFont;
