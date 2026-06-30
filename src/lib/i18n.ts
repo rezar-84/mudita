@@ -111,6 +111,10 @@ const tr: Dict = {
   defaultStyleHint: "Bu seçim, yeni eklenen metin ve süslemelerin başlangıç stili olur.",
   editingLayer: "Düzenleniyor",
   editingLayerHint: "Başka bir katmanı düzenlemek için tuvalde üzerine tıkla.",
+  noLayerSelectedTitle: "Düzenlemek için bir metin seç",
+  noLayerSelectedHint: "Tuvalde bir yazıya tıkla ya da aşağıdaki listeden seç.",
+  useThisDesign: "Benzerini Tasarla",
+  designFromScratch: "Sıfırdan Tasarla",
 
   // Font badges
   badgePopular: "Popüler",
