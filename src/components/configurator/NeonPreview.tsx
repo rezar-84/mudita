@@ -29,7 +29,7 @@ function clamp(v: number, lo: number, hi: number) {
 
 export function NeonPreview() {
   const t = useT();
-  const { config, update, setSelection } = useDesigner();
+  const { config, update, setSelection, selection } = useDesigner();
   const font = FONTS.find((f) => f.id === config.fontId) ?? FONTS[0];
   const color = COLORS.find((c) => c.id === config.colorId) ?? COLORS[0];
   const { width, height } = getDimensions(config);
