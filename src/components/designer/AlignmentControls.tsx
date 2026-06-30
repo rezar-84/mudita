@@ -7,12 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useT } from "@/lib/i18n";
 import {
-  AlignLeft,
-  AlignCenter,
-  AlignRight,
   AlignStartVertical,
   AlignCenterVertical,
   AlignEndVertical,
+  AlignStartHorizontal,
+  AlignCenterHorizontal,
+  AlignEndHorizontal,
 } from "lucide-react";
 
 export function AlignmentControls() {
@@ -31,7 +31,7 @@ export function AlignmentControls() {
 
   const btn = (
     title: string,
-    Icon: typeof AlignLeft,
+    Icon: typeof AlignStartVertical,
     dir: Parameters<typeof alignSelected>[0],
   ) => (
     <Button
@@ -65,13 +65,15 @@ export function AlignmentControls() {
         </select>
       </div>
       <div className="flex flex-wrap gap-1.5">
-        {btn(t("alignLeft"), AlignLeft, "left")}
-        {btn(t("alignCenterH"), AlignCenter, "centerH")}
-        {btn(t("alignRight"), AlignRight, "right")}
+        {/* Horizontal alignment — aligns to a vertical reference line (left / center / right) */}
+        {btn(t("alignLeft"), AlignStartVertical, "left")}
+        {btn(t("alignCenterH"), AlignCenterVertical, "centerH")}
+        {btn(t("alignRight"), AlignEndVertical, "right")}
         <span className="mx-1 w-px self-stretch bg-border" />
-        {btn(t("alignTop"), AlignStartVertical, "top")}
-        {btn(t("alignCenterV"), AlignCenterVertical, "centerV")}
-        {btn(t("alignBottom"), AlignEndVertical, "bottom")}
+        {/* Vertical alignment — aligns to a horizontal reference line (top / middle / bottom) */}
+        {btn(t("alignTop"), AlignStartHorizontal, "top")}
+        {btn(t("alignCenterV"), AlignCenterHorizontal, "centerV")}
+        {btn(t("alignBottom"), AlignEndHorizontal, "bottom")}
       </div>
       <p className="text-[10px] text-muted-foreground">
         {ref === "page"

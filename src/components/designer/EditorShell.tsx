@@ -44,7 +44,7 @@ export function EditorShell({
       )
         return;
       if (e.key === "Escape") setSelection({ kind: "canvas" });
-      if (e.key.toLowerCase() === "v") setSelection({ kind: "text" });
+      if (e.key.toLowerCase() === "v") setSelection({ kind: "canvas" });
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);

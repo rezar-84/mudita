@@ -16,9 +16,12 @@ import type {
   TextLayer,
 } from "@/lib/types";
 import { decodeConfig } from "@/lib/share";
+import { toast } from "sonner";
+
+const BASE_TEXT_ID = "base";
 
 export const defaultConfig: NeonDesignConfig = {
-  text: "Mudita",
+  text: "",
   fontId: "pacifico",
   colorId: "pink",
   sizeId: "medium",
@@ -31,14 +34,22 @@ export const defaultConfig: NeonDesignConfig = {
   notes: "",
   background: "dark-room",
   decorations: [],
-  textLayers: [],
+  textLayers: [
+    {
+      id: BASE_TEXT_ID,
+      text: "Mudita",
+      fontId: "pacifico",
+      colorId: "pink",
+      sizePct: 22,
+      x: 0,
+      y: 0,
+      rotation: 0,
+    },
+  ],
   brightness: 100,
   flicker: true,
   zoom: 1,
   isLightOn: true,
-  positionX: 0,
-  positionY: 0,
-  rotationDeg: 0,
   realSizeMode: false,
   showMeasurements: false,
   showBackboardBounds: false,
@@ -49,15 +60,36 @@ export const defaultConfig: NeonDesignConfig = {
 type Action =
   | { type: "replace"; cfg: NeonDesignConfig };
 
+/** Migrate legacy share-URL or saved configs (which had a global `text`) into the layer model. */
+function migrateConfig(cfg: NeonDesignConfig): NeonDesignConfig {
+  const layers: TextLayer[] = cfg.textLayers ? [...cfg.textLayers] : [];
+  const hasBase = layers.some((l) => l.id === BASE_TEXT_ID);
+  const legacyText = (cfg.text ?? "").trim();
+  if (!hasBase && legacyText) {
+    layers.unshift({
+      id: BASE_TEXT_ID,
+      text: cfg.text ?? "",
+      fontId: cfg.fontId ?? defaultConfig.fontId,
+      colorId: cfg.colorId ?? defaultConfig.colorId,
+      sizePct: 22,
+      x: cfg.positionX ?? 0,
+      y: cfg.positionY ?? 0,
+      rotation: cfg.rotationDeg ?? 0,
+    });
+  }
+  return {
+    ...defaultConfig,
+    ...cfg,
+    text: "",
+    decorations: cfg.decorations ?? [],
+    textLayers: layers,
+  };
+}
+
 function reducer(_state: NeonDesignConfig, action: Action): NeonDesignConfig {
   switch (action.type) {
     case "replace":
-      return {
-        ...defaultConfig,
-        ...action.cfg,
-        decorations: action.cfg.decorations ?? [],
-        textLayers: action.cfg.textLayers ?? [],
-      };
+      return migrateConfig(action.cfg);
   }
 }
 
@@ -103,9 +135,10 @@ const MAX_HISTORY = 60;
 
 export function DesignerProvider({ children }: { children: ReactNode }) {
   const [config, dispatch] = useReducer(reducer, defaultConfig);
-  const [selection, setSelectionState] = useState<EditorSelection>({ kind: "text" });
+  const initialSel: EditorSelection = { kind: "textLayer", id: BASE_TEXT_ID };
+  const [selection, setSelectionState] = useState<EditorSelection>(initialSel);
   // Ordered history of recent selections (oldest..newest), used for align references.
-  const selHistoryRef = useRef<EditorSelection[]>([{ kind: "text" }]);
+  const selHistoryRef = useRef<EditorSelection[]>([initialSel]);
   const setSelection = useCallback((sel: EditorSelection) => {
     setSelectionState(sel);
     const last = selHistoryRef.current[selHistoryRef.current.length - 1];
@@ -154,6 +187,11 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
   );
   const replace = useCallback((cfg: NeonDesignConfig) => commit(cfg), [commit]);
 
+  /** Count of visible (non-hidden) layers, used to prevent zero-layer designs. */
+  const visibleLayerCount = (cfg: NeonDesignConfig) =>
+    (cfg.textLayers ?? []).filter((l) => !l.hidden).length +
+    (cfg.decorations ?? []).filter((d) => !d.hidden).length;
+
   const addDecoration = useCallback(
     (decoration: Decoration) => {
       const next: NeonDesignConfig = {
@@ -181,11 +219,15 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
 
   const removeDecoration = useCallback(
     (id: string) => {
-      commit({
-        ...configRef.current,
-        decorations: (configRef.current.decorations ?? []).filter((d) => d.id !== id),
-      });
-      setSelection({ kind: "text" });
+      const cur = configRef.current;
+      const filtered = (cur.decorations ?? []).filter((d) => d.id !== id);
+      const nextCfg: NeonDesignConfig = { ...cur, decorations: filtered };
+      if (visibleLayerCount(nextCfg) === 0) {
+        toast.error("Tasarımda en az bir görünür katman olmalı.");
+        return;
+      }
+      commit(nextCfg);
+      setSelection({ kind: "canvas" });
     },
     [commit],
   );
@@ -215,11 +257,15 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
 
   const removeTextLayer = useCallback(
     (id: string) => {
-      commit({
-        ...configRef.current,
-        textLayers: (configRef.current.textLayers ?? []).filter((l) => l.id !== id),
-      });
-      setSelection({ kind: "text" });
+      const cur = configRef.current;
+      const filtered = (cur.textLayers ?? []).filter((l) => l.id !== id);
+      const nextCfg: NeonDesignConfig = { ...cur, textLayers: filtered };
+      if (visibleLayerCount(nextCfg) === 0) {
+        toast.error("Tasarımda en az bir görünür katman olmalı.");
+        return;
+      }
+      commit(nextCfg);
+      setSelection({ kind: "canvas" });
     },
     [commit],
   );
@@ -261,9 +307,6 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
           const l = (cur.textLayers ?? []).find((x) => x.id === sel.id);
           if (!l) return null;
           return { cx: l.x, cy: l.y, half: l.sizePct / 2 };
-        }
-        if (sel.kind === "text") {
-          return { cx: cur.positionX ?? 0, cy: cur.positionY ?? 0, half: 0 };
         }
         return null;
       };
@@ -370,12 +413,6 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
                 : l,
             ),
           };
-        } else if (t.kind === "text") {
-          nextCur = {
-            ...nextCur,
-            ...(nextX !== null ? { positionX: nextX } : {}),
-            ...(nextY !== null ? { positionY: nextY } : {}),
-          };
         }
       }
       commit(nextCur);
@@ -386,7 +423,7 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
 
   const resetDesign = useCallback(() => {
     commit({ ...defaultConfig });
-    setSelection({ kind: "text" });
+    setSelection({ kind: "textLayer", id: BASE_TEXT_ID });
   }, [commit]);
 
   const undo = useCallback(() => {

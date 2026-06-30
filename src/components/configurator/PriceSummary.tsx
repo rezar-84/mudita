@@ -18,8 +18,10 @@ export function PriceSummary() {
   const [quoteOpen, setQuoteOpen] = useState(false);
   const navigate = useNavigate();
 
-  const font = FONTS.find((f) => f.id === config.fontId)!;
-  const color = COLORS.find((c) => c.id === config.colorId)!;
+  const primaryLayer = (config.textLayers ?? []).find((l) => !l.hidden && l.text.trim());
+  const primaryText = primaryLayer?.text ?? config.text ?? "";
+  const font = FONTS.find((f) => f.id === (primaryLayer?.fontId ?? config.fontId)) ?? FONTS[0];
+  const color = COLORS.find((c) => c.id === (primaryLayer?.colorId ?? config.colorId)) ?? COLORS[0];
   const backboard = BACKBOARDS.find((b) => b.id === config.backboard)!;
 
   const buildShareUrl = () => {
@@ -44,7 +46,7 @@ export function PriceSummary() {
       "Merhaba Mudita Dekorasyon 👋",
       "Aşağıdaki neon tabela tasarımı için fiyat teklifi ve üretim süresi öğrenmek istiyorum.",
       "",
-      `✍️ Yazı: ${config.text.replace(/\n/g, " / ") || "(henüz girilmedi)"}`,
+      `✍️ Yazı: ${primaryText.replace(/\n/g, " / ") || "(henüz girilmedi)"}`,
       `🔤 Yazı tipi: ${font.label}`,
       `🎨 Renk: ${color.label}`,
       `📐 Ölçü: ${breakdown.items[0].label}`,

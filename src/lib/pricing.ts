@@ -31,7 +31,11 @@ export function calculatePrice(cfg: NeonDesignConfig): PriceBreakdown {
 
   const { width, height } = getDimensions(cfg);
   const area = Math.max(50, width * height);
-  const lines = Math.max(1, cfg.text.split("\n").filter(Boolean).length);
+  // Lines come from the primary (first) visible text layer; fall back to legacy `cfg.text`.
+  const visibleTextLayers = (cfg.textLayers ?? []).filter((l) => !l.hidden && l.text.trim().length);
+  const primary = visibleTextLayers[0];
+  const primaryText = primary?.text ?? cfg.text ?? "";
+  const lines = Math.max(1, primaryText.split("\n").filter(Boolean).length);
 
   const items: { label: string; labelEn?: string; amount: number }[] = [];
 
@@ -120,19 +124,19 @@ export function calculatePrice(cfg: NeonDesignConfig): PriceBreakdown {
     items.push({ label, labelEn, amount: Math.round(total) });
   }
 
-  // Additional text layers (multi-text)
-  const textLayers = (cfg.textLayers ?? []).filter((l) => !l.hidden && l.text.trim().length);
-  if (textLayers.length) {
+  // Additional text layers (every layer beyond the primary one is billed as an extra).
+  const extraTextLayers = visibleTextLayers.slice(1);
+  if (extraTextLayers.length) {
     let total = 0;
-    for (const l of textLayers) {
+    for (const l of extraTextLayers) {
       const ratio = Math.max(6, Math.min(40, l.sizePct)) / 100;
       const cm2 = area * ratio * ratio * 1.4; // text uses more tubing per area
       const chars = Math.max(1, l.text.trim().length);
       total += cm2 * BASE_RATE_PER_CM2 * 0.7 + chars * 18;
     }
     items.push({
-      label: `Ek metin katmanları (${textLayers.length})`,
-      labelEn: `Extra text layers (${textLayers.length})`,
+      label: `Ek metin katmanları (${extraTextLayers.length})`,
+      labelEn: `Extra text layers (${extraTextLayers.length})`,
       amount: Math.round(total),
     });
   }

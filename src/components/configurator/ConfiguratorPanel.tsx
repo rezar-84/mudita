@@ -22,20 +22,25 @@ import { useT } from "@/lib/i18n";
 
 export function ConfiguratorPanel() {
   const t = useT();
-  const { config, update } = useDesigner();
+  const { config, update, addTextLayer, setSelection } = useDesigner();
   const customW = config.customWidth ?? 80;
   const customH = config.customHeight ?? 40;
 
-  // Warnings
-  const trimmed = config.text.trim();
-  const isEmpty = trimmed.length === 0;
-  const longestLine = Math.max(1, ...config.text.split("\n").map((l) => l.length));
+  // Warnings derived from the visible text layers (no global text anymore).
+  const visibleLayers = (config.textLayers ?? []).filter((l) => !l.hidden && l.text.trim().length);
+  const isEmpty = visibleLayers.length === 0;
+  const longestLine = Math.max(
+    1,
+    ...visibleLayers.flatMap((l) => l.text.split("\n").map((line) => line.length)),
+  );
   const dims = config.sizeId === "custom" ? { width: customW, height: customH }
     : SIZES.find((s) => s.id === config.sizeId)!;
   const approxLetterCm = dims.width / Math.max(longestLine, 1);
+  const totalChars = visibleLayers.reduce((s, l) => s + l.text.length, 0);
   const tooSmall = !isEmpty && approxLetterCm < 4;
-  const tooLong = trimmed.length > 30;
-  const currentFont = FONTS.find((f) => f.id === config.fontId);
+  const tooLong = totalChars > 60;
+  const primaryFontId = visibleLayers[0]?.fontId ?? config.fontId;
+  const currentFont = FONTS.find((f) => f.id === primaryFontId);
   const complexFont = !!currentFont && (currentFont.complexity >= 1.2 || ["script", "handwritten", "retro", "elegant"].includes(currentFont.category));
   const fragile = config.outdoor && complexFont;
   const complexNote = !config.outdoor && complexFont;
@@ -72,24 +77,36 @@ export function ConfiguratorPanel() {
           <TabsTrigger value="extras">{t("tabExtras")}</TabsTrigger>
         </TabsList>
 
-        {/* TEXT */}
+        {/* TEXT — text now lives entirely on layers */}
         <TabsContent value="text" className="space-y-4 pt-4">
-          <div>
-            <Label htmlFor="neon-text" className="mb-2 block text-sm font-medium">{t("enterText")}</Label>
-            <Textarea
-              id="neon-text"
-              rows={3}
-              maxLength={60}
-              placeholder={t("textPlaceholder")}
-              value={config.text}
-              onChange={(e) => update({ text: e.target.value })}
-            />
-            <p className="mt-1 text-xs text-muted-foreground">{config.text.length}/60 {t("textCharsHint")}</p>
-          </div>
+          <p className="rounded-md border border-dashed border-border bg-secondary/40 p-3 text-xs leading-relaxed text-muted-foreground">
+            {t("textTabHelper")}
+          </p>
+          <button
+            type="button"
+            onClick={() => {
+              const id = `tl-${Date.now()}`;
+              addTextLayer({
+                id,
+                text: t("toolNewTextDefault"),
+                fontId: config.fontId,
+                colorId: config.colorId,
+                sizePct: 16,
+                x: 0,
+                y: 12,
+                rotation: 0,
+              });
+              setSelection({ kind: "textLayer", id });
+            }}
+            className="w-full rounded-lg border border-foreground/30 bg-accent/40 px-3 py-2 text-sm font-medium transition hover:bg-accent"
+          >
+            + {t("textTabAdd")}
+          </button>
         </TabsContent>
 
-        {/* STYLE: font + color */}
+        {/* STYLE: default font + color for NEW layers */}
         <TabsContent value="style" className="space-y-6 pt-4">
+          <p className="text-[11px] text-muted-foreground">{t("defaultStyleHint")}</p>
           <div>
             <Label className="mb-2 block text-sm font-medium">{t("fontType")}</Label>
             <FontSelector />
