@@ -29,7 +29,7 @@ export function PropertiesPanel({ open, onClose, onOpen }: { open: boolean; onCl
     <aside className={cn("flex flex-col border-border bg-card", "w-full max-w-full border-t", "lg:w-[360px] lg:max-w-[360px] lg:shrink-0 lg:border-l lg:border-t-0")}>
       <div className="flex shrink-0 items-center justify-between border-b border-border px-3 py-2">
         <p className="truncate text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          {isDecoration ? t("decoration") : isTextLayer ? t("textLayerPanel") : selection.kind === "text" ? t("textDesign") : t("tabScene")}
+          {isDecoration ? t("decoration") : isTextLayer ? t("textLayerPanel") : t("tabScene")}
         </p>
         <Button variant="ghost" size="icon" className="hidden h-7 w-7 lg:inline-flex" onClick={onClose} title={t("panelHide")}>
           <ChevronRight className="h-4 w-4" />

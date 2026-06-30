@@ -67,7 +67,7 @@ export function TextLayerOverlay() {
       ids.push(id);
       kinds.push(kind);
     }
-    if (ids.length === 0) setSelection({ kind: "text" });
+    if (ids.length === 0) setSelection({ kind: "canvas" });
     else if (ids.length === 1)
       setSelection({ kind: kinds[0], id: ids[0] });
     else setSelection({ kind: "multi", ids, kinds });

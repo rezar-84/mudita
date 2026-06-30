@@ -51,11 +51,23 @@ export function ToolRail({ onPickDecoration }: { onPickDecoration: () => void })
     setSelection({ kind: "canvas" });
   }
   function handleTextTool() {
-    setSelection({ kind: "text" });
-    setTimeout(() => {
-      const el = document.querySelector<HTMLTextAreaElement>("textarea#neon-text");
-      el?.focus();
-    }, 50);
+    // Select the first existing text layer if one exists, otherwise add a new one.
+    const first = (config.textLayers ?? []).find((l) => !l.hidden);
+    if (first) {
+      setSelection({ kind: "textLayer", id: first.id });
+    } else {
+      const id = `tl-${Date.now()}`;
+      addTextLayer({
+        id,
+        text: t("toolNewTextDefault"),
+        fontId: config.fontId,
+        colorId: config.colorId,
+        sizePct: 18,
+        x: 0,
+        y: 0,
+        rotation: 0,
+      });
+    }
   }
   function openLayers() {
     setSelection({ kind: "canvas" });
@@ -107,7 +119,9 @@ export function ToolRail({ onPickDecoration }: { onPickDecoration: () => void })
       icon: Type,
       label: t("toolText"),
       onClick: handleTextTool,
-      active: selection.kind === "text",
+      active:
+        selection.kind === "textLayer" ||
+        (selection.kind === "multi" && selection.kinds.includes("textLayer")),
     },
     {
       id: "new-text-layer",
