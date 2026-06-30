@@ -55,10 +55,10 @@ export function EditorShell({
   return (
     <div
       className={cn(
-        "flex w-full flex-col overflow-hidden bg-background text-foreground",
+        "flex w-full flex-col bg-background text-foreground",
         isFullscreen
-          ? "fixed inset-0 z-[100] h-screen"
-          : "min-h-[640px] rounded-2xl border border-border shadow-soft lg:h-[calc(100vh-7rem)]",
+          ? "fixed inset-0 z-[100] h-screen overflow-hidden"
+          : "min-h-[560px] rounded-2xl border border-border shadow-soft lg:h-[calc(100vh-7rem)] lg:overflow-hidden",
       )}
     >
       <EditorTopBar

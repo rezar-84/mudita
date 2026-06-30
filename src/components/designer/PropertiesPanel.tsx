@@ -2,18 +2,12 @@ import { useDesigner } from "@/components/configurator/DesignerContext";
 import { ConfiguratorPanel } from "@/components/configurator/ConfiguratorPanel";
 import { DecorationProperties } from "./DecorationProperties";
 import { TextLayerProperties } from "./TextLayerProperties";
+import { LayersPanel } from "./LayersPanel";
+import { AlignmentControls } from "./AlignmentControls";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, ChevronLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-/**
- * Contextual right inspector. Switches between:
- *  - Decoration properties (when a decoration layer is selected)
- *  - Full configurator (text/style/size/scene/extras) for canvas/text mode
- *
- * On lg+ the panel can be collapsed via the top bar.
- * On mobile it's a full-width bottom drawer using vh constraints.
- */
 export function PropertiesPanel({
   open,
   onClose,
@@ -46,10 +40,11 @@ export function PropertiesPanel({
   return (
     <aside
       className={cn(
-        "flex flex-col border-l border-border bg-card",
-        // Mobile: fixed bottom sheet via wrapping; here we just make it work side-by-side at md+
-        "w-full max-w-full lg:w-[360px] lg:max-w-[360px] lg:shrink-0",
-        // On small screens, stack below canvas — the parent flex is row, so on mobile we hide canvas above? Instead, make the panel scroll inside its own container.
+        "flex flex-col border-border bg-card",
+        // Mobile: full-width below canvas, no internal scroll (page scrolls instead)
+        "w-full max-w-full border-t",
+        // Desktop: 360px sticky side panel with internal scroll
+        "lg:w-[360px] lg:max-w-[360px] lg:shrink-0 lg:border-l lg:border-t-0",
       )}
     >
       <div className="flex shrink-0 items-center justify-between border-b border-border px-3 py-2">
@@ -72,13 +67,38 @@ export function PropertiesPanel({
           <ChevronRight className="h-4 w-4" />
         </Button>
       </div>
-      <div className="min-h-0 flex-1 overflow-auto p-3 sm:p-4">
+
+      <div
+        className={cn(
+          "p-3 sm:p-4",
+          // Page flow on mobile, internal scroll on lg+
+          "lg:min-h-0 lg:flex-1 lg:overflow-auto",
+        )}
+      >
         {isDecoration ? (
-          <DecorationProperties />
+          <div className="space-y-4">
+            <AlignmentControls />
+            <DecorationProperties />
+            <div id="layers-section">
+              <LayersPanel />
+            </div>
+          </div>
         ) : isTextLayer ? (
-          <TextLayerProperties />
+          <div className="space-y-4">
+            <AlignmentControls />
+            <TextLayerProperties />
+            <div id="layers-section">
+              <LayersPanel />
+            </div>
+          </div>
         ) : (
-          <ConfiguratorPanel />
+          <div className="space-y-5">
+            <ConfiguratorPanel />
+            <AlignmentControls />
+            <div id="layers-section">
+              <LayersPanel />
+            </div>
+          </div>
         )}
       </div>
     </aside>
