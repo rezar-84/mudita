@@ -56,7 +56,7 @@ export function EditorTopBar({
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-semibold leading-tight">{t("editorTitle")}</p>
         <p className="hidden truncate text-[11px] text-muted-foreground sm:block">
-          {config.text.trim() || t("editorUntitled")} · {config.fontId}
+          {((config.textLayers ?? []).find((l) => !l.hidden && l.text.trim())?.text ?? config.text ?? "").trim() || t("editorUntitled")}
         </p>
       </div>
 

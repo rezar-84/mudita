@@ -45,8 +45,10 @@ function CartPage() {
       <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_320px]">
         <ul className="space-y-3">
           {items.map((it) => {
-            const font = FONTS.find((f) => f.id === it.config.fontId)!;
-            const color = COLORS.find((c) => c.id === it.config.colorId)!;
+            const primary = (it.config.textLayers ?? []).find((l) => !l.hidden && l.text.trim());
+            const primaryText = primary?.text ?? it.config.text ?? "";
+            const font = FONTS.find((f) => f.id === (primary?.fontId ?? it.config.fontId))!;
+            const color = COLORS.find((c) => c.id === (primary?.colorId ?? it.config.colorId))!;
             return (
               <li key={it.id} className="flex items-center gap-4 rounded-2xl border border-border bg-card p-4">
                 <div className="flex h-20 w-20 items-center justify-center rounded-lg bg-preset-dark">
@@ -58,11 +60,11 @@ function CartPage() {
                       textShadow: `0 0 4px ${color.hex}, 0 0 10px ${color.glow}, 0 0 20px ${color.glow}`,
                     }}
                   >
-                    {it.config.text.split("\n")[0].slice(0, 6) || "Aa"}
+                    {primaryText.split("\n")[0].slice(0, 6) || "Aa"}
                   </span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="font-medium truncate">{it.config.text.replace(/\n/g, " / ") || t("cartTextless")}</div>
+                  <div className="font-medium truncate">{primaryText.replace(/\n/g, " / ") || t("cartTextless")}</div>
                   <div className="text-sm text-muted-foreground">{font.label} · {color.label}</div>
                 </div>
                 <div className="text-right">
