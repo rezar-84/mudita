@@ -28,6 +28,10 @@ export function DecorationOverlay() {
 
   function onPointerDown(e: React.PointerEvent, id: string) {
     e.stopPropagation();
+    if (e.shiftKey) {
+      toggleSelect("decoration", id);
+      return;
+    }
     setSelection({ kind: "decoration", id });
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
@@ -59,6 +63,30 @@ export function DecorationOverlay() {
     dragRef.current = null;
   }
 
+  function toggleSelect(kind: "textLayer" | "decoration", id: string) {
+    const cur = selection;
+    let ids: string[] = [];
+    let kinds: ("textLayer" | "decoration")[] = [];
+    if (cur.kind === "multi") {
+      ids = [...cur.ids];
+      kinds = [...cur.kinds];
+    } else if (cur.kind === "textLayer" || cur.kind === "decoration") {
+      ids = [cur.id];
+      kinds = [cur.kind];
+    }
+    const idx = ids.indexOf(id);
+    if (idx >= 0) {
+      ids.splice(idx, 1);
+      kinds.splice(idx, 1);
+    } else {
+      ids.push(id);
+      kinds.push(kind);
+    }
+    if (ids.length === 0) setSelection({ kind: "text" });
+    else if (ids.length === 1) setSelection({ kind: kinds[0], id: ids[0] });
+    else setSelection({ kind: "multi", ids, kinds });
+  }
+
   return (
     <div
       ref={containerRef}
@@ -72,6 +100,7 @@ export function DecorationOverlay() {
         const color = COLORS.find((c) => c.id === d.colorId) ?? COLORS[0];
         const preset = d.source === "preset" ? DECORATIONS.find((p) => p.id === d.presetId) : null;
         const isSelected = selection.kind === "decoration" && selection.id === d.id;
+        const isMulti = selection.kind === "multi" && selection.ids.includes(d.id);
         const isLightOn = config.isLightOn ?? true;
         const brightness = (config.brightness ?? 100) / 100;
         const glow = color.glow;
@@ -122,6 +151,12 @@ export function DecorationOverlay() {
               />
             ) : null}
 
+            {isMulti && (
+              <div
+                aria-hidden
+                className="pointer-events-none absolute -inset-2 rounded-md border border-dashed border-neon-cyan/70"
+              />
+            )}
             {isSelected && !d.locked && (
               <SelectionHandles
                 canvasRef={containerRef}

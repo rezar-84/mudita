@@ -15,6 +15,7 @@ import {
 import { MeasurementOverlay } from "./MeasurementOverlay";
 import { DecorationOverlay } from "@/components/designer/DecorationOverlay";
 import { TextLayerOverlay } from "@/components/designer/TextLayerOverlay";
+import { SelectionHandles } from "@/components/designer/SelectionHandles";
 
 const BG_CLASS: Record<string, string> = Object.fromEntries(
   BACKGROUNDS.map((b) => [b.id, b.thumb]),
@@ -28,7 +29,7 @@ function clamp(v: number, lo: number, hi: number) {
 
 export function NeonPreview() {
   const t = useT();
-  const { config, update, setSelection } = useDesigner();
+  const { config, update, setSelection, selection } = useDesigner();
   const font = FONTS.find((f) => f.id === config.fontId) ?? FONTS[0];
   const color = COLORS.find((c) => c.id === config.colorId) ?? COLORS[0];
   const { width, height } = getDimensions(config);
@@ -192,6 +193,21 @@ export function NeonPreview() {
             {displayText}
           </div>
         </div>
+
+        {selection.kind === "text" && !isEmpty && (
+          <SelectionHandles
+            canvasRef={containerRef}
+            layerXPct={posX}
+            layerYPct={posY}
+            sizePct={Math.max(6, Math.min(40, zoom * 15))}
+            rotation={rotation}
+            onClose={() => update({ text: "" })}
+            onResize={(s) =>
+              update({ zoom: Math.max(0.6, Math.min(1.8, s / 15)) })
+            }
+            onRotate={(r) => update({ rotationDeg: r })}
+          />
+        )}
 
         {/* Decoration / SVG layers */}
         <DecorationOverlay />
