@@ -27,10 +27,39 @@ export function LayersPanel() {
   }
 
   function isSelected(it: Item) {
+    if (selection.kind === "multi") return selection.ids.includes(it.id);
     return (
       (it.kind === "decoration" && selection.kind === "decoration" && selection.id === it.id) ||
       (it.kind === "textLayer" && selection.kind === "textLayer" && selection.id === it.id)
     );
+  }
+
+  function pick(it: Item, e: React.MouseEvent) {
+    if (e.shiftKey) {
+      const cur = selection;
+      let ids: string[] = [];
+      let kinds: ("textLayer" | "decoration")[] = [];
+      if (cur.kind === "multi") {
+        ids = [...cur.ids];
+        kinds = [...cur.kinds];
+      } else if (cur.kind === "textLayer" || cur.kind === "decoration") {
+        ids = [cur.id];
+        kinds = [cur.kind];
+      }
+      const idx = ids.indexOf(it.id);
+      if (idx >= 0) {
+        ids.splice(idx, 1);
+        kinds.splice(idx, 1);
+      } else {
+        ids.push(it.id);
+        kinds.push(it.kind);
+      }
+      if (ids.length === 0) setSelection({ kind: "text" });
+      else if (ids.length === 1) setSelection({ kind: kinds[0], id: ids[0] });
+      else setSelection({ kind: "multi", ids, kinds });
+      return;
+    }
+    setSelection({ kind: it.kind, id: it.id } as Parameters<typeof setSelection>[0]);
   }
 
   function setVisible(it: Item, hidden: boolean) {
