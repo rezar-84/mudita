@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+import { useT } from "@/lib/i18n";
 import {
   Copy,
   Trash2,
@@ -20,14 +21,12 @@ import {
 import { cn } from "@/lib/utils";
 
 export function TextLayerProperties() {
-  const { config, selection, updateTextLayer, removeTextLayer, addTextLayer, reorder } =
-    useDesigner();
+  const { config, selection, updateTextLayer, removeTextLayer, addTextLayer, reorder } = useDesigner();
+  const t = useT();
   if (selection.kind !== "textLayer") return null;
   const l = (config.textLayers ?? []).find((x) => x.id === selection.id);
   if (!l) {
-    return (
-      <p className="text-sm text-muted-foreground">Seçili metin katmanı silinmiş.</p>
-    );
+    return <p className="text-sm text-muted-foreground">{t("textLayerNotFound")}</p>;
   }
 
   const onDuplicate = () =>
@@ -41,26 +40,22 @@ export function TextLayerProperties() {
   return (
     <div className="space-y-5">
       <div>
-        <p className="text-sm font-semibold">Metin Katmanı</p>
-        <p className="text-xs text-muted-foreground">
-          Ek bir metin satırı. Sürükleyerek konumlandırabilirsin.
-        </p>
+        <p className="text-sm font-semibold">{t("textLayerTitle")}</p>
+        <p className="text-xs text-muted-foreground">{t("textLayerDesc")}</p>
       </div>
 
-      {/* Content */}
       <div>
-        <Label className="mb-2 block text-sm font-medium">İçerik</Label>
+        <Label className="mb-2 block text-sm font-medium">{t("content")}</Label>
         <Input
           value={l.text}
           maxLength={40}
           onChange={(e) => updateTextLayer(l.id, { text: e.target.value })}
-          placeholder="Yazı..."
+          placeholder={t("textPlaceholderShort")}
         />
       </div>
 
-      {/* Font */}
       <div>
-        <Label className="mb-2 block text-sm font-medium">Yazı Tipi</Label>
+        <Label className="mb-2 block text-sm font-medium">{t("fontType")}</Label>
         <select
           className="h-9 w-full rounded-md border border-input bg-background px-2 text-sm"
           value={l.fontId}
@@ -74,9 +69,8 @@ export function TextLayerProperties() {
         </select>
       </div>
 
-      {/* Color */}
       <div>
-        <Label className="mb-2 block text-sm font-medium">Renk</Label>
+        <Label className="mb-2 block text-sm font-medium">{t("color")}</Label>
         <div className="grid grid-cols-6 gap-2">
           {COLORS.map((c) => (
             <button
@@ -99,178 +93,96 @@ export function TextLayerProperties() {
         </div>
       </div>
 
-      {/* Size */}
       <div>
         <Label className="mb-2 flex items-center justify-between text-sm">
-          Boyut <span className="text-muted-foreground">{l.sizePct}%</span>
+          {t("layerSize")} <span className="text-muted-foreground">{l.sizePct}%</span>
         </Label>
-        <Slider
-          min={6}
-          max={40}
-          step={1}
-          value={[l.sizePct]}
-          onValueChange={([v]) => updateTextLayer(l.id, { sizePct: v })}
-        />
+        <Slider min={6} max={40} step={1} value={[l.sizePct]} onValueChange={([v]) => updateTextLayer(l.id, { sizePct: v })} />
       </div>
 
-      {/* Rotation */}
       <div>
         <Label className="mb-2 flex items-center justify-between text-sm">
-          Döndürme <span className="text-muted-foreground">{l.rotation}°</span>
+          {t("rotation")} <span className="text-muted-foreground">{l.rotation}°</span>
         </Label>
-        <Slider
-          min={-180}
-          max={180}
-          step={5}
-          value={[l.rotation]}
-          onValueChange={([v]) => updateTextLayer(l.id, { rotation: v })}
-        />
+        <Slider min={-180} max={180} step={5} value={[l.rotation]} onValueChange={([v]) => updateTextLayer(l.id, { rotation: v })} />
         <div className="mt-2 flex flex-wrap gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() =>
-              updateTextLayer(l.id, { rotation: ((l.rotation - 90 + 540) % 360) - 180 })
-            }
-          >
-            <RotateCcw className="mr-1 h-3.5 w-3.5" />
-            -90°
+          <Button variant="outline" size="sm" onClick={() => updateTextLayer(l.id, { rotation: ((l.rotation - 90 + 540) % 360) - 180 })}>
+            <RotateCcw className="mr-1 h-3.5 w-3.5" /> -90°
           </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() =>
-              updateTextLayer(l.id, { rotation: ((l.rotation + 90 + 540) % 360) - 180 })
-            }
-          >
-            <RotateCw className="mr-1 h-3.5 w-3.5" />
-            +90°
+          <Button variant="outline" size="sm" onClick={() => updateTextLayer(l.id, { rotation: ((l.rotation + 90 + 540) % 360) - 180 })}>
+            <RotateCw className="mr-1 h-3.5 w-3.5" /> +90°
           </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => updateTextLayer(l.id, { rotation: 0 })}
-          >
+          <Button variant="outline" size="sm" onClick={() => updateTextLayer(l.id, { rotation: 0 })}>
             0°
           </Button>
         </div>
       </div>
 
-      {/* Transform: flip */}
       <div>
-        <Label className="mb-2 block text-sm font-medium">Dönüşüm</Label>
+        <Label className="mb-2 block text-sm font-medium">{t("transform")}</Label>
         <div className="flex flex-wrap gap-2">
-          <Button
-            variant={l.flipX ? "default" : "outline"}
-            size="sm"
-            onClick={() => updateTextLayer(l.id, { flipX: !l.flipX })}
-          >
-            <FlipHorizontal2 className="mr-1 h-3.5 w-3.5" /> Yatay
+          <Button variant={l.flipX ? "default" : "outline"} size="sm" onClick={() => updateTextLayer(l.id, { flipX: !l.flipX })}>
+            <FlipHorizontal2 className="mr-1 h-3.5 w-3.5" /> {t("horizontal")}
           </Button>
-          <Button
-            variant={l.flipY ? "default" : "outline"}
-            size="sm"
-            onClick={() => updateTextLayer(l.id, { flipY: !l.flipY })}
-          >
-            <FlipVertical2 className="mr-1 h-3.5 w-3.5" /> Dikey
+          <Button variant={l.flipY ? "default" : "outline"} size="sm" onClick={() => updateTextLayer(l.id, { flipY: !l.flipY })}>
+            <FlipVertical2 className="mr-1 h-3.5 w-3.5" /> {t("vertical")}
           </Button>
         </div>
       </div>
 
-      {/* Position */}
       <div className="grid grid-cols-2 gap-3">
         <div>
           <Label className="mb-2 flex items-center justify-between text-xs">
             X <span className="text-muted-foreground">{l.x}</span>
           </Label>
-          <Slider
-            min={-45}
-            max={45}
-            step={1}
-            value={[l.x]}
-            onValueChange={([v]) => updateTextLayer(l.id, { x: v })}
-          />
+          <Slider min={-45} max={45} step={1} value={[l.x]} onValueChange={([v]) => updateTextLayer(l.id, { x: v })} />
         </div>
         <div>
           <Label className="mb-2 flex items-center justify-between text-xs">
             Y <span className="text-muted-foreground">{l.y}</span>
           </Label>
-          <Slider
-            min={-45}
-            max={45}
-            step={1}
-            value={[l.y]}
-            onValueChange={([v]) => updateTextLayer(l.id, { y: v })}
-          />
+          <Slider min={-45} max={45} step={1} value={[l.y]} onValueChange={([v]) => updateTextLayer(l.id, { y: v })} />
         </div>
       </div>
 
-      {/* Z-order quick actions */}
       <div className="flex flex-wrap gap-2">
         <Button variant="outline" size="sm" onClick={() => reorder("textLayer", l.id, Infinity)}>
-          ⏫ Üste
+          {t("layerToTop")}
         </Button>
         <Button variant="outline" size="sm" onClick={() => reorder("textLayer", l.id, 1)}>
-          ↑ Bir Öne
+          {t("layerForward")}
         </Button>
         <Button variant="outline" size="sm" onClick={() => reorder("textLayer", l.id, -1)}>
-          ↓ Bir Geri
+          {t("layerBackward")}
         </Button>
         <Button variant="outline" size="sm" onClick={() => reorder("textLayer", l.id, -Infinity)}>
-          ⏬ En Arkaya
+          {t("layerToBottom")}
         </Button>
       </div>
 
-      {/* Actions */}
       <div className="flex flex-wrap gap-2">
         <Button variant="outline" size="sm" onClick={onDuplicate}>
-          <Copy className="mr-1.5 h-3.5 w-3.5" /> Çoğalt
+          <Copy className="mr-1.5 h-3.5 w-3.5" /> {t("duplicate")}
         </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => updateTextLayer(l.id, { locked: !l.locked })}
-        >
-          {l.locked ? (
-            <Unlock className="mr-1.5 h-3.5 w-3.5" />
-          ) : (
-            <Lock className="mr-1.5 h-3.5 w-3.5" />
-          )}
-          {l.locked ? "Kilit Aç" : "Kilitle"}
+        <Button variant="outline" size="sm" onClick={() => updateTextLayer(l.id, { locked: !l.locked })}>
+          {l.locked ? <Unlock className="mr-1.5 h-3.5 w-3.5" /> : <Lock className="mr-1.5 h-3.5 w-3.5" />}
+          {l.locked ? t("unlock") : t("lock")}
         </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => updateTextLayer(l.id, { hidden: !l.hidden })}
-        >
-          {l.hidden ? (
-            <Eye className="mr-1.5 h-3.5 w-3.5" />
-          ) : (
-            <EyeOff className="mr-1.5 h-3.5 w-3.5" />
-          )}
-          {l.hidden ? "Göster" : "Gizle"}
+        <Button variant="outline" size="sm" onClick={() => updateTextLayer(l.id, { hidden: !l.hidden })}>
+          {l.hidden ? <Eye className="mr-1.5 h-3.5 w-3.5" /> : <EyeOff className="mr-1.5 h-3.5 w-3.5" />}
+          {l.hidden ? t("show") : t("hide")}
         </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="text-destructive hover:text-destructive"
-          onClick={() => removeTextLayer(l.id)}
-        >
-          <Trash2 className="mr-1.5 h-3.5 w-3.5" /> Sil
+        <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => removeTextLayer(l.id)}>
+          <Trash2 className="mr-1.5 h-3.5 w-3.5" /> {t("delete")}
         </Button>
       </div>
 
       <div className="flex items-center justify-between rounded-lg border border-border p-3">
         <div>
-          <p className="text-sm">Katmanı Göster</p>
-          <p className="text-[11px] text-muted-foreground">
-            Üretimde dahil etmek istemiyorsan kapat.
-          </p>
+          <p className="text-sm">{t("layerShowLabel")}</p>
+          <p className="text-[11px] text-muted-foreground">{t("layerExcludeDesc")}</p>
         </div>
-        <Switch
-          checked={!l.hidden}
-          onCheckedChange={(v) => updateTextLayer(l.id, { hidden: !v })}
-        />
+        <Switch checked={!l.hidden} onCheckedChange={(v) => updateTextLayer(l.id, { hidden: !v })} />
       </div>
     </div>
   );

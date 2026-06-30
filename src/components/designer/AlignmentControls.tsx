@@ -5,6 +5,7 @@ import {
 } from "@/components/configurator/DesignerContext";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { useT } from "@/lib/i18n";
 import {
   AlignLeft,
   AlignCenter,
@@ -14,20 +15,19 @@ import {
   AlignEndVertical,
 } from "lucide-react";
 
-/**
- * Single primary selection model. The reference selector picks the *bounds*
- * we align the selected layer against:
- *  - page    → the canvas itself
- *  - first   → first layer in recent selection history (excluding current)
- *  - last    → most recent layer in selection history (excluding current)
- *  - biggest → the layer with the largest sizePct (excluding current)
- *
- * When the chosen reference is unavailable (e.g. only one layer exists), the
- * align action transparently falls back to the page bounds.
- */
 export function AlignmentControls() {
   const { alignSelected } = useDesigner();
+  const t = useT();
   const [ref, setRef] = useState<AlignReference>("page");
+
+  function refLabel(r: AlignReference): string {
+    switch (r) {
+      case "page": return t("alignRefPage");
+      case "first": return t("alignRefFirst");
+      case "last": return t("alignRefLast");
+      case "biggest": return t("alignRefBiggest");
+    }
+  }
 
   const btn = (
     title: string,
@@ -50,51 +50,38 @@ export function AlignmentControls() {
     <div className="space-y-2 rounded-lg border border-border p-3">
       <div className="flex items-center justify-between gap-2">
         <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          Hizala
+          {t("align")}
         </Label>
         <select
           value={ref}
           onChange={(e) => setRef(e.target.value as AlignReference)}
           className="h-7 rounded-md border border-input bg-background px-1.5 text-[11px]"
-          title="Referans"
+          title={t("alignRef")}
         >
-          <option value="page">Sayfa</option>
-          <option value="first">İlk seçili</option>
-          <option value="last">Son seçili</option>
-          <option value="biggest">En büyük</option>
+          <option value="page">{t("alignRefPage")}</option>
+          <option value="first">{t("alignRefFirst")}</option>
+          <option value="last">{t("alignRefLast")}</option>
+          <option value="biggest">{t("alignRefBiggest")}</option>
         </select>
       </div>
       <div className="flex flex-wrap gap-1.5">
-        {btn("Sola", AlignLeft, "left")}
-        {btn("Yatay ortala", AlignCenter, "centerH")}
-        {btn("Sağa", AlignRight, "right")}
+        {btn(t("alignLeft"), AlignLeft, "left")}
+        {btn(t("alignCenterH"), AlignCenter, "centerH")}
+        {btn(t("alignRight"), AlignRight, "right")}
         <span className="mx-1 w-px self-stretch bg-border" />
-        {btn("Üste", AlignStartVertical, "top")}
-        {btn("Dikey ortala", AlignCenterVertical, "centerV")}
-        {btn("Alta", AlignEndVertical, "bottom")}
+        {btn(t("alignTop"), AlignStartVertical, "top")}
+        {btn(t("alignCenterV"), AlignCenterVertical, "centerV")}
+        {btn(t("alignBottom"), AlignEndVertical, "bottom")}
       </div>
       <p className="text-[10px] text-muted-foreground">
         {ref === "page"
-          ? "Seçili katman tuval kenarlarına göre hizalanır."
+          ? t("alignHintPage")
           : ref === "biggest"
-            ? "En büyük diğer katmanın sınırlarına göre hizalanır."
+            ? t("alignHintBiggest")
             : ref === "first"
-              ? "Geçmişteki ilk seçili katmana göre hizalanır."
-              : "En son seçtiğin diğer katmana göre hizalanır."}
+              ? t("alignHintFirst")
+              : t("alignHintLast")}
       </p>
     </div>
   );
-}
-
-function refLabel(ref: AlignReference): string {
-  switch (ref) {
-    case "page":
-      return "sayfa";
-    case "first":
-      return "ilk seçili";
-    case "last":
-      return "son seçili";
-    case "biggest":
-      return "en büyük";
-  }
 }
