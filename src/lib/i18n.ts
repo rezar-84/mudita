@@ -109,6 +109,8 @@ const tr: Dict = {
   textTabHelper: "Tüm metinler birer katmandır. Mevcut metni düzenlemek için tuvaldeki yazıya tıkla; yeni metin eklemek için aşağıdaki butonu kullan.",
   textTabAdd: "Yeni Metin Katmanı Ekle",
   defaultStyleHint: "Bu seçim, yeni eklenen metin ve süslemelerin başlangıç stili olur.",
+  editingLayer: "Düzenleniyor",
+  editingLayerHint: "Başka bir katmanı düzenlemek için tuvalde üzerine tıkla.",
 
   // Font badges
   badgePopular: "Popüler",
