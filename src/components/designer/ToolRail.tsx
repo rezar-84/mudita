@@ -3,6 +3,7 @@ import { useDesigner } from "@/components/configurator/DesignerContext";
 import { sanitiseSvg } from "@/lib/svgSanitize";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { useT } from "@/lib/i18n";
 import {
   MousePointer2,
   Type,
@@ -30,6 +31,7 @@ interface Tool {
 }
 
 export function ToolRail({ onPickDecoration }: { onPickDecoration: () => void }) {
+  const t = useT();
   const {
     config,
     update,
@@ -65,7 +67,7 @@ export function ToolRail({ onPickDecoration }: { onPickDecoration: () => void })
   }
   function handleSvgUpload(file: File) {
     if (!file.type.includes("svg")) {
-      toast.error("Lütfen bir SVG dosyası seçin.");
+      toast.error(t("toolSvgError"));
       return;
     }
     const reader = new FileReader();
@@ -73,7 +75,7 @@ export function ToolRail({ onPickDecoration }: { onPickDecoration: () => void })
       const text = String(reader.result || "");
       const cleaned = sanitiseSvg(text);
       if (!cleaned) {
-        toast.error("SVG güvenli şekilde okunamadı veya çok büyük.");
+        toast.error(t("toolSvgParseError"));
         return;
       }
       addDecoration({
@@ -87,7 +89,7 @@ export function ToolRail({ onPickDecoration }: { onPickDecoration: () => void })
         rotation: 0,
         sizePct: 22,
       });
-      toast.success("SVG eklendi · renk ve boyutu sağdan ayarla");
+      toast.success(t("toolSvgAdded"));
     };
     reader.readAsText(file);
   }
@@ -96,25 +98,25 @@ export function ToolRail({ onPickDecoration }: { onPickDecoration: () => void })
     {
       id: "select",
       icon: MousePointer2,
-      label: "Seç (V)",
+      label: t("toolSelect"),
       onClick: handleSelectTool,
       active: selection.kind === "canvas",
     },
     {
       id: "text",
       icon: Type,
-      label: "Ana Metin",
+      label: t("toolText"),
       onClick: handleTextTool,
       active: selection.kind === "text",
     },
     {
       id: "new-text-layer",
       icon: TextCursorInput,
-      label: "Yeni Metin Katmanı",
+      label: t("toolNewTextLayer"),
       onClick: () => {
         addTextLayer({
           id: `tl-${Date.now()}`,
-          text: "Yeni Yazı",
+          text: t("toolNewTextDefault"),
           fontId: config.fontId,
           colorId: config.colorId,
           sizePct: 14,
@@ -122,77 +124,76 @@ export function ToolRail({ onPickDecoration }: { onPickDecoration: () => void })
           y: 15,
           rotation: 0,
         });
-        toast.success("Metin katmanı eklendi");
+        toast.success(t("toolTextLayerAdded"));
       },
     },
     {
       id: "decoration",
       icon: Sparkles,
-      label: "Süsleme / İkon Ekle",
+      label: t("toolDecoration"),
       onClick: onPickDecoration,
     },
     {
       id: "upload",
       icon: Upload,
-      label: "SVG Yükle",
+      label: t("toolSvgUpload"),
       onClick: () => fileRef.current?.click(),
     },
     {
       id: "background",
       icon: ImageIcon,
-      label: "Arka Plan",
+      label: t("toolBackground"),
       onClick: () => setSelection({ kind: "canvas" }),
     },
     {
       id: "layers",
       icon: Layers,
-      label: "Katmanlar",
+      label: t("toolLayers"),
       onClick: openLayers,
     },
     {
       id: "measure",
       icon: Ruler,
-      label: "Ölçüleri Göster/Gizle",
+      label: t("toolMeasure"),
       onClick: () => update({ showMeasurements: !(config.showMeasurements ?? false) }),
       active: !!config.showMeasurements,
     },
     {
       id: "ai-mockup",
       icon: Wand2,
-      label: "AI Mockup (yakında)",
-      onClick: () =>
-        toast.info("AI Mockup yakında! Tasarımını gerçek ortamda önizleyebileceksin."),
+      label: t("toolAiMockup"),
+      onClick: () => toast.info(t("toolAiMockupToast")),
     },
     {
       id: "undo",
       icon: Undo2,
-      label: "Geri Al (Ctrl+Z)",
+      label: t("undoLabel"),
       onClick: undo,
       disabled: !canUndo,
     },
     {
       id: "redo",
       icon: Redo2,
-      label: "İleri Al (Ctrl+Shift+Z)",
+      label: t("redoLabel"),
       onClick: redo,
       disabled: !canRedo,
     },
     {
       id: "view-reset",
       icon: RotateCcw,
-      label: "Görünümü Sıfırla",
+      label: t("resetView"),
       onClick: () =>
         update({ positionX: 0, positionY: 0, rotationDeg: 0, zoom: 1, brightness: 100 }),
     },
     {
       id: "design-reset",
       icon: Trash2,
-      label: "Tasarımı Sıfırla",
+      label: t("toolResetDesign"),
       danger: true,
       onClick: () => {
-        if (typeof window !== "undefined" && window.confirm("Tüm tasarımı sıfırlamak istiyor musun? (Geri al ile geri getirebilirsin)")) {
+        if (typeof window !== "undefined" && window.confirm(t("toolResetConfirm"))) {
           resetDesign();
-          toast.success("Tasarım sıfırlandı");
+          toast.success(t("toolDesignReset"));
         }
       },
     },

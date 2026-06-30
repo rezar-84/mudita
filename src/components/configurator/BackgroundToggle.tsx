@@ -3,11 +3,11 @@ import { Upload, X, ImageIcon } from "lucide-react";
 import { useDesigner } from "./DesignerContext";
 import { cn } from "@/lib/utils";
 import { BACKGROUNDS } from "@/data/options";
-import { t } from "@/lib/i18n";
+import { useT } from "@/lib/i18n";
 import { toast } from "sonner";
 
-const MAX_BYTES = 8 * 1024 * 1024; // 8MB raw upload
-const TARGET_MAX_DIM = 1600; // px — downscale large images
+const MAX_BYTES = 8 * 1024 * 1024;
+const TARGET_MAX_DIM = 1600;
 
 async function fileToCompressedDataUrl(file: File): Promise<string> {
   const dataUrl: string = await new Promise((res, rej) => {
@@ -17,7 +17,6 @@ async function fileToCompressedDataUrl(file: File): Promise<string> {
     r.readAsDataURL(file);
   });
 
-  // Decode and resize via canvas to keep state small
   const img = await new Promise<HTMLImageElement>((res, rej) => {
     const i = new Image();
     i.onload = () => res(i);
@@ -38,6 +37,7 @@ async function fileToCompressedDataUrl(file: File): Promise<string> {
 }
 
 export function BackgroundToggle() {
+  const t = useT();
   const { config, update } = useDesigner();
   const inputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
@@ -49,20 +49,20 @@ export function BackgroundToggle() {
     e.target.value = "";
     if (!file) return;
     if (!file.type.startsWith("image/")) {
-      toast.error("Lütfen bir görsel dosyası seçin");
+      toast.error(t("bgErrNotImage"));
       return;
     }
     if (file.size > MAX_BYTES) {
-      toast.error("Görsel 8 MB'tan küçük olmalı");
+      toast.error(t("bgErrTooLarge"));
       return;
     }
     setLoading(true);
     try {
       const url = await fileToCompressedDataUrl(file);
       update({ customBackground: url, customBackgroundName: file.name });
-      toast.success("Arka plan güncellendi");
+      toast.success(t("bgUpdated"));
     } catch {
-      toast.error("Görsel yüklenemedi");
+      toast.error(t("bgUploadFailed"));
     } finally {
       setLoading(false);
     }
@@ -88,7 +88,7 @@ export function BackgroundToggle() {
           )}
         >
           <Upload className="h-3 w-3" />
-          {loading ? "Yükleniyor…" : "Görsel Yükle"}
+          {loading ? t("uploading") : t("uploadImage")}
         </button>
         <input
           ref={inputRef}
@@ -108,15 +108,15 @@ export function BackgroundToggle() {
           />
           <div className="min-w-0 flex-1">
             <p className="truncate text-xs font-medium">
-              {config.customBackgroundName ?? "Özel arka plan"}
+              {config.customBackgroundName ?? t("customBg")}
             </p>
-            <p className="text-[10px] text-muted-foreground">Aktif</p>
+            <p className="text-[10px] text-muted-foreground">{t("active")}</p>
           </div>
           <button
             type="button"
             onClick={clearCustom}
             className="rounded-md p-1 text-muted-foreground hover:bg-background hover:text-foreground"
-            aria-label="Özel arka planı kaldır"
+            aria-label={t("removeBg")}
           >
             <X className="h-4 w-4" />
           </button>
@@ -156,7 +156,7 @@ export function BackgroundToggle() {
 
       <p className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
         <ImageIcon className="h-3 w-3" />
-        Kendi duvarınızın fotoğrafını yükleyip neonun nasıl görüneceğini deneyin.
+        {t("bgTip")}
       </p>
     </div>
   );
