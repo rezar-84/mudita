@@ -151,6 +151,12 @@ export function DecorationOverlay() {
               />
             ) : null}
 
+            {isMulti && (
+              <div
+                aria-hidden
+                className="pointer-events-none absolute -inset-2 rounded-md border border-dashed border-neon-cyan/70"
+              />
+            )}
             {isSelected && !d.locked && (
               <SelectionHandles
                 canvasRef={containerRef}
