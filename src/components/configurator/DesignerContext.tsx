@@ -514,11 +514,23 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
       } else if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "y") {
         e.preventDefault();
         redo();
+      } else if (e.key === "Delete" || e.key === "Backspace") {
+        // Only act when a layer is selected; ignore on canvas/none to avoid
+        // hijacking browser back navigation on Backspace.
+        const sel = selection;
+        if (
+          sel.kind === "decoration" ||
+          sel.kind === "textLayer" ||
+          sel.kind === "multi"
+        ) {
+          e.preventDefault();
+          deleteSelection();
+        }
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [undo, redo]);
+  }, [undo, redo, deleteSelection, selection]);
 
   const canUndo = pastRef.current.length > 0;
   const canRedo = futureRef.current.length > 0;
