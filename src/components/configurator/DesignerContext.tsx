@@ -438,9 +438,41 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
         }
       }
       commit(nextCur);
+      flashAlignmentGuide({ dir, reference, ref: refBounds, ts: Date.now() });
     },
-    [selection, commit],
+    [selection, commit, flashAlignmentGuide],
   );
+
+  const deleteSelection = useCallback(() => {
+    const cur = configRef.current;
+    const sel = selection;
+    let ids: string[] = [];
+    let kinds: ("decoration" | "textLayer")[] = [];
+    if (sel.kind === "decoration" || sel.kind === "textLayer") {
+      ids = [sel.id];
+      kinds = [sel.kind];
+    } else if (sel.kind === "multi") {
+      ids = [...sel.ids];
+      kinds = [...sel.kinds];
+    } else {
+      return;
+    }
+    const decoIds = new Set(ids.filter((_, i) => kinds[i] === "decoration"));
+    const textIds = new Set(ids.filter((_, i) => kinds[i] === "textLayer"));
+    const nextDecos = (cur.decorations ?? []).filter((d) => !decoIds.has(d.id));
+    const nextTexts = (cur.textLayers ?? []).filter((l) => !textIds.has(l.id));
+    const nextCfg: NeonDesignConfig = {
+      ...cur,
+      decorations: nextDecos,
+      textLayers: nextTexts,
+    };
+    if (visibleLayerCount(nextCfg) === 0) {
+      toast.error("Tasarımda en az bir görünür katman olmalı.");
+      return;
+    }
+    commit(nextCfg);
+    setSelection({ kind: "canvas" });
+  }, [selection, commit, setSelection]);
 
 
   const resetDesign = useCallback(() => {
