@@ -24,7 +24,7 @@ import { cn } from "@/lib/utils";
  * plus lock / hide / duplicate / delete actions.
  */
 export function DecorationProperties() {
-  const { config, selection, updateDecoration, removeDecoration, addDecoration } = useDesigner();
+  const { config, selection, updateDecoration, removeDecoration, addDecoration, reorder } = useDesigner();
   if (selection.kind !== "decoration") return null;
   const d = (config.decorations ?? []).find((x) => x.id === selection.id);
   if (!d) {
@@ -49,6 +49,22 @@ export function DecorationProperties() {
         <p className="text-xs text-muted-foreground">
           {d.source === "preset" ? "Hazır ikon" : "Yüklenen SVG"}
         </p>
+      </div>
+
+      {/* Z-order quick actions */}
+      <div className="flex flex-wrap gap-2">
+        <Button variant="outline" size="sm" onClick={() => reorder("decoration", d.id, Infinity)}>
+          ⏫ Üste
+        </Button>
+        <Button variant="outline" size="sm" onClick={() => reorder("decoration", d.id, 1)}>
+          ↑ Bir Öne
+        </Button>
+        <Button variant="outline" size="sm" onClick={() => reorder("decoration", d.id, -1)}>
+          ↓ Bir Geri
+        </Button>
+        <Button variant="outline" size="sm" onClick={() => reorder("decoration", d.id, -Infinity)}>
+          ⏬ En Arkaya
+        </Button>
       </div>
 
       {/* Quick actions */}

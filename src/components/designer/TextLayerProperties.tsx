@@ -20,7 +20,7 @@ import {
 import { cn } from "@/lib/utils";
 
 export function TextLayerProperties() {
-  const { config, selection, updateTextLayer, removeTextLayer, addTextLayer } =
+  const { config, selection, updateTextLayer, removeTextLayer, addTextLayer, reorder } =
     useDesigner();
   if (selection.kind !== "textLayer") return null;
   const l = (config.textLayers ?? []).find((x) => x.id === selection.id);
@@ -203,6 +203,22 @@ export function TextLayerProperties() {
             onValueChange={([v]) => updateTextLayer(l.id, { y: v })}
           />
         </div>
+      </div>
+
+      {/* Z-order quick actions */}
+      <div className="flex flex-wrap gap-2">
+        <Button variant="outline" size="sm" onClick={() => reorder("textLayer", l.id, Infinity)}>
+          ⏫ Üste
+        </Button>
+        <Button variant="outline" size="sm" onClick={() => reorder("textLayer", l.id, 1)}>
+          ↑ Bir Öne
+        </Button>
+        <Button variant="outline" size="sm" onClick={() => reorder("textLayer", l.id, -1)}>
+          ↓ Bir Geri
+        </Button>
+        <Button variant="outline" size="sm" onClick={() => reorder("textLayer", l.id, -Infinity)}>
+          ⏬ En Arkaya
+        </Button>
       </div>
 
       {/* Actions */}

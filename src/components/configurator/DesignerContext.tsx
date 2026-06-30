@@ -5,6 +5,7 @@ import {
   useEffect,
   useMemo,
   useReducer,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -46,19 +47,10 @@ export const defaultConfig: NeonDesignConfig = {
 };
 
 type Action =
-  | { type: "set"; patch: Partial<NeonDesignConfig> }
-  | { type: "replace"; cfg: NeonDesignConfig }
-  | { type: "addDecoration"; decoration: Decoration }
-  | { type: "updateDecoration"; id: string; patch: Partial<Decoration> }
-  | { type: "removeDecoration"; id: string }
-  | { type: "addTextLayer"; layer: TextLayer }
-  | { type: "updateTextLayer"; id: string; patch: Partial<TextLayer> }
-  | { type: "removeTextLayer"; id: string };
+  | { type: "replace"; cfg: NeonDesignConfig };
 
-function reducer(state: NeonDesignConfig, action: Action): NeonDesignConfig {
+function reducer(_state: NeonDesignConfig, action: Action): NeonDesignConfig {
   switch (action.type) {
-    case "set":
-      return { ...state, ...action.patch };
     case "replace":
       return {
         ...defaultConfig,
@@ -66,36 +58,18 @@ function reducer(state: NeonDesignConfig, action: Action): NeonDesignConfig {
         decorations: action.cfg.decorations ?? [],
         textLayers: action.cfg.textLayers ?? [],
       };
-    case "addDecoration":
-      return { ...state, decorations: [...(state.decorations ?? []), action.decoration] };
-    case "updateDecoration":
-      return {
-        ...state,
-        decorations: (state.decorations ?? []).map((d) =>
-          d.id === action.id ? { ...d, ...action.patch } : d,
-        ),
-      };
-    case "removeDecoration":
-      return {
-        ...state,
-        decorations: (state.decorations ?? []).filter((d) => d.id !== action.id),
-      };
-    case "addTextLayer":
-      return { ...state, textLayers: [...(state.textLayers ?? []), action.layer] };
-    case "updateTextLayer":
-      return {
-        ...state,
-        textLayers: (state.textLayers ?? []).map((l) =>
-          l.id === action.id ? { ...l, ...action.patch } : l,
-        ),
-      };
-    case "removeTextLayer":
-      return {
-        ...state,
-        textLayers: (state.textLayers ?? []).filter((l) => l.id !== action.id),
-      };
   }
 }
+
+export type LayerKind = "decoration" | "textLayer";
+
+export type AlignDirection =
+  | "left"
+  | "centerH"
+  | "right"
+  | "top"
+  | "centerV"
+  | "bottom";
 
 interface Ctx {
   config: NeonDesignConfig;
@@ -107,16 +81,45 @@ interface Ctx {
   addTextLayer: (layer: TextLayer) => void;
   updateTextLayer: (id: string, patch: Partial<TextLayer>) => void;
   removeTextLayer: (id: string) => void;
+  /** Reorder layers within their own array. delta: +1 forward, -1 back, +Inf to front, -Inf to back. */
+  reorder: (kind: LayerKind, id: string, delta: number) => void;
+  alignSelected: (dir: AlignDirection) => void;
+  resetDesign: () => void;
+  undo: () => void;
+  redo: () => void;
+  canUndo: boolean;
+  canRedo: boolean;
   selection: EditorSelection;
   setSelection: (sel: EditorSelection) => void;
 }
 
 const DesignerCtx = createContext<Ctx | null>(null);
 
+const MAX_HISTORY = 60;
+
 export function DesignerProvider({ children }: { children: ReactNode }) {
   const [config, dispatch] = useReducer(reducer, defaultConfig);
   const [selection, setSelection] = useState<EditorSelection>({ kind: "text" });
 
+  // history of snapshots
+  const pastRef = useRef<NeonDesignConfig[]>([]);
+  const futureRef = useRef<NeonDesignConfig[]>([]);
+  const configRef = useRef(config);
+  const [historyTick, setHistoryTick] = useState(0);
+
+  useEffect(() => {
+    configRef.current = config;
+  }, [config]);
+
+  const commit = useCallback((next: NeonDesignConfig) => {
+    pastRef.current.push(configRef.current);
+    if (pastRef.current.length > MAX_HISTORY) pastRef.current.shift();
+    futureRef.current = [];
+    dispatch({ type: "replace", cfg: next });
+    setHistoryTick((t) => t + 1);
+  }, []);
+
+  // Load from share URL once
   useEffect(() => {
     if (typeof window === "undefined") return;
     const params = new URLSearchParams(window.location.search);
@@ -124,35 +127,202 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
     if (!d) return;
     const decoded = decodeConfig(d);
     if (decoded) dispatch({ type: "replace", cfg: decoded });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const update = useCallback((patch: Partial<NeonDesignConfig>) => dispatch({ type: "set", patch }), []);
-  const replace = useCallback((cfg: NeonDesignConfig) => dispatch({ type: "replace", cfg }), []);
-  const addDecoration = useCallback((decoration: Decoration) => {
-    dispatch({ type: "addDecoration", decoration });
-    setSelection({ kind: "decoration", id: decoration.id });
-  }, []);
+  const update = useCallback(
+    (patch: Partial<NeonDesignConfig>) => commit({ ...configRef.current, ...patch }),
+    [commit],
+  );
+  const replace = useCallback((cfg: NeonDesignConfig) => commit(cfg), [commit]);
+
+  const addDecoration = useCallback(
+    (decoration: Decoration) => {
+      const next: NeonDesignConfig = {
+        ...configRef.current,
+        decorations: [...(configRef.current.decorations ?? []), decoration],
+      };
+      commit(next);
+      setSelection({ kind: "decoration", id: decoration.id });
+    },
+    [commit],
+  );
+
   const updateDecoration = useCallback(
-    (id: string, patch: Partial<Decoration>) => dispatch({ type: "updateDecoration", id, patch }),
-    [],
+    (id: string, patch: Partial<Decoration>) => {
+      const next = {
+        ...configRef.current,
+        decorations: (configRef.current.decorations ?? []).map((d) =>
+          d.id === id ? { ...d, ...patch } : d,
+        ),
+      };
+      commit(next);
+    },
+    [commit],
   );
-  const removeDecoration = useCallback((id: string) => {
-    dispatch({ type: "removeDecoration", id });
-    setSelection({ kind: "text" });
-  }, []);
-  const addTextLayer = useCallback((layer: TextLayer) => {
-    dispatch({ type: "addTextLayer", layer });
-    setSelection({ kind: "textLayer", id: layer.id });
-  }, []);
+
+  const removeDecoration = useCallback(
+    (id: string) => {
+      commit({
+        ...configRef.current,
+        decorations: (configRef.current.decorations ?? []).filter((d) => d.id !== id),
+      });
+      setSelection({ kind: "text" });
+    },
+    [commit],
+  );
+
+  const addTextLayer = useCallback(
+    (layer: TextLayer) => {
+      commit({
+        ...configRef.current,
+        textLayers: [...(configRef.current.textLayers ?? []), layer],
+      });
+      setSelection({ kind: "textLayer", id: layer.id });
+    },
+    [commit],
+  );
+
   const updateTextLayer = useCallback(
-    (id: string, patch: Partial<TextLayer>) => dispatch({ type: "updateTextLayer", id, patch }),
-    [],
+    (id: string, patch: Partial<TextLayer>) => {
+      commit({
+        ...configRef.current,
+        textLayers: (configRef.current.textLayers ?? []).map((l) =>
+          l.id === id ? { ...l, ...patch } : l,
+        ),
+      });
+    },
+    [commit],
   );
-  const removeTextLayer = useCallback((id: string) => {
-    dispatch({ type: "removeTextLayer", id });
+
+  const removeTextLayer = useCallback(
+    (id: string) => {
+      commit({
+        ...configRef.current,
+        textLayers: (configRef.current.textLayers ?? []).filter((l) => l.id !== id),
+      });
+      setSelection({ kind: "text" });
+    },
+    [commit],
+  );
+
+  const reorder = useCallback(
+    (kind: LayerKind, id: string, delta: number) => {
+      const cur = configRef.current;
+      const key: "decorations" | "textLayers" =
+        kind === "decoration" ? "decorations" : "textLayers";
+      const arr = [...((cur[key] ?? []) as Array<{ id: string }>)];
+      const idx = arr.findIndex((x) => x.id === id);
+      if (idx < 0) return;
+      const [item] = arr.splice(idx, 1);
+      let target: number;
+      if (delta === Infinity) target = arr.length;
+      else if (delta === -Infinity) target = 0;
+      else target = Math.max(0, Math.min(arr.length, idx + delta));
+      arr.splice(target, 0, item);
+      commit({ ...cur, [key]: arr } as NeonDesignConfig);
+    },
+    [commit],
+  );
+
+  const alignSelected = useCallback(
+    (dir: AlignDirection) => {
+      // Align to PAGE (canvas centre). Single-selection model: snap selected layer
+      // to page edges/center using its x/y percent offsets (range -45..45).
+      const EDGE = 40; // a small inset from canvas edge
+      const cur = configRef.current;
+      const sel = selection;
+      const apply = (x: number | null, y: number | null) => {
+        if (sel.kind === "decoration") {
+          updateDecoration(sel.id, {
+            ...(x !== null ? { x } : {}),
+            ...(y !== null ? { y } : {}),
+          });
+        } else if (sel.kind === "textLayer") {
+          updateTextLayer(sel.id, {
+            ...(x !== null ? { x } : {}),
+            ...(y !== null ? { y } : {}),
+          });
+        } else {
+          // main text uses positionX/Y
+          update({
+            ...(x !== null ? { positionX: x } : {}),
+            ...(y !== null ? { positionY: y } : {}),
+          });
+        }
+      };
+      switch (dir) {
+        case "left":
+          apply(-EDGE, null);
+          break;
+        case "centerH":
+          apply(0, null);
+          break;
+        case "right":
+          apply(EDGE, null);
+          break;
+        case "top":
+          apply(null, -EDGE);
+          break;
+        case "centerV":
+          apply(null, 0);
+          break;
+        case "bottom":
+          apply(null, EDGE);
+          break;
+      }
+      // remember the rest of `cur` so eslint doesn't complain
+      void cur;
+    },
+    [selection, update, updateDecoration, updateTextLayer],
+  );
+
+  const resetDesign = useCallback(() => {
+    commit({ ...defaultConfig });
     setSelection({ kind: "text" });
+  }, [commit]);
+
+  const undo = useCallback(() => {
+    const prev = pastRef.current.pop();
+    if (!prev) return;
+    futureRef.current.push(configRef.current);
+    dispatch({ type: "replace", cfg: prev });
+    setHistoryTick((t) => t + 1);
   }, []);
+
+  const redo = useCallback(() => {
+    const next = futureRef.current.pop();
+    if (!next) return;
+    pastRef.current.push(configRef.current);
+    dispatch({ type: "replace", cfg: next });
+    setHistoryTick((t) => t + 1);
+  }, []);
+
+  // Cmd/Ctrl+Z / Shift for redo
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (
+        target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.isContentEditable)
+      )
+        return;
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "z") {
+        e.preventDefault();
+        if (e.shiftKey) redo();
+        else undo();
+      } else if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "y") {
+        e.preventDefault();
+        redo();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [undo, redo]);
+
+  const canUndo = pastRef.current.length > 0;
+  const canRedo = futureRef.current.length > 0;
 
   const value = useMemo<Ctx>(
     () => ({
@@ -165,9 +335,18 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
       addTextLayer,
       updateTextLayer,
       removeTextLayer,
+      reorder,
+      alignSelected,
+      resetDesign,
+      undo,
+      redo,
+      canUndo,
+      canRedo,
       selection,
       setSelection,
     }),
+    // historyTick included so canUndo/canRedo refresh
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       config,
       update,
@@ -178,7 +357,13 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
       addTextLayer,
       updateTextLayer,
       removeTextLayer,
+      reorder,
+      alignSelected,
+      resetDesign,
+      undo,
+      redo,
       selection,
+      historyTick,
     ],
   );
 

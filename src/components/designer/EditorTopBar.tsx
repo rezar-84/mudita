@@ -11,6 +11,8 @@ import {
   PanelRightClose,
   ShoppingCart,
   Share2,
+  Undo2,
+  Redo2,
 } from "lucide-react";
 import { encodeConfig } from "@/lib/share";
 
@@ -30,7 +32,7 @@ export function EditorTopBar({
   onTogglePanel: () => void;
   rightPanelOpen: boolean;
 }) {
-  const { config } = useDesigner();
+  const { config, undo, redo, canUndo, canRedo } = useDesigner();
   const navigate = useNavigate();
   const breakdown = calculatePrice(config);
 
@@ -68,6 +70,30 @@ export function EditorTopBar({
         <p className="hidden truncate text-[11px] text-muted-foreground sm:block">
           {config.text.trim() || "İsimsiz tasarım"} · {config.fontId}
         </p>
+      </div>
+
+      {/* Undo / Redo */}
+      <div className="hidden items-center gap-0.5 rounded-md border border-border p-0.5 sm:flex">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-7 w-7"
+          onClick={undo}
+          disabled={!canUndo}
+          title="Geri Al (Ctrl+Z)"
+        >
+          <Undo2 className="h-3.5 w-3.5" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-7 w-7"
+          onClick={redo}
+          disabled={!canRedo}
+          title="İleri Al (Ctrl+Shift+Z)"
+        >
+          <Redo2 className="h-3.5 w-3.5" />
+        </Button>
       </div>
 
       <div className="hidden items-baseline gap-1.5 px-2 sm:flex">
