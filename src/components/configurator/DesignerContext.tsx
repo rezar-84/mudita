@@ -87,7 +87,7 @@ interface Ctx {
   removeTextLayer: (id: string) => void;
   /** Reorder layers within their own array. delta: +1 forward, -1 back, +Inf to front, -Inf to back. */
   reorder: (kind: LayerKind, id: string, delta: number) => void;
-  alignSelected: (dir: AlignDirection) => void;
+  alignSelected: (dir: AlignDirection, reference?: AlignReference) => void;
   resetDesign: () => void;
   undo: () => void;
   redo: () => void;
