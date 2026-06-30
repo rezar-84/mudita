@@ -24,9 +24,25 @@ import { useT } from "@/lib/i18n";
 
 export function ConfiguratorPanel() {
   const t = useT();
-  const { config, update, addTextLayer, setSelection } = useDesigner();
+  const { config, update, addTextLayer, setSelection, selection, updateTextLayer } = useDesigner();
   const customW = config.customWidth ?? 80;
   const customH = config.customHeight ?? 40;
+
+  // Active text layer: selected layer (if textLayer), else first visible layer, else first layer.
+  const layers = config.textLayers ?? [];
+  const activeLayer =
+    (selection.kind === "textLayer" && layers.find((l) => l.id === selection.id)) ||
+    layers.find((l) => !l.hidden && l.text.trim().length) ||
+    layers[0] ||
+    null;
+
+  const [tab, setTab] = useState<string>("text");
+  useEffect(() => {
+    const onOpenScene = () => setTab("scene");
+    window.addEventListener("mudita:open-scene", onOpenScene);
+    return () => window.removeEventListener("mudita:open-scene", onOpenScene);
+  }, []);
+
 
   // Warnings derived from the visible text layers (no global text anymore).
   const visibleLayers = (config.textLayers ?? []).filter((l) => !l.hidden && l.text.trim().length);
