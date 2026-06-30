@@ -72,6 +72,30 @@ export function EditorTopBar({
         </p>
       </div>
 
+      {/* Undo / Redo */}
+      <div className="hidden items-center gap-0.5 rounded-md border border-border p-0.5 sm:flex">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-7 w-7"
+          onClick={undo}
+          disabled={!canUndo}
+          title="Geri Al (Ctrl+Z)"
+        >
+          <Undo2 className="h-3.5 w-3.5" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-7 w-7"
+          onClick={redo}
+          disabled={!canRedo}
+          title="İleri Al (Ctrl+Shift+Z)"
+        >
+          <Redo2 className="h-3.5 w-3.5" />
+        </Button>
+      </div>
+
       <div className="hidden items-baseline gap-1.5 px-2 sm:flex">
         <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Fiyat</span>
         <span className="text-base font-bold tabular-nums text-foreground">
