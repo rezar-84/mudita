@@ -161,6 +161,19 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  // Transient alignment guideline overlay.
+  const [alignmentGuide, setAlignmentGuide] = useState<AlignmentGuide | null>(null);
+  const alignGuideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const flashAlignmentGuide = useCallback((g: AlignmentGuide) => {
+    setAlignmentGuide(g);
+    if (alignGuideTimerRef.current) clearTimeout(alignGuideTimerRef.current);
+    alignGuideTimerRef.current = setTimeout(() => setAlignmentGuide(null), 900);
+  }, []);
+  useEffect(() => () => {
+    if (alignGuideTimerRef.current) clearTimeout(alignGuideTimerRef.current);
+  }, []);
+
+
 
   // history of snapshots
   const pastRef = useRef<NeonDesignConfig[]>([]);
