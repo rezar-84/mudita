@@ -183,6 +183,7 @@ export type EditorSelection =
 
 export interface PriceLineItem {
   label: string;
+  labelEn?: string;
   amount: number;
 }
 
@@ -192,6 +193,7 @@ export interface PriceBreakdown {
   shipping: number;
   total: number;
   productionDays: string;
+  productionDaysEn?: string;
 }
 
 export interface QuoteRequest {

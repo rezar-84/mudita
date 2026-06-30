@@ -33,37 +33,61 @@ export function calculatePrice(cfg: NeonDesignConfig): PriceBreakdown {
   const area = Math.max(50, width * height);
   const lines = Math.max(1, cfg.text.split("\n").filter(Boolean).length);
 
-  const items: { label: string; amount: number }[] = [];
+  const items: { label: string; labelEn?: string; amount: number }[] = [];
 
   let base = area * BASE_RATE_PER_CM2;
   base = base * font.complexity;
-  items.push({ label: `Taban (${width}×${height} cm)`, amount: Math.round(base) });
+  items.push({
+    label: `Taban (${width}×${height} cm)`,
+    labelEn: `Base (${width}×${height} cm)`,
+    amount: Math.round(base),
+  });
 
   if (lines > 1) {
     const extra = (lines - 1) * EXTRA_LINE_FEE;
-    items.push({ label: `Ek satır (${lines - 1})`, amount: extra });
+    items.push({
+      label: `Ek satır (${lines - 1})`,
+      labelEn: `Extra line (${lines - 1})`,
+      amount: extra,
+    });
   }
 
   if (color.rgb) {
     const add = base * (RGB_MULT - 1);
-    items.push({ label: "RGB / Çok renkli", amount: Math.round(add) });
+    items.push({
+      label: "RGB / Çok renkli",
+      labelEn: "RGB / Multi-color",
+      amount: Math.round(add),
+    });
   }
 
   if (cfg.outdoor) {
     const add = base * (OUTDOOR_MULT - 1);
-    items.push({ label: "Dış mekan / IP korumalı", amount: Math.round(add) });
+    items.push({
+      label: "Dış mekan / IP korumalı",
+      labelEn: "Outdoor / IP-rated",
+      amount: Math.round(add),
+    });
   }
 
   const backboardAdd = base * (backboard.priceMultiplier - 1) + backboard.flatAdd;
   if (backboardAdd > 0) {
-    items.push({ label: `Arka panel: ${backboard.label}`, amount: Math.round(backboardAdd) });
+    items.push({
+      label: `Arka panel: ${backboard.label}`,
+      labelEn: `Backboard: ${backboard.labelEn ?? backboard.label}`,
+      amount: Math.round(backboardAdd),
+    });
   }
 
-  items.push({ label: `Montaj: ${mounting.label}`, amount: mounting.price });
+  items.push({
+    label: `Montaj: ${mounting.label}`,
+    labelEn: `Mounting: ${mounting.labelEn ?? mounting.label}`,
+    amount: mounting.price,
+  });
 
-  if (cfg.dimmer) items.push({ label: "Uzaktan kumandalı dimmer", amount: 300 });
+  if (cfg.dimmer) items.push({ label: "Uzaktan kumandalı dimmer", labelEn: "Remote dimmer", amount: 300 });
   if (ADAPTER_PRICE[cfg.adapter] > 0)
-    items.push({ label: "AB tipi adaptör", amount: ADAPTER_PRICE[cfg.adapter] });
+    items.push({ label: "AB tipi adaptör", labelEn: "EU plug adapter", amount: ADAPTER_PRICE[cfg.adapter] });
 
   // Decoration layers
   const decorations = cfg.decorations ?? [];
@@ -88,7 +112,12 @@ export function calculatePrice(cfg: NeonDesignConfig): PriceBreakdown {
       : presetCount
         ? `Süslemeler (${presetCount} adet)`
         : `SVG süsleme (${uploadCount} adet)`;
-    items.push({ label, amount: Math.round(total) });
+    const labelEn = presetCount && uploadCount
+      ? `Decorations (${presetCount}+${uploadCount} SVG)`
+      : presetCount
+        ? `Decorations (${presetCount})`
+        : `SVG decoration (${uploadCount})`;
+    items.push({ label, labelEn, amount: Math.round(total) });
   }
 
   // Additional text layers (multi-text)
@@ -103,17 +132,16 @@ export function calculatePrice(cfg: NeonDesignConfig): PriceBreakdown {
     }
     items.push({
       label: `Ek metin katmanları (${textLayers.length})`,
+      labelEn: `Extra text layers (${textLayers.length})`,
       amount: Math.round(total),
     });
   }
-
-
 
   const subtotalBeforeUrgent = items.reduce((s, i) => s + i.amount, 0);
   let subtotal = subtotalBeforeUrgent;
   if (cfg.urgent) {
     const add = Math.round(subtotalBeforeUrgent * (URGENT_MULT - 1));
-    items.push({ label: "Acil üretim", amount: add });
+    items.push({ label: "Acil üretim", labelEn: "Rush production", amount: add });
     subtotal += add;
   }
 
@@ -126,6 +154,7 @@ export function calculatePrice(cfg: NeonDesignConfig): PriceBreakdown {
     shipping,
     total,
     productionDays: cfg.urgent ? "3-5 iş günü" : "7-10 iş günü",
+    productionDaysEn: cfg.urgent ? "3-5 business days" : "7-10 business days",
   };
 }
 
