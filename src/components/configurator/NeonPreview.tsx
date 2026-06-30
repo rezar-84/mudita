@@ -15,6 +15,7 @@ import {
 import { MeasurementOverlay } from "./MeasurementOverlay";
 import { DecorationOverlay } from "@/components/designer/DecorationOverlay";
 import { TextLayerOverlay } from "@/components/designer/TextLayerOverlay";
+import { AlignmentGuides } from "@/components/designer/AlignmentGuides";
 
 const BG_CLASS: Record<string, string> = Object.fromEntries(
   BACKGROUNDS.map((b) => [b.id, b.thumb]),
