@@ -3,7 +3,7 @@ import { useDesigner } from "./DesignerContext";
 import { COLORS, FONTS, BACKGROUNDS } from "@/data/options";
 import { getDimensions } from "@/lib/pricing";
 import { cn } from "@/lib/utils";
-import { t } from "@/lib/i18n";
+import { useT } from "@/lib/i18n";
 import {
   Lightbulb,
   LightbulbOff,
@@ -27,13 +27,14 @@ function clamp(v: number, lo: number, hi: number) {
 }
 
 export function NeonPreview() {
+  const t = useT();
   const { config, update, setSelection } = useDesigner();
   const font = FONTS.find((f) => f.id === config.fontId) ?? FONTS[0];
   const color = COLORS.find((c) => c.id === config.colorId) ?? COLORS[0];
   const { width, height } = getDimensions(config);
 
   const isEmpty = config.text.trim().length === 0;
-  const displayText = isEmpty ? "Yazınız" : config.text;
+  const displayText = isEmpty ? t("previewDefaultText") : config.text;
   const lines = displayText.split("\n");
   const longestLine = Math.max(1, ...lines.map((l) => l.length));
   const fontSize = Math.max(28, Math.min(140, (width * 4) / longestLine));
@@ -71,7 +72,6 @@ export function NeonPreview() {
   const dragState = useRef<{ startX: number; startY: number; baseX: number; baseY: number; w: number; h: number } | null>(null);
 
   function onPointerDown(e: React.PointerEvent) {
-    // Click on bare canvas selects the text layer (deselects decoration)
     setSelection({ kind: "text" });
     if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
@@ -204,12 +204,12 @@ export function NeonPreview() {
 
         {(config.showSizeBadge ?? true) && (
           <div className="pointer-events-none absolute bottom-3 left-3 rounded-md bg-black/60 px-2 py-1 text-xs font-medium text-white backdrop-blur">
-            ≈ {width} × {height} cm {realSize && <span className="ml-1 opacity-70">· gerçek boyut</span>}
+            ≈ {width} × {height} cm {realSize && <span className="ml-1 opacity-70">· {t("realSizeLabel")}</span>}
           </div>
         )}
         {config.outdoor && (
           <div className="pointer-events-none absolute bottom-3 right-3 rounded-md bg-neon-cyan/90 px-2 py-1 text-xs font-medium text-black">
-            Dış Mekan · IP65
+            {t("outdoorBadge")}
           </div>
         )}
         {/* LEFT dock — essentials only: light + zoom + center */}
@@ -220,7 +220,7 @@ export function NeonPreview() {
           <button
             type="button"
             aria-label={isLightOn ? t("lightOffAria") : t("lightOnAria")}
-            title={isLightOn ? "Işığı Kapat" : "Işığı Aç"}
+            title={isLightOn ? t("lightOffTitle") : t("lightOnTitle")}
             onClick={() => update({ isLightOn: !isLightOn })}
             className={cn(
               "inline-flex h-8 items-center gap-1.5 rounded-full px-2.5 text-xs font-medium transition",
@@ -233,8 +233,8 @@ export function NeonPreview() {
           <div className="mx-0.5 h-5 w-px bg-white/15" aria-hidden />
           <button
             type="button"
-            aria-label="Uzaklaştır"
-            title="Uzaklaştır"
+            aria-label={t("zoomOut")}
+            title={t("zoomOut")}
             onClick={() => update({ zoom: Math.max(0.6, Math.round(((config.zoom ?? 1) - 0.1) * 10) / 10) })}
             className="inline-flex h-8 w-8 items-center justify-center rounded-full hover:bg-white/15"
           >
@@ -242,8 +242,8 @@ export function NeonPreview() {
           </button>
           <button
             type="button"
-            aria-label="Yakınlaştır"
-            title="Yakınlaştır"
+            aria-label={t("zoomIn")}
+            title={t("zoomIn")}
             onClick={() => update({ zoom: Math.min(1.8, Math.round(((config.zoom ?? 1) + 0.1) * 10) / 10) })}
             className="inline-flex h-8 w-8 items-center justify-center rounded-full hover:bg-white/15"
           >
@@ -252,7 +252,7 @@ export function NeonPreview() {
           <button
             type="button"
             aria-label={t("center")}
-            title="Ortala"
+            title={t("center")}
             onClick={() => update({ positionX: 0, positionY: 0 })}
             className="inline-flex h-8 w-8 items-center justify-center rounded-full hover:bg-white/15"
           >
@@ -267,8 +267,8 @@ export function NeonPreview() {
         >
           <button
             type="button"
-            aria-label="Tam Ekran"
-            title="Tam Ekran"
+            aria-label={t("fullscreen")}
+            title={t("fullscreen")}
             onClick={() => window.dispatchEvent(new CustomEvent("mudita:fullscreen-toggle"))}
             className="inline-flex h-8 w-8 items-center justify-center rounded-full hover:bg-white/15"
           >
@@ -276,11 +276,9 @@ export function NeonPreview() {
           </button>
         </div>
 
-
-
         {isEmpty && (
           <div className="pointer-events-none absolute inset-x-0 bottom-12 text-center text-xs text-white/70">
-            Sağdaki kutuya yazını yaz, önizleme canlansın ✨
+            {t("emptyPreviewHint")}
           </div>
         )}
       </div>
