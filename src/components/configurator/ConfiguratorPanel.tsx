@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useDesigner } from "./DesignerContext";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -13,7 +14,8 @@ import {
 } from "@/data/options";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, RotateCcw, RotateCw, FlipHorizontal2, FlipVertical2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { FontSelector } from "./FontSelector";
 import { PreviewControls } from "./PreviewControls";
 import { BackgroundToggle } from "./BackgroundToggle";
