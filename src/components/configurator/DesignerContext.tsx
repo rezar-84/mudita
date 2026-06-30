@@ -425,17 +425,6 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
     commit({ ...defaultConfig });
     setSelection({ kind: "textLayer", id: BASE_TEXT_ID });
   }, [commit]);
-      }
-      commit(nextCur);
-    },
-    [selection, commit],
-  );
-
-
-  const resetDesign = useCallback(() => {
-    commit({ ...defaultConfig });
-    setSelection({ kind: "text" });
-  }, [commit]);
 
   const undo = useCallback(() => {
     const prev = pastRef.current.pop();
