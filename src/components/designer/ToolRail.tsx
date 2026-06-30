@@ -13,6 +13,10 @@ import {
   Ruler,
   RotateCcw,
   Wand2,
+  Undo2,
+  Redo2,
+  Layers,
+  Trash2,
 } from "lucide-react";
 
 interface Tool {
@@ -21,15 +25,24 @@ interface Tool {
   label: string;
   onClick: () => void;
   active?: boolean;
+  disabled?: boolean;
+  danger?: boolean;
 }
 
-/**
- * Vertical tool rail — Figma/Inkscape style. Icons only on mobile/tablet,
- * tooltips via title attr. Tools dispatch immediate actions or open dialogs.
- */
 export function ToolRail({ onPickDecoration }: { onPickDecoration: () => void }) {
-  const { config, update, selection, setSelection, addDecoration, addTextLayer } =
-    useDesigner();
+  const {
+    config,
+    update,
+    selection,
+    setSelection,
+    addDecoration,
+    addTextLayer,
+    undo,
+    redo,
+    canUndo,
+    canRedo,
+    resetDesign,
+  } = useDesigner();
   const fileRef = useRef<HTMLInputElement>(null);
 
   function handleSelectTool() {
@@ -37,10 +50,17 @@ export function ToolRail({ onPickDecoration }: { onPickDecoration: () => void })
   }
   function handleTextTool() {
     setSelection({ kind: "text" });
-    // Focus textarea inside the right panel if mounted
     setTimeout(() => {
       const el = document.querySelector<HTMLTextAreaElement>("textarea#neon-text");
       el?.focus();
+    }, 50);
+  }
+  function openLayers() {
+    setSelection({ kind: "canvas" });
+    setTimeout(() => {
+      document
+        .getElementById("layers-section")
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 50);
   }
   function handleSvgUpload(file: File) {
@@ -92,9 +112,8 @@ export function ToolRail({ onPickDecoration }: { onPickDecoration: () => void })
       icon: TextCursorInput,
       label: "Yeni Metin Katmanı",
       onClick: () => {
-        const id = `tl-${Date.now()}`;
         addTextLayer({
-          id,
+          id: `tl-${Date.now()}`,
           text: "Yeni Yazı",
           fontId: config.fontId,
           colorId: config.colorId,
@@ -122,10 +141,13 @@ export function ToolRail({ onPickDecoration }: { onPickDecoration: () => void })
       id: "background",
       icon: ImageIcon,
       label: "Arka Plan",
-      onClick: () => {
-        // Switch right panel to scene by selecting canvas
-        setSelection({ kind: "canvas" });
-      },
+      onClick: () => setSelection({ kind: "canvas" }),
+    },
+    {
+      id: "layers",
+      icon: Layers,
+      label: "Katmanlar",
+      onClick: openLayers,
     },
     {
       id: "measure",
@@ -139,25 +161,48 @@ export function ToolRail({ onPickDecoration }: { onPickDecoration: () => void })
       icon: Wand2,
       label: "AI Mockup (yakında)",
       onClick: () =>
-        toast.info(
-          "AI Mockup yakında! Tasarımını gerçek ortam fotoğraflarında önizleyebileceksin.",
-        ),
+        toast.info("AI Mockup yakında! Tasarımını gerçek ortamda önizleyebileceksin."),
     },
     {
-      id: "reset",
+      id: "undo",
+      icon: Undo2,
+      label: "Geri Al (Ctrl+Z)",
+      onClick: undo,
+      disabled: !canUndo,
+    },
+    {
+      id: "redo",
+      icon: Redo2,
+      label: "İleri Al (Ctrl+Shift+Z)",
+      onClick: redo,
+      disabled: !canRedo,
+    },
+    {
+      id: "view-reset",
       icon: RotateCcw,
       label: "Görünümü Sıfırla",
       onClick: () =>
         update({ positionX: 0, positionY: 0, rotationDeg: 0, zoom: 1, brightness: 100 }),
+    },
+    {
+      id: "design-reset",
+      icon: Trash2,
+      label: "Tasarımı Sıfırla",
+      danger: true,
+      onClick: () => {
+        if (typeof window !== "undefined" && window.confirm("Tüm tasarımı sıfırlamak istiyor musun? (Geri al ile geri getirebilirsin)")) {
+          resetDesign();
+          toast.success("Tasarım sıfırlandı");
+        }
+      },
     },
   ];
 
   return (
     <div
       className={cn(
-        // Horizontal scroll strip on mobile (above canvas), vertical column on lg+
         "flex shrink-0 items-center gap-1 border-border bg-card/70 px-1 py-1",
-        "overflow-x-auto border-b lg:overflow-visible",
+        "overflow-x-auto border-b lg:overflow-y-auto lg:overflow-x-visible",
         "lg:w-14 lg:flex-col lg:gap-1 lg:border-b-0 lg:border-r lg:px-0 lg:py-2",
       )}
     >
@@ -166,11 +211,14 @@ export function ToolRail({ onPickDecoration }: { onPickDecoration: () => void })
           key={tool.id}
           type="button"
           onClick={tool.onClick}
+          disabled={tool.disabled}
           title={tool.label}
           aria-label={tool.label}
           className={cn(
             "inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition hover:bg-accent hover:text-foreground",
             tool.active && "bg-accent text-foreground ring-1 ring-inset ring-neon-cyan/40",
+            tool.disabled && "cursor-not-allowed opacity-40 hover:bg-transparent hover:text-muted-foreground",
+            tool.danger && "text-destructive hover:bg-destructive/10 hover:text-destructive",
           )}
         >
           <tool.icon className="h-[18px] w-[18px]" />

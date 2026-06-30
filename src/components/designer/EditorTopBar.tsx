@@ -11,8 +11,11 @@ import {
   PanelRightClose,
   ShoppingCart,
   Share2,
+  Undo2,
+  Redo2,
 } from "lucide-react";
 import { encodeConfig } from "@/lib/share";
+import { useDesigner as useDesignerHook } from "@/components/configurator/DesignerContext";
 
 /**
  * Compact top bar — title on the left, price + primary action on the right.
@@ -31,6 +34,7 @@ export function EditorTopBar({
   rightPanelOpen: boolean;
 }) {
   const { config } = useDesigner();
+  const { undo, redo, canUndo, canRedo } = useDesignerHook();
   const navigate = useNavigate();
   const breakdown = calculatePrice(config);
 
