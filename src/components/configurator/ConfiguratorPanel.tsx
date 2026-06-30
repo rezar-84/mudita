@@ -506,3 +506,33 @@ function ActiveLayerBadge({
     </div>
   );
 }
+
+function NoLayerSelected({
+  layers,
+  onPick,
+}: {
+  layers: { id: string; text: string; hidden?: boolean }[];
+  onPick: (id: string) => void;
+}) {
+  const t = useT();
+  return (
+    <div className="space-y-3 rounded-lg border border-dashed border-border bg-secondary/40 p-4 text-center">
+      <p className="text-sm font-medium">{t("noLayerSelectedTitle")}</p>
+      <p className="text-xs text-muted-foreground">{t("noLayerSelectedHint")}</p>
+      {layers.length > 0 && (
+        <div className="flex flex-wrap justify-center gap-2 pt-1">
+          {layers.map((l, i) => (
+            <button
+              key={l.id}
+              type="button"
+              onClick={() => onPick(l.id)}
+              className="rounded-full border border-border bg-background px-3 py-1 text-xs hover:border-foreground/60"
+            >
+              #{i + 1} {(l.text || "—").slice(0, 16)}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
