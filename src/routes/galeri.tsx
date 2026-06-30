@@ -61,11 +61,16 @@ const ITEMS: Item[] = [
 const CATEGORIES: Category[] = ["Tümü", "Ev", "Ofis", "Kafe", "Düğün", "Bebek Odası", "Logo", "Mağaza"];
 
 function buildDesignUrl(item: Item): string {
+  const baseLayers = defaultConfig.textLayers ?? [];
+  const [baseLayer, ...rest] = baseLayers;
   const cfg: NeonDesignConfig = {
     ...defaultConfig,
-    text: item.text,
-    fontId: item.fontId,
-    colorId: item.colorId,
+    textLayers: baseLayer
+      ? [
+          { ...baseLayer, text: item.text, fontId: item.fontId, colorId: item.colorId },
+          ...rest,
+        ]
+      : baseLayers,
   };
   return `/tasarla?d=${encodeConfig(cfg)}`;
 }
