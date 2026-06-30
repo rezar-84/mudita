@@ -28,6 +28,10 @@ export function DecorationOverlay() {
 
   function onPointerDown(e: React.PointerEvent, id: string) {
     e.stopPropagation();
+    if (e.shiftKey) {
+      toggleSelect("decoration", id);
+      return;
+    }
     setSelection({ kind: "decoration", id });
     const rect = containerRef.current?.getBoundingClientRect();
     if (!rect) return;
@@ -57,6 +61,30 @@ export function DecorationOverlay() {
   }
   function onPointerUp() {
     dragRef.current = null;
+  }
+
+  function toggleSelect(kind: "textLayer" | "decoration", id: string) {
+    const cur = selection;
+    let ids: string[] = [];
+    let kinds: ("textLayer" | "decoration")[] = [];
+    if (cur.kind === "multi") {
+      ids = [...cur.ids];
+      kinds = [...cur.kinds];
+    } else if (cur.kind === "textLayer" || cur.kind === "decoration") {
+      ids = [cur.id];
+      kinds = [cur.kind];
+    }
+    const idx = ids.indexOf(id);
+    if (idx >= 0) {
+      ids.splice(idx, 1);
+      kinds.splice(idx, 1);
+    } else {
+      ids.push(id);
+      kinds.push(kind);
+    }
+    if (ids.length === 0) setSelection({ kind: "text" });
+    else if (ids.length === 1) setSelection({ kind: kinds[0], id: ids[0] });
+    else setSelection({ kind: "multi", ids, kinds });
   }
 
   return (
