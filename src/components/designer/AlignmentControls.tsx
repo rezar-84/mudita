@@ -16,9 +16,18 @@ import {
 } from "lucide-react";
 
 export function AlignmentControls() {
-  const { alignSelected } = useDesigner();
+  const { alignSelected, selection } = useDesigner();
   const t = useT();
   const [ref, setRef] = useState<AlignReference>("page");
+
+  // Only meaningful when something is actually selected.
+  if (
+    selection.kind !== "textLayer" &&
+    selection.kind !== "decoration" &&
+    selection.kind !== "multi"
+  ) {
+    return null;
+  }
 
   function refLabel(r: AlignReference): string {
     switch (r) {
