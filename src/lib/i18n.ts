@@ -105,6 +105,10 @@ const tr: Dict = {
   logoSuitableTip: "Bu yazı tipi logo ve marka tabelaları için uygundur",
   shippingTip: "Türkiye geneli güvenli kargo",
   productAddedToCart: "Ürün sepete eklendi",
+  layerLastWarning: "Tasarımda en az bir görünür katman olmalı.",
+  textTabHelper: "Tüm metinler birer katmandır. Mevcut metni düzenlemek için tuvaldeki yazıya tıkla; yeni metin eklemek için aşağıdaki butonu kullan.",
+  textTabAdd: "Yeni Metin Katmanı Ekle",
+  defaultStyleHint: "Bu seçim, yeni eklenen metin ve süslemelerin başlangıç stili olur.",
 
   // Font badges
   badgePopular: "Popüler",
@@ -490,6 +494,10 @@ const en: Dict = {
   logoSuitableTip: "This font is well-suited for logos and brand signs",
   shippingTip: "Safe shipping across Türkiye",
   productAddedToCart: "Added to cart",
+  layerLastWarning: "Your design must keep at least one visible layer.",
+  textTabHelper: "All text on the canvas lives as a layer. Click a text in the canvas to edit it, or add a new layer below.",
+  textTabAdd: "Add new text layer",
+  defaultStyleHint: "This style is used as the starting point for newly added text and decorations.",
 
   badgePopular: "Popular",
   badgePremium: "Premium",

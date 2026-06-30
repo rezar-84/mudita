@@ -139,8 +139,11 @@ export interface TextLayer {
 }
 
 export interface NeonDesignConfig {
+  /** @deprecated legacy single-text field — kept for share-URL backwards compat. Real text lives in textLayers. */
   text: string;
+  /** Default font for newly added layers. */
   fontId: string;
+  /** Default color for newly added layers. */
   colorId: string;
   sizeId: SizePresetId;
   customWidth?: number;
@@ -157,21 +160,24 @@ export interface NeonDesignConfig {
   customBackgroundName?: string;
   /** Decoration / SVG layers on top of the text. */
   decorations?: Decoration[];
-  /** Additional text layers (multi-text support). */
+  /** Text layers (canonical store for all text on the canvas). */
   textLayers?: TextLayer[];
   // Visual preview-only options (do not affect price)
   brightness?: number;   // 40 – 120, default 100
   flicker?: boolean;     // default true
   zoom?: number;         // 0.6 – 1.4, default 1
   isLightOn?: boolean;   // default true — turns glow off when false
-  positionX?: number;    // -45..45 percent offset, default 0
-  positionY?: number;    // -45..45 percent offset, default 0
-  rotationDeg?: number;  // -15..15 deg, default 0
-  realSizeMode?: boolean;// default false — show a cm ruler
-  showMeasurements?: boolean;    // default false — width/height overlays
-  showBackboardBounds?: boolean; // default false — backboard box overlay
-  showSafeArea?: boolean;        // default false — inner safe-area guide
-  showSizeBadge?: boolean;       // default true — toggles the W×H badge on the canvas
+  /** @deprecated layer positions live on each layer now. */
+  positionX?: number;
+  /** @deprecated */
+  positionY?: number;
+  /** @deprecated */
+  rotationDeg?: number;
+  realSizeMode?: boolean;
+  showMeasurements?: boolean;
+  showBackboardBounds?: boolean;
+  showSafeArea?: boolean;
+  showSizeBadge?: boolean;
 }
 
 /** Editor selection: which object the properties panel edits. */
