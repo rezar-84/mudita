@@ -2,17 +2,15 @@ import { useRef } from "react";
 import { useDesigner } from "@/components/configurator/DesignerContext";
 import { COLORS, FONTS } from "@/data/options";
 import { cn } from "@/lib/utils";
+import { SelectionHandles } from "./SelectionHandles";
 
 function clamp(v: number, lo: number, hi: number) {
   return Math.max(lo, Math.min(hi, v));
 }
 
-/**
- * Renders additional text layers (multi-text) inside the neon preview canvas.
- * Each layer can be clicked to select and dragged to reposition.
- */
 export function TextLayerOverlay() {
-  const { config, selection, setSelection, updateTextLayer } = useDesigner();
+  const { config, selection, setSelection, updateTextLayer, removeTextLayer } =
+    useDesigner();
   const layers = config.textLayers ?? [];
   const containerRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{
@@ -73,7 +71,7 @@ export function TextLayerOverlay() {
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
     >
-      {layers.map((l) => {
+      {layers.map((l, idx) => {
         if (l.hidden) return null;
         const color = COLORS.find((c) => c.id === l.colorId) ?? COLORS[0];
         const font = FONTS.find((f) => f.id === l.fontId) ?? FONTS[0];
@@ -111,15 +109,21 @@ export function TextLayerOverlay() {
               whiteSpace: "pre",
               lineHeight: 1.05,
               opacity: isLightOn ? Math.min(1, 0.55 + brightness * 0.5) : 0.6,
+              zIndex: 30 + idx,
             }}
             aria-label={l.text || "Metin katmanı"}
           >
             {l.text || "Yazı"}
-            {isSelected && (
-              <div
-                aria-hidden
-                className="pointer-events-none absolute -inset-2 rounded-md border border-dashed border-neon-cyan/80"
-                style={{ filter: "none", textShadow: "none" }}
+            {isSelected && !l.locked && (
+              <SelectionHandles
+                canvasRef={containerRef}
+                layerXPct={l.x}
+                layerYPct={l.y}
+                sizePct={l.sizePct}
+                rotation={l.rotation}
+                onClose={() => removeTextLayer(l.id)}
+                onResize={(s) => updateTextLayer(l.id, { sizePct: Math.min(40, s) })}
+                onRotate={(r) => updateTextLayer(l.id, { rotation: r })}
               />
             )}
           </div>

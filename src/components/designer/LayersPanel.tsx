@@ -1,0 +1,195 @@
+import { useDesigner } from "@/components/configurator/DesignerContext";
+import { Button } from "@/components/ui/button";
+import {
+  ArrowUp,
+  ArrowDown,
+  ArrowUpToLine,
+  ArrowDownToLine,
+  Eye,
+  EyeOff,
+  Lock,
+  Unlock,
+  Trash2,
+  Type,
+  Sparkles,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+
+/**
+ * Compact layer list. Top of the list = front-most (rendered last).
+ * Z-order is array order: index 0 is back, last is front. We display in
+ * reverse so "top of list" feels natural.
+ */
+export function LayersPanel() {
+  const {
+    config,
+    selection,
+    setSelection,
+    reorder,
+    updateDecoration,
+    updateTextLayer,
+    removeDecoration,
+    removeTextLayer,
+  } = useDesigner();
+
+  const decos = config.decorations ?? [];
+  const texts = config.textLayers ?? [];
+
+  type Item = {
+    id: string;
+    kind: "decoration" | "textLayer";
+    label: string;
+    hidden?: boolean;
+    locked?: boolean;
+  };
+
+  const items: Item[] = [
+    ...texts.map<Item>((l) => ({
+      id: l.id,
+      kind: "textLayer",
+      label: l.text?.trim() || "Metin katmanı",
+      hidden: l.hidden,
+      locked: l.locked,
+    })),
+    ...decos.map<Item>((d) => ({
+      id: d.id,
+      kind: "decoration",
+      label: d.label || (d.source === "upload" ? "Yüklenen SVG" : "Süsleme"),
+      hidden: d.hidden,
+      locked: d.locked,
+    })),
+  ].reverse();
+
+  if (items.length === 0) {
+    return (
+      <div className="rounded-lg border border-dashed border-border p-3 text-xs text-muted-foreground">
+        Henüz ek katman yok. Sol araçlardan yeni metin katmanı veya süsleme ekleyebilirsin.
+      </div>
+    );
+  }
+
+  function isSelected(it: Item) {
+    return (
+      (it.kind === "decoration" && selection.kind === "decoration" && selection.id === it.id) ||
+      (it.kind === "textLayer" && selection.kind === "textLayer" && selection.id === it.id)
+    );
+  }
+
+  function setVisible(it: Item, hidden: boolean) {
+    if (it.kind === "decoration") updateDecoration(it.id, { hidden });
+    else updateTextLayer(it.id, { hidden });
+  }
+  function setLocked(it: Item, locked: boolean) {
+    if (it.kind === "decoration") updateDecoration(it.id, { locked });
+    else updateTextLayer(it.id, { locked });
+  }
+  function remove(it: Item) {
+    if (it.kind === "decoration") removeDecoration(it.id);
+    else removeTextLayer(it.id);
+  }
+
+  return (
+    <div className="space-y-2">
+      <p className="text-xs uppercase tracking-wider text-muted-foreground">
+        Katmanlar ({items.length})
+      </p>
+      <ul className="space-y-1.5">
+        {items.map((it) => {
+          const sel = isSelected(it);
+          const Icon = it.kind === "textLayer" ? Type : Sparkles;
+          return (
+            <li
+              key={`${it.kind}-${it.id}`}
+              className={cn(
+                "group flex items-center gap-1 rounded-md border bg-card px-2 py-1.5 text-sm transition",
+                sel ? "border-neon-cyan/60 ring-1 ring-neon-cyan/30" : "border-border",
+              )}
+            >
+              <button
+                type="button"
+                onClick={() =>
+                  setSelection({
+                    kind: it.kind,
+                    id: it.id,
+                  } as Parameters<typeof setSelection>[0])
+                }
+                className="flex min-w-0 flex-1 items-center gap-2 text-left"
+              >
+                <Icon className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                <span className="truncate">{it.label}</span>
+              </button>
+
+              {/* Z-order */}
+              <div className="flex shrink-0 items-center">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7"
+                  title="Üste taşı"
+                  onClick={() => reorder(it.kind, it.id, Infinity)}
+                >
+                  <ArrowUpToLine className="h-3.5 w-3.5" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7"
+                  title="Bir öne"
+                  onClick={() => reorder(it.kind, it.id, 1)}
+                >
+                  <ArrowUp className="h-3.5 w-3.5" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7"
+                  title="Bir geri"
+                  onClick={() => reorder(it.kind, it.id, -1)}
+                >
+                  <ArrowDown className="h-3.5 w-3.5" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7"
+                  title="En arkaya"
+                  onClick={() => reorder(it.kind, it.id, -Infinity)}
+                >
+                  <ArrowDownToLine className="h-3.5 w-3.5" />
+                </Button>
+              </div>
+
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7"
+                title={it.hidden ? "Göster" : "Gizle"}
+                onClick={() => setVisible(it, !it.hidden)}
+              >
+                {it.hidden ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7"
+                title={it.locked ? "Kilidi aç" : "Kilitle"}
+                onClick={() => setLocked(it, !it.locked)}
+              >
+                {it.locked ? <Lock className="h-3.5 w-3.5" /> : <Unlock className="h-3.5 w-3.5" />}
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 text-destructive hover:text-destructive"
+                title="Sil"
+                onClick={() => remove(it)}
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </Button>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}

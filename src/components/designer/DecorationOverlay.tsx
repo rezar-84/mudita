@@ -3,18 +3,15 @@ import { useDesigner } from "@/components/configurator/DesignerContext";
 import { COLORS } from "@/data/options";
 import { DECORATIONS } from "@/data/decorations";
 import { cn } from "@/lib/utils";
+import { SelectionHandles } from "./SelectionHandles";
 
 function clamp(v: number, lo: number, hi: number) {
   return Math.max(lo, Math.min(hi, v));
 }
 
-/**
- * Renders decoration layers inside the neon preview canvas. Each layer can be
- * clicked to select and dragged to reposition. Selected layer gets a dashed
- * outline and a delete handle.
- */
 export function DecorationOverlay() {
-  const { config, selection, setSelection, updateDecoration } = useDesigner();
+  const { config, selection, setSelection, updateDecoration, removeDecoration } =
+    useDesigner();
   const decorations = config.decorations ?? [];
   const containerRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{
@@ -70,7 +67,7 @@ export function DecorationOverlay() {
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
     >
-      {decorations.map((d) => {
+      {decorations.map((d, idx) => {
         if (d.hidden) return null;
         const color = COLORS.find((c) => c.id === d.colorId) ?? COLORS[0];
         const preset = d.source === "preset" ? DECORATIONS.find((p) => p.id === d.presetId) : null;
@@ -101,6 +98,7 @@ export function DecorationOverlay() {
               filter: glowFilter,
               opacity: isLightOn ? Math.min(1, 0.65 + brightness * 0.4) : 0.6,
               transition: dragRef.current?.id === d.id ? "none" : "filter 150ms ease",
+              zIndex: 10 + idx,
             }}
             aria-label={d.label || "Süsleme"}
           >
@@ -124,12 +122,16 @@ export function DecorationOverlay() {
               />
             ) : null}
 
-            {/* Selection outline */}
-            {isSelected && (
-              <div
-                aria-hidden
-                className="pointer-events-none absolute -inset-2 rounded-md border border-dashed border-neon-cyan/80"
-                style={{ filter: "none" }}
+            {isSelected && !d.locked && (
+              <SelectionHandles
+                canvasRef={containerRef}
+                layerXPct={d.x}
+                layerYPct={d.y}
+                sizePct={d.sizePct}
+                rotation={d.rotation}
+                onClose={() => removeDecoration(d.id)}
+                onResize={(s) => updateDecoration(d.id, { sizePct: s })}
+                onRotate={(r) => updateDecoration(d.id, { rotation: r })}
               />
             )}
           </div>
