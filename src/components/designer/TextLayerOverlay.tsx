@@ -104,7 +104,9 @@ export function TextLayerOverlay() {
         if (l.hidden) return null;
         const color = COLORS.find((c) => c.id === l.colorId) ?? COLORS[0];
         const font = FONTS.find((f) => f.id === l.fontId) ?? FONTS[0];
-        const isSelected = selection.kind === "textLayer" && selection.id === l.id;
+        const isMulti = selection.kind === "multi" && selection.ids.includes(l.id);
+        const isSingleSelected = selection.kind === "textLayer" && selection.id === l.id;
+        const isSelected = isSingleSelected;
         const g = (px: number) => Math.round(px * brightness);
         const textShadow = isLightOn
           ? [
