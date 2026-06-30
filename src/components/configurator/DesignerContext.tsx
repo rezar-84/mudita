@@ -244,56 +244,116 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
   );
 
   const alignSelected = useCallback(
-    (dir: AlignDirection) => {
-      // Align to PAGE (canvas centre). Single-selection model: snap selected layer
-      // to page edges/center using its x/y percent offsets (range -45..45).
-      const EDGE = 40; // a small inset from canvas edge
+    (dir: AlignDirection, reference: AlignReference = "page") => {
+      // Resolve a layer (selection -> bounds in percent space). Main text has no
+      // intrinsic size, so its half-extents are 0; layers use sizePct/2.
+      const PAGE_HALF = 45; // canvas usable extent in % offset units
       const cur = configRef.current;
-      const sel = selection;
-      const apply = (x: number | null, y: number | null) => {
+
+      type Bounds = { cx: number; cy: number; half: number } | null;
+      const boundsOf = (sel: EditorSelection): Bounds => {
         if (sel.kind === "decoration") {
-          updateDecoration(sel.id, {
-            ...(x !== null ? { x } : {}),
-            ...(y !== null ? { y } : {}),
-          });
-        } else if (sel.kind === "textLayer") {
-          updateTextLayer(sel.id, {
-            ...(x !== null ? { x } : {}),
-            ...(y !== null ? { y } : {}),
-          });
-        } else {
-          // main text uses positionX/Y
-          update({
-            ...(x !== null ? { positionX: x } : {}),
-            ...(y !== null ? { positionY: y } : {}),
-          });
+          const d = (cur.decorations ?? []).find((x) => x.id === sel.id);
+          if (!d) return null;
+          return { cx: d.x, cy: d.y, half: d.sizePct / 2 };
         }
+        if (sel.kind === "textLayer") {
+          const l = (cur.textLayers ?? []).find((x) => x.id === sel.id);
+          if (!l) return null;
+          return { cx: l.x, cy: l.y, half: l.sizePct / 2 };
+        }
+        if (sel.kind === "text") {
+          return { cx: cur.positionX ?? 0, cy: cur.positionY ?? 0, half: 0 };
+        }
+        return null;
       };
+
+      const sel = selection;
+      const selBounds = boundsOf(sel);
+      if (!selBounds) return;
+
+      // Resolve reference bounds.
+      let refBounds: Bounds = null;
+      if (reference === "page") {
+        refBounds = { cx: 0, cy: 0, half: PAGE_HALF };
+      } else if (reference === "biggest") {
+        const all: Array<{ sel: EditorSelection; size: number }> = [
+          ...(cur.decorations ?? []).map((d) => ({
+            sel: { kind: "decoration", id: d.id } as EditorSelection,
+            size: d.sizePct,
+          })),
+          ...(cur.textLayers ?? []).map((l) => ({
+            sel: { kind: "textLayer", id: l.id } as EditorSelection,
+            size: l.sizePct,
+          })),
+        ].filter((x) => {
+          // Exclude the currently selected layer so alignment is meaningful.
+          if (sel.kind === x.sel.kind && "id" in sel && "id" in x.sel)
+            return sel.id !== x.sel.id;
+          return true;
+        });
+        if (!all.length) refBounds = { cx: 0, cy: 0, half: PAGE_HALF };
+        else {
+          all.sort((a, b) => b.size - a.size);
+          refBounds = boundsOf(all[0].sel);
+        }
+      } else {
+        // first / last selected (excluding current selection)
+        const hist = selHistoryRef.current.filter((s) => {
+          if (s.kind !== sel.kind) return true;
+          if ("id" in s && "id" in sel) return s.id !== sel.id;
+          return false;
+        });
+        const target = reference === "first" ? hist[0] : hist[hist.length - 1];
+        refBounds = target ? boundsOf(target) : null;
+      }
+      // Fallback to page when reference is unavailable.
+      if (!refBounds) refBounds = { cx: 0, cy: 0, half: PAGE_HALF };
+
+      const clamp = (n: number) => Math.max(-PAGE_HALF, Math.min(PAGE_HALF, n));
+      let nextX: number | null = null;
+      let nextY: number | null = null;
       switch (dir) {
         case "left":
-          apply(-EDGE, null);
+          nextX = clamp(refBounds.cx - refBounds.half + selBounds.half);
           break;
         case "centerH":
-          apply(0, null);
+          nextX = clamp(refBounds.cx);
           break;
         case "right":
-          apply(EDGE, null);
+          nextX = clamp(refBounds.cx + refBounds.half - selBounds.half);
           break;
         case "top":
-          apply(null, -EDGE);
+          nextY = clamp(refBounds.cy - refBounds.half + selBounds.half);
           break;
         case "centerV":
-          apply(null, 0);
+          nextY = clamp(refBounds.cy);
           break;
         case "bottom":
-          apply(null, EDGE);
+          nextY = clamp(refBounds.cy + refBounds.half - selBounds.half);
           break;
       }
-      // remember the rest of `cur` so eslint doesn't complain
-      void cur;
+
+      if (sel.kind === "decoration") {
+        updateDecoration(sel.id, {
+          ...(nextX !== null ? { x: nextX } : {}),
+          ...(nextY !== null ? { y: nextY } : {}),
+        });
+      } else if (sel.kind === "textLayer") {
+        updateTextLayer(sel.id, {
+          ...(nextX !== null ? { x: nextX } : {}),
+          ...(nextY !== null ? { y: nextY } : {}),
+        });
+      } else if (sel.kind === "text") {
+        update({
+          ...(nextX !== null ? { positionX: nextX } : {}),
+          ...(nextY !== null ? { positionY: nextY } : {}),
+        });
+      }
     },
     [selection, update, updateDecoration, updateTextLayer],
   );
+
 
   const resetDesign = useCallback(() => {
     commit({ ...defaultConfig });
