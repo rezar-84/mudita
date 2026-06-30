@@ -86,7 +86,7 @@ export function ConfiguratorPanel() {
       )}
 
 
-      <Tabs defaultValue="text" className="w-full">
+      <Tabs value={tab} onValueChange={setTab} className="w-full">
         <TabsList className="grid w-full grid-cols-5 gap-1">
           <TabsTrigger value="text">{t("tabText")}</TabsTrigger>
           <TabsTrigger value="style">{t("tabStyle")}</TabsTrigger>
@@ -95,11 +95,82 @@ export function ConfiguratorPanel() {
           <TabsTrigger value="extras">{t("tabExtras")}</TabsTrigger>
         </TabsList>
 
-        {/* TEXT — text now lives entirely on layers */}
-        <TabsContent value="text" className="space-y-4 pt-4">
-          <p className="rounded-md border border-dashed border-border bg-secondary/40 p-3 text-xs leading-relaxed text-muted-foreground">
-            {t("textTabHelper")}
-          </p>
+        {/* TEXT — edits the active layer directly */}
+        <TabsContent value="text" className="space-y-5 pt-4">
+          {activeLayer && (
+            <ActiveLayerBadge
+              label={activeLayer.text || t("textTabAdd")}
+              hint={t("editingLayerHint")}
+              editing={t("editingLayer")}
+              layers={layers}
+              activeId={activeLayer.id}
+              onPick={(id) => setSelection({ kind: "textLayer", id })}
+            />
+          )}
+
+          {activeLayer && (
+            <>
+              <div>
+                <Label className="mb-2 block text-sm font-medium">{t("enterText")}</Label>
+                <Textarea
+                  rows={2}
+                  maxLength={60}
+                  value={activeLayer.text}
+                  placeholder={t("textPlaceholder")}
+                  onChange={(e) => updateTextLayer(activeLayer.id, { text: e.target.value })}
+                  style={{ fontFamily: FONTS.find((f) => f.id === activeLayer.fontId)?.family }}
+                  className="text-xl"
+                />
+                <p className="mt-1 text-[11px] text-muted-foreground">
+                  {activeLayer.text.length} {t("textCharsHint")}
+                </p>
+              </div>
+
+              <div>
+                <Label className="mb-2 flex items-center justify-between text-sm">
+                  {t("layerSize")} <span className="text-muted-foreground">{activeLayer.sizePct}%</span>
+                </Label>
+                <Slider
+                  min={6}
+                  max={40}
+                  step={1}
+                  value={[activeLayer.sizePct]}
+                  onValueChange={([v]) => updateTextLayer(activeLayer.id, { sizePct: v })}
+                />
+              </div>
+
+              <div>
+                <Label className="mb-2 flex items-center justify-between text-sm">
+                  {t("rotation")} <span className="text-muted-foreground">{activeLayer.rotation}°</span>
+                </Label>
+                <Slider
+                  min={-180}
+                  max={180}
+                  step={5}
+                  value={[activeLayer.rotation]}
+                  onValueChange={([v]) => updateTextLayer(activeLayer.id, { rotation: v })}
+                />
+                <div className="mt-2 flex flex-wrap gap-2">
+                  <Button variant="outline" size="sm" onClick={() => updateTextLayer(activeLayer.id, { rotation: ((activeLayer.rotation - 90 + 540) % 360) - 180 })}>
+                    <RotateCcw className="mr-1 h-3.5 w-3.5" /> -90°
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={() => updateTextLayer(activeLayer.id, { rotation: ((activeLayer.rotation + 90 + 540) % 360) - 180 })}>
+                    <RotateCw className="mr-1 h-3.5 w-3.5" /> +90°
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={() => updateTextLayer(activeLayer.id, { rotation: 0 })}>
+                    0°
+                  </Button>
+                  <Button variant={activeLayer.flipX ? "default" : "outline"} size="sm" onClick={() => updateTextLayer(activeLayer.id, { flipX: !activeLayer.flipX })}>
+                    <FlipHorizontal2 className="mr-1 h-3.5 w-3.5" /> {t("horizontal")}
+                  </Button>
+                  <Button variant={activeLayer.flipY ? "default" : "outline"} size="sm" onClick={() => updateTextLayer(activeLayer.id, { flipY: !activeLayer.flipY })}>
+                    <FlipVertical2 className="mr-1 h-3.5 w-3.5" /> {t("vertical")}
+                  </Button>
+                </div>
+              </div>
+            </>
+          )}
+
           <button
             type="button"
             onClick={() => {
@@ -107,8 +178,8 @@ export function ConfiguratorPanel() {
               addTextLayer({
                 id,
                 text: t("toolNewTextDefault"),
-                fontId: config.fontId,
-                colorId: config.colorId,
+                fontId: activeLayer?.fontId ?? config.fontId,
+                colorId: activeLayer?.colorId ?? config.colorId,
                 sizePct: 16,
                 x: 0,
                 y: 12,
@@ -122,41 +193,67 @@ export function ConfiguratorPanel() {
           </button>
         </TabsContent>
 
-        {/* STYLE: default font + color for NEW layers */}
+        {/* STYLE — font + color for the active layer */}
         <TabsContent value="style" className="space-y-6 pt-4">
-          <p className="text-[11px] text-muted-foreground">{t("defaultStyleHint")}</p>
+          {activeLayer && (
+            <ActiveLayerBadge
+              label={activeLayer.text || t("textTabAdd")}
+              hint={t("editingLayerHint")}
+              editing={t("editingLayer")}
+              layers={layers}
+              activeId={activeLayer.id}
+              onPick={(id) => setSelection({ kind: "textLayer", id })}
+            />
+          )}
+
           <div>
             <Label className="mb-2 block text-sm font-medium">{t("fontType")}</Label>
-            <FontSelector />
+            <FontSelector
+              value={activeLayer?.fontId}
+              onChange={(id) =>
+                activeLayer
+                  ? updateTextLayer(activeLayer.id, { fontId: id })
+                  : update({ fontId: id })
+              }
+            />
           </div>
 
           <div>
             <Label className="mb-2 block text-sm font-medium">{t("pickColor")}</Label>
             <div className="grid grid-cols-5 gap-2 sm:grid-cols-10">
-              {COLORS.map((c) => (
-                <button
-                  key={c.id}
-                  type="button"
-                  title={c.label}
-                  onClick={() => update({ colorId: c.id })}
-                  className={cn(
-                    "h-10 rounded-full border-2 transition",
-                    config.colorId === c.id ? "border-foreground scale-110" : "border-border",
-                  )}
-                  style={{
-                    background: c.rgb
-                      ? "conic-gradient(red, orange, yellow, lime, cyan, blue, magenta, red)"
-                      : c.hex,
-                    boxShadow: `0 0 12px ${c.glow}`,
-                  }}
-                />
-              ))}
+              {COLORS.map((c) => {
+                const selected = activeLayer ? activeLayer.colorId === c.id : config.colorId === c.id;
+                return (
+                  <button
+                    key={c.id}
+                    type="button"
+                    title={c.label}
+                    onClick={() =>
+                      activeLayer
+                        ? updateTextLayer(activeLayer.id, { colorId: c.id })
+                        : update({ colorId: c.id })
+                    }
+                    className={cn(
+                      "h-10 rounded-full border-2 transition",
+                      selected ? "border-foreground scale-110" : "border-border",
+                    )}
+                    style={{
+                      background: c.rgb
+                        ? "conic-gradient(red, orange, yellow, lime, cyan, blue, magenta, red)"
+                        : c.hex,
+                      boxShadow: `0 0 12px ${c.glow}`,
+                    }}
+                  />
+                );
+              })}
             </div>
             <p className="mt-2 text-xs text-muted-foreground">
-              {t("selectedColor")}: {COLORS.find((c) => c.id === config.colorId)?.label}
+              {t("selectedColor")}:{" "}
+              {COLORS.find((c) => c.id === (activeLayer?.colorId ?? config.colorId))?.label}
             </p>
           </div>
         </TabsContent>
+
 
         {/* SIZE */}
         <TabsContent value="size" className="space-y-5 pt-4">
