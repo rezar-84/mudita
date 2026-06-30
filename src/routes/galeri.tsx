@@ -153,7 +153,7 @@ function GalleryPage() {
           to="/tasarla"
           className="inline-block rounded-full bg-gradient-neon px-6 py-3 text-sm font-semibold text-white shadow-glow"
         >
-          Sıfırdan Tasarla
+          {t("designFromScratch")}
         </Link>
       </div>
     </div>
