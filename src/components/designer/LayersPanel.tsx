@@ -84,7 +84,7 @@ export function LayersPanel() {
           const Icon = it.kind === "textLayer" ? Type : Sparkles;
           return (
             <li key={`${it.kind}-${it.id}`} className={cn("group flex items-center gap-1 rounded-md border bg-card px-2 py-1.5 text-sm transition", sel ? "border-neon-cyan/60 ring-1 ring-neon-cyan/30" : "border-border")}>
-              <button type="button" onClick={() => setSelection({ kind: it.kind, id: it.id } as Parameters<typeof setSelection>[0])} className="flex min-w-0 flex-1 items-center gap-2 text-left">
+              <button type="button" onClick={(e) => pick(it, e)} className="flex min-w-0 flex-1 items-center gap-2 text-left">
                 <Icon className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                 <span className="truncate">{it.label}</span>
               </button>
