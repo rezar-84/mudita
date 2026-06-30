@@ -111,6 +111,10 @@ const tr: Dict = {
   defaultStyleHint: "Bu seçim, yeni eklenen metin ve süslemelerin başlangıç stili olur.",
   editingLayer: "Düzenleniyor",
   editingLayerHint: "Başka bir katmanı düzenlemek için tuvalde üzerine tıkla.",
+  noLayerSelectedTitle: "Düzenlemek için bir metin seç",
+  noLayerSelectedHint: "Tuvalde bir yazıya tıkla ya da aşağıdaki listeden seç.",
+  useThisDesign: "Benzerini Tasarla",
+  designFromScratch: "Sıfırdan Tasarla",
 
   // Font badges
   badgePopular: "Popüler",
@@ -501,7 +505,11 @@ const en: Dict = {
   textTabAdd: "Add new text layer",
   defaultStyleHint: "This style is used as the starting point for newly added text and decorations.",
   editingLayer: "Editing",
-  editingLayerHint: "Click a different layer in the canvas to edit it.",
+  editingLayerHint: "Click a different layer on the canvas to edit it.",
+  noLayerSelectedTitle: "Select a text to edit",
+  noLayerSelectedHint: "Click a text in the canvas or pick one from the list below.",
+  useThisDesign: "Design Similar",
+  designFromScratch: "Design from Scratch",
 
   badgePopular: "Popular",
   badgePremium: "Premium",

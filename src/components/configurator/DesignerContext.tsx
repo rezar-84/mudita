@@ -76,6 +76,21 @@ function migrateConfig(cfg: NeonDesignConfig): NeonDesignConfig {
       y: cfg.positionY ?? 0,
       rotation: cfg.rotationDeg ?? 0,
     });
+  } else if (hasBase && legacyText) {
+    // Old share/gallery links carry text/fontId/colorId at top level;
+    // apply them onto the base text layer so the design renders correctly.
+    const idx = layers.findIndex((l) => l.id === BASE_TEXT_ID);
+    if (idx >= 0) {
+      layers[idx] = {
+        ...layers[idx],
+        text: cfg.text ?? layers[idx].text,
+        fontId: cfg.fontId ?? layers[idx].fontId,
+        colorId: cfg.colorId ?? layers[idx].colorId,
+        x: cfg.positionX ?? layers[idx].x,
+        y: cfg.positionY ?? layers[idx].y,
+        rotation: cfg.rotationDeg ?? layers[idx].rotation,
+      };
+    }
   }
   return {
     ...defaultConfig,

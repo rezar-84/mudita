@@ -61,11 +61,16 @@ const ITEMS: Item[] = [
 const CATEGORIES: Category[] = ["Tümü", "Ev", "Ofis", "Kafe", "Düğün", "Bebek Odası", "Logo", "Mağaza"];
 
 function buildDesignUrl(item: Item): string {
+  const baseLayers = defaultConfig.textLayers ?? [];
+  const [baseLayer, ...rest] = baseLayers;
   const cfg: NeonDesignConfig = {
     ...defaultConfig,
-    text: item.text,
-    fontId: item.fontId,
-    colorId: item.colorId,
+    textLayers: baseLayer
+      ? [
+          { ...baseLayer, text: item.text, fontId: item.fontId, colorId: item.colorId },
+          ...rest,
+        ]
+      : baseLayers,
   };
   return `/tasarla?d=${encodeConfig(cfg)}`;
 }
@@ -135,7 +140,7 @@ function GalleryPage() {
                 href={buildDesignUrl(it)}
                 className="mt-1 inline-flex w-full items-center justify-center rounded-full bg-gradient-neon px-4 py-2 text-xs font-semibold text-white shadow-glow"
               >
-                Benzerini Tasarla
+                {t("useThisDesign")}
               </a>
 
             </div>
@@ -148,7 +153,7 @@ function GalleryPage() {
           to="/tasarla"
           className="inline-block rounded-full bg-gradient-neon px-6 py-3 text-sm font-semibold text-white shadow-glow"
         >
-          Sıfırdan Tasarla
+          {t("designFromScratch")}
         </Link>
       </div>
     </div>

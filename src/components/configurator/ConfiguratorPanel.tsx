@@ -28,13 +28,13 @@ export function ConfiguratorPanel() {
   const customW = config.customWidth ?? 80;
   const customH = config.customHeight ?? 40;
 
-  // Active text layer: selected layer (if textLayer), else first visible layer, else first layer.
+  // Active text layer is STRICTLY the selected layer. No silent fallback —
+  // when nothing is selected we show an empty state asking the user to pick one.
   const layers = config.textLayers ?? [];
   const activeLayer =
-    (selection.kind === "textLayer" && layers.find((l) => l.id === selection.id)) ||
-    layers.find((l) => !l.hidden && l.text.trim().length) ||
-    layers[0] ||
-    null;
+    selection.kind === "textLayer"
+      ? layers.find((l) => l.id === selection.id) ?? null
+      : null;
 
   const [tab, setTab] = useState<string>("text");
   useEffect(() => {
@@ -42,6 +42,15 @@ export function ConfiguratorPanel() {
     window.addEventListener("mudita:open-scene", onOpenScene);
     return () => window.removeEventListener("mudita:open-scene", onOpenScene);
   }, []);
+
+  // When user clicks a text on the canvas, jump to the Text tab so the
+  // textarea / fonts / colors immediately reflect that layer.
+  useEffect(() => {
+    if (selection.kind === "textLayer" && tab !== "text" && tab !== "style") {
+      setTab("text");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selection]);
 
 
   // Warnings derived from the visible text layers (no global text anymore).
@@ -95,21 +104,26 @@ export function ConfiguratorPanel() {
           <TabsTrigger value="extras">{t("tabExtras")}</TabsTrigger>
         </TabsList>
 
-        {/* TEXT — edits the active layer directly */}
+        {/* TEXT — edits the selected layer directly */}
         <TabsContent value="text" className="space-y-5 pt-4">
-          {activeLayer && (
-            <ActiveLayerBadge
-              label={activeLayer.text || t("textTabAdd")}
-              hint={t("editingLayerHint")}
-              editing={t("editingLayer")}
+          {!activeLayer && (
+            <NoLayerSelected
               layers={layers}
-              activeId={activeLayer.id}
               onPick={(id) => setSelection({ kind: "textLayer", id })}
             />
           )}
 
           {activeLayer && (
             <>
+              <ActiveLayerBadge
+                label={activeLayer.text || t("textTabAdd")}
+                hint={t("editingLayerHint")}
+                editing={t("editingLayer")}
+                layers={layers}
+                activeId={activeLayer.id}
+                onPick={(id) => setSelection({ kind: "textLayer", id })}
+              />
+
               <div>
                 <Label className="mb-2 block text-sm font-medium">{t("enterText")}</Label>
                 <Textarea
@@ -193,66 +207,69 @@ export function ConfiguratorPanel() {
           </button>
         </TabsContent>
 
-        {/* STYLE — font + color for the active layer */}
+        {/* STYLE — font + color for the selected layer */}
         <TabsContent value="style" className="space-y-6 pt-4">
-          {activeLayer && (
-            <ActiveLayerBadge
-              label={activeLayer.text || t("textTabAdd")}
-              hint={t("editingLayerHint")}
-              editing={t("editingLayer")}
+          {!activeLayer && (
+            <NoLayerSelected
               layers={layers}
-              activeId={activeLayer.id}
               onPick={(id) => setSelection({ kind: "textLayer", id })}
             />
           )}
 
-          <div>
-            <Label className="mb-2 block text-sm font-medium">{t("fontType")}</Label>
-            <FontSelector
-              value={activeLayer?.fontId}
-              onChange={(id) =>
-                activeLayer
-                  ? updateTextLayer(activeLayer.id, { fontId: id })
-                  : update({ fontId: id })
-              }
-            />
-          </div>
+          {activeLayer && (
+            <>
+              <ActiveLayerBadge
+                label={activeLayer.text || t("textTabAdd")}
+                hint={t("editingLayerHint")}
+                editing={t("editingLayer")}
+                layers={layers}
+                activeId={activeLayer.id}
+                onPick={(id) => setSelection({ kind: "textLayer", id })}
+              />
 
-          <div>
-            <Label className="mb-2 block text-sm font-medium">{t("pickColor")}</Label>
-            <div className="grid grid-cols-5 gap-2 sm:grid-cols-10">
-              {COLORS.map((c) => {
-                const selected = activeLayer ? activeLayer.colorId === c.id : config.colorId === c.id;
-                return (
-                  <button
-                    key={c.id}
-                    type="button"
-                    title={c.label}
-                    onClick={() =>
-                      activeLayer
-                        ? updateTextLayer(activeLayer.id, { colorId: c.id })
-                        : update({ colorId: c.id })
-                    }
-                    className={cn(
-                      "h-10 rounded-full border-2 transition",
-                      selected ? "border-foreground scale-110" : "border-border",
-                    )}
-                    style={{
-                      background: c.rgb
-                        ? "conic-gradient(red, orange, yellow, lime, cyan, blue, magenta, red)"
-                        : c.hex,
-                      boxShadow: `0 0 12px ${c.glow}`,
-                    }}
-                  />
-                );
-              })}
-            </div>
-            <p className="mt-2 text-xs text-muted-foreground">
-              {t("selectedColor")}:{" "}
-              {COLORS.find((c) => c.id === (activeLayer?.colorId ?? config.colorId))?.label}
-            </p>
-          </div>
+              <div>
+                <Label className="mb-2 block text-sm font-medium">{t("fontType")}</Label>
+                <FontSelector
+                  value={activeLayer.fontId}
+                  onChange={(id) => updateTextLayer(activeLayer.id, { fontId: id })}
+                />
+              </div>
+
+              <div>
+                <Label className="mb-2 block text-sm font-medium">{t("pickColor")}</Label>
+                <div className="grid grid-cols-5 gap-2 sm:grid-cols-10">
+                  {COLORS.map((c) => {
+                    const selected = activeLayer.colorId === c.id;
+                    return (
+                      <button
+                        key={c.id}
+                        type="button"
+                        title={c.label}
+                        onClick={() => updateTextLayer(activeLayer.id, { colorId: c.id })}
+                        className={cn(
+                          "h-10 rounded-full border-2 transition",
+                          selected ? "border-foreground scale-110" : "border-border",
+                        )}
+                        style={{
+                          background: c.rgb
+                            ? "conic-gradient(red, orange, yellow, lime, cyan, blue, magenta, red)"
+                            : c.hex,
+                          boxShadow: `0 0 12px ${c.glow}`,
+                        }}
+                      />
+                    );
+                  })}
+                </div>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  {t("selectedColor")}:{" "}
+                  {COLORS.find((c) => c.id === activeLayer.colorId)?.label}
+                </p>
+              </div>
+            </>
+          )}
         </TabsContent>
+
+
 
 
         {/* SIZE */}
@@ -486,6 +503,36 @@ function ActiveLayerBadge({
         )}
       </div>
       <p className="mt-1 text-[10px] text-muted-foreground">{hint}</p>
+    </div>
+  );
+}
+
+function NoLayerSelected({
+  layers,
+  onPick,
+}: {
+  layers: { id: string; text: string; hidden?: boolean }[];
+  onPick: (id: string) => void;
+}) {
+  const t = useT();
+  return (
+    <div className="space-y-3 rounded-lg border border-dashed border-border bg-secondary/40 p-4 text-center">
+      <p className="text-sm font-medium">{t("noLayerSelectedTitle")}</p>
+      <p className="text-xs text-muted-foreground">{t("noLayerSelectedHint")}</p>
+      {layers.length > 0 && (
+        <div className="flex flex-wrap justify-center gap-2 pt-1">
+          {layers.map((l, i) => (
+            <button
+              key={l.id}
+              type="button"
+              onClick={() => onPick(l.id)}
+              className="rounded-full border border-border bg-background px-3 py-1 text-xs hover:border-foreground/60"
+            >
+              #{i + 1} {(l.text || "—").slice(0, 16)}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
