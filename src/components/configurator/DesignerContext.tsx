@@ -105,7 +105,12 @@ export type AlignDirection =
 
 export type AlignReference = "page" | "first" | "last" | "biggest";
 
-
+export type AlignmentGuide = {
+  dir: AlignDirection;
+  reference: AlignReference;
+  ref: { cx: number; cy: number; half: number };
+  ts: number;
+};
 
 interface Ctx {
   config: NeonDesignConfig;
@@ -120,6 +125,8 @@ interface Ctx {
   /** Reorder layers within their own array. delta: +1 forward, -1 back, +Inf to front, -Inf to back. */
   reorder: (kind: LayerKind, id: string, delta: number) => void;
   alignSelected: (dir: AlignDirection, reference?: AlignReference) => void;
+  /** Delete currently selected layer(s), honoring the at-least-one-visible guard. */
+  deleteSelection: () => void;
   resetDesign: () => void;
   undo: () => void;
   redo: () => void;
@@ -127,6 +134,8 @@ interface Ctx {
   canRedo: boolean;
   selection: EditorSelection;
   setSelection: (sel: EditorSelection) => void;
+  /** Most recent alignment reference, briefly shown as a guideline overlay. Null when no overlay should render. */
+  alignmentGuide: AlignmentGuide | null;
 }
 
 const DesignerCtx = createContext<Ctx | null>(null);
