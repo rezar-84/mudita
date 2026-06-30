@@ -16,8 +16,16 @@ const BADGE_STYLE: Record<FontBadge, string> = {
   logo: "bg-accent/60 text-accent-foreground border-accent",
 };
 
-export function FontSelector() {
+export function FontSelector({
+  value,
+  onChange,
+}: {
+  value?: string;
+  onChange?: (id: string) => void;
+} = {}) {
   const { config, update } = useDesigner();
+  const selectedId = value ?? config.fontId;
+  const setSelected = onChange ?? ((id: string) => update({ fontId: id }));
 
   const grouped = FONT_CATEGORY_ORDER
     .map((cat) => ({ cat, fonts: FONTS.filter((f) => f.category === cat) }))
@@ -31,8 +39,8 @@ export function FontSelector() {
           key={cat}
           category={cat}
           fonts={fonts}
-          selectedId={config.fontId}
-          onSelect={(id) => update({ fontId: id })}
+          selectedId={selectedId}
+          onSelect={setSelected}
         />
       ))}
     </div>
