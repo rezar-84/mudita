@@ -28,13 +28,13 @@ export function ConfiguratorPanel() {
   const customW = config.customWidth ?? 80;
   const customH = config.customHeight ?? 40;
 
-  // Active text layer: selected layer (if textLayer), else first visible layer, else first layer.
+  // Active text layer is STRICTLY the selected layer. No silent fallback —
+  // when nothing is selected we show an empty state asking the user to pick one.
   const layers = config.textLayers ?? [];
   const activeLayer =
-    (selection.kind === "textLayer" && layers.find((l) => l.id === selection.id)) ||
-    layers.find((l) => !l.hidden && l.text.trim().length) ||
-    layers[0] ||
-    null;
+    selection.kind === "textLayer"
+      ? layers.find((l) => l.id === selection.id) ?? null
+      : null;
 
   const [tab, setTab] = useState<string>("text");
   useEffect(() => {
@@ -42,6 +42,15 @@ export function ConfiguratorPanel() {
     window.addEventListener("mudita:open-scene", onOpenScene);
     return () => window.removeEventListener("mudita:open-scene", onOpenScene);
   }, []);
+
+  // When user clicks a text on the canvas, jump to the Text tab so the
+  // textarea / fonts / colors immediately reflect that layer.
+  useEffect(() => {
+    if (selection.kind === "textLayer" && tab !== "text" && tab !== "style") {
+      setTab("text");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selection]);
 
 
   // Warnings derived from the visible text layers (no global text anymore).
