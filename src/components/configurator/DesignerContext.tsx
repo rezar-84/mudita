@@ -548,6 +548,7 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
       removeTextLayer,
       reorder,
       alignSelected,
+      deleteSelection,
       resetDesign,
       undo,
       redo,
@@ -555,6 +556,7 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
       canRedo,
       selection,
       setSelection,
+      alignmentGuide,
     }),
     // historyTick included so canUndo/canRedo refresh
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -570,10 +572,12 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
       removeTextLayer,
       reorder,
       alignSelected,
+      deleteSelection,
       resetDesign,
       undo,
       redo,
       selection,
+      alignmentGuide,
       historyTick,
     ],
   );
