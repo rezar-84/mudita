@@ -1,18 +1,7 @@
 import { useRef } from "react";
 import { X, RotateCw, Move } from "lucide-react";
+import { useT } from "@/lib/i18n";
 
-/**
- * Reusable on-canvas selection handles for a layer.
- *
- * - Close (×): top-right corner — calls onClose
- * - Rotate: above top-center — drag to set rotation
- * - Resize: bottom-right corner — drag to set sizePct (relative to canvas min-dim)
- *
- * The handles are rendered inside the layer's transformed box, so they
- * rotate/flip with it visually. The drag math, however, is computed against
- * the layer's centre in viewport coords (via canvasRef) so it stays correct
- * regardless of rotation.
- */
 export function SelectionHandles({
   canvasRef,
   layerXPct,
@@ -24,20 +13,17 @@ export function SelectionHandles({
   onRotate,
 }: {
   canvasRef: React.RefObject<HTMLDivElement | null>;
-  layerXPct: number; // -45..45
-  layerYPct: number; // -45..45
-  sizePct: number; // 5..40 (used to clamp during resize)
+  layerXPct: number;
+  layerYPct: number;
+  sizePct: number;
   rotation: number;
   onClose: () => void;
   onResize: (nextSizePct: number) => void;
   onRotate: (nextDeg: number) => void;
 }) {
-  const startRef = useRef<{ cx: number; cy: number; baseDist: number; baseSize: number } | null>(
-    null,
-  );
-  const rotStartRef = useRef<{ cx: number; cy: number; baseAng: number; baseRot: number } | null>(
-    null,
-  );
+  const t = useT();
+  const startRef = useRef<{ cx: number; cy: number; baseDist: number; baseSize: number } | null>(null);
+  const rotStartRef = useRef<{ cx: number; cy: number; baseAng: number; baseRot: number } | null>(null);
 
   function layerCentre() {
     const rect = canvasRef.current?.getBoundingClientRect();
@@ -47,7 +33,6 @@ export function SelectionHandles({
     return { cx, cy, w: rect.width, h: rect.height };
   }
 
-  // RESIZE
   function onResizeDown(e: React.PointerEvent) {
     e.stopPropagation();
     e.preventDefault();
@@ -63,10 +48,8 @@ export function SelectionHandles({
     const { w, h } = layerCentre();
     const min = Math.min(w, h) || 1;
     const dist = Math.hypot(e.clientX - s.cx, e.clientY - s.cy);
-    // Map distance ratio onto sizePct space. Diagonal of a sizePct box is roughly sizePct% * sqrt(2).
     const ratio = dist / s.baseDist;
     const next = Math.max(5, Math.min(80, Math.round(s.baseSize * ratio)));
-    // Use min for stable feel across aspect ratios
     void min;
     onResize(next);
   }
@@ -74,7 +57,6 @@ export function SelectionHandles({
     startRef.current = null;
   }
 
-  // ROTATE
   function onRotateDown(e: React.PointerEvent) {
     e.stopPropagation();
     e.preventDefault();
@@ -89,7 +71,6 @@ export function SelectionHandles({
     e.stopPropagation();
     const ang = (Math.atan2(e.clientY - s.cy, e.clientX - s.cx) * 180) / Math.PI;
     let next = Math.round(s.baseRot + (ang - s.baseAng));
-    // normalise -180..180
     next = ((((next + 180) % 360) + 360) % 360) - 180;
     onRotate(next);
   }
@@ -102,18 +83,16 @@ export function SelectionHandles({
 
   return (
     <>
-      {/* Selection outline */}
       <div
         aria-hidden
         className="pointer-events-none absolute -inset-2 rounded-md border border-dashed border-neon-cyan/80"
         style={{ filter: "none", textShadow: "none" }}
       />
 
-      {/* Close */}
       <button
         type="button"
-        title="Sil"
-        aria-label="Katmanı sil"
+        title={t("delete")}
+        aria-label={t("deleteLayer")}
         onPointerDown={(e) => e.stopPropagation()}
         onClick={(e) => {
           e.stopPropagation();
@@ -125,11 +104,10 @@ export function SelectionHandles({
         <X className="h-3.5 w-3.5" />
       </button>
 
-      {/* Rotate */}
       <button
         type="button"
-        title="Döndür (sürükle)"
-        aria-label="Döndür"
+        title={t("rotateDrag")}
+        aria-label={t("rotate")}
         onPointerDown={onRotateDown}
         onPointerMove={onRotateMove}
         onPointerUp={onRotateUp}
@@ -139,18 +117,16 @@ export function SelectionHandles({
       >
         <RotateCw className="h-3.5 w-3.5" />
       </button>
-      {/* Connector line from rotate handle to box */}
       <div
         aria-hidden
         className="pointer-events-none absolute left-1/2 -top-5 h-3 w-px bg-neon-cyan/70"
         style={{ filter: "none", textShadow: "none" }}
       />
 
-      {/* Resize (bottom-right) */}
       <button
         type="button"
-        title="Yeniden boyutlandır (sürükle)"
-        aria-label="Yeniden boyutlandır"
+        title={t("resizeDrag")}
+        aria-label={t("resize")}
         onPointerDown={onResizeDown}
         onPointerMove={onResizeMove}
         onPointerUp={onResizeUp}
