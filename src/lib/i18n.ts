@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 
 type Dict = Record<string, string>;
 
@@ -109,6 +109,8 @@ const tr: Dict = {
   textTabHelper: "Tüm metinler birer katmandır. Mevcut metni düzenlemek için tuvaldeki yazıya tıkla; yeni metin eklemek için aşağıdaki butonu kullan.",
   textTabAdd: "Yeni Metin Katmanı Ekle",
   defaultStyleHint: "Bu seçim, yeni eklenen metin ve süslemelerin başlangıç stili olur.",
+  editingLayer: "Düzenleniyor",
+  editingLayerHint: "Başka bir katmanı düzenlemek için tuvalde üzerine tıkla.",
 
   // Font badges
   badgePopular: "Popüler",
@@ -498,6 +500,8 @@ const en: Dict = {
   textTabHelper: "All text on the canvas lives as a layer. Click a text in the canvas to edit it, or add a new layer below.",
   textTabAdd: "Add new text layer",
   defaultStyleHint: "This style is used as the starting point for newly added text and decorations.",
+  editingLayer: "Editing",
+  editingLayerHint: "Click a different layer in the canvas to edit it.",
 
   badgePopular: "Popular",
   badgePremium: "Premium",
@@ -788,16 +792,23 @@ export type TKey = keyof typeof tr;
 
 const listeners = new Set<() => void>();
 
-function readInitial(): Locale {
-  if (typeof window === "undefined") return "tr";
+// Start with the SSR-safe default so server and first client render match.
+// Stored language (if any) is applied AFTER hydration via useLocale's effect.
+let current: Locale = "tr";
+let hydrated = false;
+
+function hydrateFromStorage() {
+  if (hydrated || typeof window === "undefined") return;
+  hydrated = true;
   try {
     const stored = window.localStorage.getItem("locale");
-    if (stored === "tr" || stored === "en") return stored;
+    if ((stored === "tr" || stored === "en") && stored !== current) {
+      current = stored;
+      if (typeof document !== "undefined") document.documentElement.lang = stored;
+      listeners.forEach((fn) => fn());
+    }
   } catch {}
-  return "tr";
 }
-
-let current: Locale = readInitial();
 
 export function getLocale(): Locale {
   return current;
@@ -829,11 +840,16 @@ function subscribe(cb: () => void) {
 }
 
 export function useLocale(): Locale {
-  return useSyncExternalStore(
+  const locale = useSyncExternalStore(
     subscribe,
     () => current,
     () => "tr" as Locale,
   );
+  // Hydrate from localStorage after first commit, never during SSR or first render.
+  useEffect(() => {
+    hydrateFromStorage();
+  }, []);
+  return locale;
 }
 
 export function useT() {

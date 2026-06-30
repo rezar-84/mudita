@@ -157,7 +157,12 @@ export function ToolRail({ onPickDecoration }: { onPickDecoration: () => void })
       id: "background",
       icon: ImageIcon,
       label: t("toolBackground"),
-      onClick: () => setSelection({ kind: "canvas" }),
+      onClick: () => {
+        setSelection({ kind: "canvas" });
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("mudita:open-scene"));
+        }
+      },
     },
     {
       id: "layers",
