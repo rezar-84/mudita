@@ -71,6 +71,10 @@ export type AlignDirection =
   | "centerV"
   | "bottom";
 
+export type AlignReference = "page" | "first" | "last" | "biggest";
+
+
+
 interface Ctx {
   config: NeonDesignConfig;
   update: (patch: Partial<NeonDesignConfig>) => void;
