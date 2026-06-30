@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 
 type Dict = Record<string, string>;
 
@@ -788,16 +788,23 @@ export type TKey = keyof typeof tr;
 
 const listeners = new Set<() => void>();
 
-function readInitial(): Locale {
-  if (typeof window === "undefined") return "tr";
+// Start with the SSR-safe default so server and first client render match.
+// Stored language (if any) is applied AFTER hydration via useLocale's effect.
+let current: Locale = "tr";
+let hydrated = false;
+
+function hydrateFromStorage() {
+  if (hydrated || typeof window === "undefined") return;
+  hydrated = true;
   try {
     const stored = window.localStorage.getItem("locale");
-    if (stored === "tr" || stored === "en") return stored;
+    if ((stored === "tr" || stored === "en") && stored !== current) {
+      current = stored;
+      if (typeof document !== "undefined") document.documentElement.lang = stored;
+      listeners.forEach((fn) => fn());
+    }
   } catch {}
-  return "tr";
 }
-
-let current: Locale = readInitial();
 
 export function getLocale(): Locale {
   return current;
@@ -829,11 +836,16 @@ function subscribe(cb: () => void) {
 }
 
 export function useLocale(): Locale {
-  return useSyncExternalStore(
+  const locale = useSyncExternalStore(
     subscribe,
     () => current,
     () => "tr" as Locale,
   );
+  // Hydrate from localStorage after first commit, never during SSR or first render.
+  useEffect(() => {
+    hydrateFromStorage();
+  }, []);
+  return locale;
 }
 
 export function useT() {
