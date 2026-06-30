@@ -18,9 +18,10 @@ import { FontSelector } from "./FontSelector";
 import { PreviewControls } from "./PreviewControls";
 import { BackgroundToggle } from "./BackgroundToggle";
 import { AiIdeaPanel } from "./AiIdeaPanel";
-import { t } from "@/lib/i18n";
+import { useT } from "@/lib/i18n";
 
 export function ConfiguratorPanel() {
+  const t = useT();
   const { config, update } = useDesigner();
   const customW = config.customWidth ?? 80;
   const customH = config.customHeight ?? 40;
@@ -40,16 +41,16 @@ export function ConfiguratorPanel() {
   const complexNote = !config.outdoor && complexFont;
 
   const warnings: string[] = [];
-  if (tooSmall) warnings.push("Yazı çok küçük olabilir, üretim zorlaşır. Daha büyük ölçü öneririz.");
-  if (tooLong) warnings.push("Yazı uzun — okunaklık için ölçüyü büyütmeyi düşünebilirsin.");
-  if (fragile) warnings.push("İnce/script yazı tipi dış mekanda dayanıksız olabilir, kalın bir font öneririz.");
-  if (complexNote) warnings.push("Bu yazı tipi karmaşık; üretim biraz daha uzun sürebilir.");
+  if (tooSmall) warnings.push(t("warningSmall"));
+  if (tooLong) warnings.push(t("warningLongText"));
+  if (fragile) warnings.push(t("warningOutdoorScript"));
+  if (complexNote) warnings.push(t("warningComplexFont"));
 
   return (
     <div className="space-y-6">
       {isEmpty && (
         <div className="rounded-lg border border-dashed border-border bg-secondary/40 p-3 text-sm text-muted-foreground">
-          Tasarımına başlamak için aşağıdaki kutuya yazını gir.
+          {t("emptyHint")}
         </div>
       )}
       {warnings.length > 0 && (
@@ -64,26 +65,26 @@ export function ConfiguratorPanel() {
 
       <Tabs defaultValue="text" className="w-full">
         <TabsList className="grid w-full grid-cols-5 gap-1">
-          <TabsTrigger value="text">Yazı</TabsTrigger>
-          <TabsTrigger value="style">Stil</TabsTrigger>
-          <TabsTrigger value="size">Ölçü</TabsTrigger>
-          <TabsTrigger value="scene">Sahne</TabsTrigger>
-          <TabsTrigger value="extras">Ekstra</TabsTrigger>
+          <TabsTrigger value="text">{t("tabText")}</TabsTrigger>
+          <TabsTrigger value="style">{t("tabStyle")}</TabsTrigger>
+          <TabsTrigger value="size">{t("tabSize")}</TabsTrigger>
+          <TabsTrigger value="scene">{t("tabScene")}</TabsTrigger>
+          <TabsTrigger value="extras">{t("tabExtras")}</TabsTrigger>
         </TabsList>
 
         {/* TEXT */}
         <TabsContent value="text" className="space-y-4 pt-4">
           <div>
-            <Label htmlFor="neon-text" className="mb-2 block text-sm font-medium">Yazını Gir</Label>
+            <Label htmlFor="neon-text" className="mb-2 block text-sm font-medium">{t("enterText")}</Label>
             <Textarea
               id="neon-text"
               rows={3}
               maxLength={60}
-              placeholder="Mudita"
+              placeholder={t("textPlaceholder")}
               value={config.text}
               onChange={(e) => update({ text: e.target.value })}
             />
-            <p className="mt-1 text-xs text-muted-foreground">{config.text.length}/60 karakter · Enter ile yeni satır</p>
+            <p className="mt-1 text-xs text-muted-foreground">{config.text.length}/60 {t("textCharsHint")}</p>
           </div>
         </TabsContent>
 
@@ -95,7 +96,7 @@ export function ConfiguratorPanel() {
           </div>
 
           <div>
-            <Label className="mb-2 block text-sm font-medium">Renk Seç</Label>
+            <Label className="mb-2 block text-sm font-medium">{t("pickColor")}</Label>
             <div className="grid grid-cols-5 gap-2 sm:grid-cols-10">
               {COLORS.map((c) => (
                 <button
@@ -117,7 +118,7 @@ export function ConfiguratorPanel() {
               ))}
             </div>
             <p className="mt-2 text-xs text-muted-foreground">
-              Seçili: {COLORS.find((c) => c.id === config.colorId)?.label}
+              {t("selectedColor")}: {COLORS.find((c) => c.id === config.colorId)?.label}
             </p>
           </div>
         </TabsContent>
@@ -125,7 +126,7 @@ export function ConfiguratorPanel() {
         {/* SIZE */}
         <TabsContent value="size" className="space-y-5 pt-4">
           <div>
-            <Label className="mb-2 block text-sm font-medium">Ölçü</Label>
+            <Label className="mb-2 block text-sm font-medium">{t("size")}</Label>
             <RadioGroup
               value={config.sizeId}
               onValueChange={(v) => update({ sizeId: v as typeof config.sizeId })}
@@ -150,7 +151,7 @@ export function ConfiguratorPanel() {
             <div className="space-y-4 rounded-lg border border-border p-4">
               <div>
                 <Label className="mb-2 flex items-center justify-between text-sm">
-                  Genişlik <span className="text-muted-foreground">{customW} cm</span>
+                  {t("width")} <span className="text-muted-foreground">{customW} cm</span>
                 </Label>
                 <Slider
                   min={20} max={200} step={5}
@@ -160,7 +161,7 @@ export function ConfiguratorPanel() {
               </div>
               <div>
                 <Label className="mb-2 flex items-center justify-between text-sm">
-                  Yükseklik <span className="text-muted-foreground">{customH} cm</span>
+                  {t("height")} <span className="text-muted-foreground">{customH} cm</span>
                 </Label>
                 <Slider
                   min={10} max={120} step={5}
@@ -173,8 +174,8 @@ export function ConfiguratorPanel() {
 
           <div className="flex items-center justify-between rounded-lg border border-border p-3">
             <div>
-              <p className="text-sm font-medium">Dış Mekan (IP65)</p>
-              <p className="text-xs text-muted-foreground">Su geçirmez üretim, +%25</p>
+              <p className="text-sm font-medium">{t("outdoorIP65")}</p>
+              <p className="text-xs text-muted-foreground">{t("outdoorIP65Desc")}</p>
             </div>
             <Switch checked={config.outdoor} onCheckedChange={(v) => update({ outdoor: v })} />
           </div>
@@ -191,7 +192,7 @@ export function ConfiguratorPanel() {
         {/* EXTRAS: backboard, mounting, accessories, notes */}
         <TabsContent value="extras" className="space-y-5 pt-4">
           <div>
-            <Label className="mb-2 block text-sm font-medium">Arka Panel</Label>
+            <Label className="mb-2 block text-sm font-medium">{t("backboard")}</Label>
             <div className="grid grid-cols-2 gap-2">
               {BACKBOARDS.map((b) => (
                 <button
@@ -210,7 +211,7 @@ export function ConfiguratorPanel() {
           </div>
 
           <div>
-            <Label className="mb-2 block text-sm font-medium">Montaj Seçenekleri</Label>
+            <Label className="mb-2 block text-sm font-medium">{t("mounting")}</Label>
             <RadioGroup
               value={config.mounting}
               onValueChange={(v) => update({ mounting: v as typeof config.mounting })}
@@ -234,9 +235,9 @@ export function ConfiguratorPanel() {
           <div className="space-y-3 rounded-lg border border-border p-3">
             <div className="flex items-center justify-between">
               <div className="min-w-0">
-                <p className="text-sm">Uzaktan Kumandalı Dimmer</p>
+                <p className="text-sm">{t("dimmer")}</p>
                 <p className="text-[11px] text-muted-foreground">
-                  Parlaklığı ve titreşim modunu uzaktan kumandayla ayarla.
+                  {t("dimmerDesc")}
                 </p>
               </div>
               <Switch checked={config.dimmer} onCheckedChange={(v) => update({ dimmer: v })} />
@@ -245,7 +246,7 @@ export function ConfiguratorPanel() {
             {config.dimmer && (
               <div className="space-y-3 rounded-md border border-dashed border-foreground/20 bg-secondary/30 p-3">
                 <p className="text-[11px] text-muted-foreground">
-                  ✨ Dimmer simülasyonu: aşağıdaki ayarlar uzaktan kumandayla gerçek hayatta da yapılabilir.
+                  {t("dimmerSimNote")}
                 </p>
                 <div>
                   <Label className="mb-2 flex items-center justify-between text-xs">
@@ -263,7 +264,7 @@ export function ConfiguratorPanel() {
                 <div className="flex items-center justify-between">
                   <div className="min-w-0">
                     <p className="text-xs font-medium">{t("flicker")}</p>
-                    <p className="text-[11px] text-muted-foreground">Hafif neon titreşim efekti</p>
+                    <p className="text-[11px] text-muted-foreground">{t("flickerDesc")}</p>
                   </div>
                   <Switch
                     checked={config.flicker ?? true}
@@ -274,11 +275,11 @@ export function ConfiguratorPanel() {
             )}
 
             <div className="flex items-center justify-between">
-              <span className="text-sm">Acil Üretim (3-5 gün)</span>
+              <span className="text-sm">{t("urgentLabel")}</span>
               <Switch checked={config.urgent} onCheckedChange={(v) => update({ urgent: v })} />
             </div>
             <div>
-              <Label className="mb-1 block text-sm">Güç Adaptörü</Label>
+              <Label className="mb-1 block text-sm">{t("adapter")}</Label>
               <RadioGroup
                 value={config.adapter}
                 onValueChange={(v) => update({ adapter: v as typeof config.adapter })}
@@ -288,24 +289,24 @@ export function ConfiguratorPanel() {
                   "flex cursor-pointer items-center justify-between rounded-lg border p-2 text-sm",
                   config.adapter === "tr" ? "border-foreground bg-accent/40" : "border-border",
                 )}>
-                  <span>Türkiye Tipi</span><RadioGroupItem value="tr" />
+                  <span>{t("adapterTR")}</span><RadioGroupItem value="tr" />
                 </label>
                 <label className={cn(
                   "flex cursor-pointer items-center justify-between rounded-lg border p-2 text-sm",
                   config.adapter === "eu" ? "border-foreground bg-accent/40" : "border-border",
                 )}>
-                  <span>AB Tipi (+₺120)</span><RadioGroupItem value="eu" />
+                  <span>{t("adapterEU")}</span><RadioGroupItem value="eu" />
                 </label>
               </RadioGroup>
             </div>
           </div>
 
           <div>
-            <Label htmlFor="notes" className="mb-2 block text-sm font-medium">Özel Notlar</Label>
+            <Label htmlFor="notes" className="mb-2 block text-sm font-medium">{t("notes")}</Label>
             <Textarea
               id="notes"
               rows={3}
-              placeholder="Özel istekleriniz..."
+              placeholder={t("notesPlaceholder")}
               value={config.notes}
               onChange={(e) => update({ notes: e.target.value })}
             />

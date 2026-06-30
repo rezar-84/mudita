@@ -9,8 +9,10 @@ import { QuoteDialog } from "./QuoteDialog";
 import { addToCart } from "@/lib/cart";
 import { useNavigate } from "@tanstack/react-router";
 import { FONTS, COLORS, BACKBOARDS } from "@/data/options";
+import { useT } from "@/lib/i18n";
 
 export function PriceSummary() {
+  const t = useT();
   const { config } = useDesigner();
   const breakdown = calculatePrice(config);
   const [quoteOpen, setQuoteOpen] = useState(false);
@@ -31,7 +33,7 @@ export function PriceSummary() {
     const url = buildShareUrl();
     try {
       await navigator.clipboard.writeText(url);
-      toast.success("Tasarım linki panoya kopyalandı");
+      toast.success(t("designLinkCopied"));
     } catch {
       toast.info(url);
     }
@@ -58,18 +60,18 @@ export function PriceSummary() {
 
   const onAddCart = () => {
     addToCart(config, breakdown.total);
-    toast.success("Ürün sepete eklendi");
+    toast.success(t("productAddedToCart"));
     setTimeout(() => navigate({ to: "/sepet" }), 400);
   };
 
   return (
     <div className="rounded-2xl border border-border bg-card p-5 shadow-soft">
       <div className="mb-1 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-        Tahmini Fiyat
+        {t("estimatedPrice")}
       </div>
       <div className="mb-4 flex items-baseline justify-between gap-3">
         <span className="text-3xl font-bold tabular-nums">{formatTRY(breakdown.total)}</span>
-        <span className="text-xs text-muted-foreground">KDV dahil · kargo dahil</span>
+        <span className="text-xs text-muted-foreground">{t("priceInclVat")}</span>
       </div>
 
       <ul className="mb-4 space-y-1.5 border-t border-border pt-3 text-sm">
@@ -80,40 +82,38 @@ export function PriceSummary() {
           </li>
         ))}
         <li className="flex justify-between text-muted-foreground">
-          <span>Kargo (Türkiye)</span>
+          <span>{t("shippingTurkey")}</span>
           <span className="tabular-nums">{formatTRY(breakdown.shipping)}</span>
         </li>
       </ul>
 
       <div className="mb-4 rounded-lg bg-secondary/60 p-3 text-xs">
         <div className="flex items-center justify-between">
-          <span className="text-muted-foreground">Üretim süresi</span>
+          <span className="text-muted-foreground">{t("productionTime")}</span>
           <span className="font-medium text-foreground">{breakdown.productionDays}</span>
         </div>
       </div>
 
       <div className="space-y-2">
         <Button onClick={onAddCart} className="w-full bg-gradient-neon text-white shadow-glow hover:opacity-90">
-          <ShoppingCart className="mr-2 h-4 w-4" /> Sepete Ekle
+          <ShoppingCart className="mr-2 h-4 w-4" /> {t("ctaAddToCart")}
         </Button>
         <Button onClick={() => setQuoteOpen(true)} variant="outline" className="w-full">
-          <FileText className="mr-2 h-4 w-4" /> Ücretsiz Teklif Al
+          <FileText className="mr-2 h-4 w-4" /> {t("ctaFreeQuote")}
         </Button>
         <Button onClick={onWhatsapp} variant="secondary" className="w-full">
-          <MessageCircle className="mr-2 h-4 w-4" /> WhatsApp’tan Gönder
+          <MessageCircle className="mr-2 h-4 w-4" /> {t("ctaWhatsapp")}
         </Button>
         <Button onClick={onShare} variant="ghost" className="w-full">
-          <Share2 className="mr-2 h-4 w-4" /> Tasarımı Paylaş
+          <Share2 className="mr-2 h-4 w-4" /> {t("ctaShareDesign")}
         </Button>
       </div>
 
       <p className="mt-4 rounded-lg border border-border bg-accent/30 p-3 text-xs leading-relaxed text-muted-foreground">
-        ✅ Üretime başlamadan önce <span className="font-medium text-foreground">tasarım onayınızı</span> alıyoruz.
-        Renk, ölçü veya font değiştirmek istersen birlikte revize ederiz.
+        ✅ {t("approvalNoteA")} <span className="font-medium text-foreground">{t("approvalNoteHighlight")}</span>{t("approvalNoteC")}
       </p>
 
       <QuoteDialog open={quoteOpen} onOpenChange={setQuoteOpen} price={breakdown.total} />
     </div>
   );
 }
-

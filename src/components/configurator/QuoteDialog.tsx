@@ -8,13 +8,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { useDesigner } from "./DesignerContext";
 import { formatTRY } from "@/lib/pricing";
-
-const schema = z.object({
-  name: z.string().trim().min(2, "Ad en az 2 karakter").max(100),
-  email: z.string().trim().email("Geçerli e-posta giriniz").max(255),
-  phone: z.string().trim().min(7, "Geçerli telefon giriniz").max(30),
-  notes: z.string().trim().max(1000).optional().default(""),
-});
+import { useT } from "@/lib/i18n";
 
 interface Props {
   open: boolean;
@@ -23,9 +17,17 @@ interface Props {
 }
 
 export function QuoteDialog({ open, onOpenChange, price }: Props) {
+  const t = useT();
   const { config } = useDesigner();
   const [form, setForm] = useState({ name: "", email: "", phone: "", notes: "" });
   const [submitting, setSubmitting] = useState(false);
+
+  const schema = z.object({
+    name: z.string().trim().min(2, t("quoteErrName")).max(100),
+    email: z.string().trim().email(t("quoteErrEmail")).max(255),
+    phone: z.string().trim().min(7, t("quoteErrPhone")).max(30),
+    notes: z.string().trim().max(1000).optional().default(""),
+  });
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,13 +37,11 @@ export function QuoteDialog({ open, onOpenChange, price }: Props) {
       return;
     }
     setSubmitting(true);
-    // Mock submit — backend integration later.
     await new Promise((r) => setTimeout(r, 600));
     setSubmitting(false);
-    toast.success("Teklif talebiniz alındı! En kısa sürede dönüş yapacağız.");
+    toast.success(t("quoteSuccess"));
     onOpenChange(false);
     setForm({ name: "", email: "", phone: "", notes: "" });
-    // For dev visibility:
     console.info("[quote-request]", { ...parsed.data, config });
   };
 
@@ -49,31 +49,31 @@ export function QuoteDialog({ open, onOpenChange, price }: Props) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Teklif Al</DialogTitle>
+          <DialogTitle>{t("quoteTitle")}</DialogTitle>
           <DialogDescription>
-            Tahmini fiyat: <span className="font-medium text-foreground">{formatTRY(price)}</span>. Detaylı teklif için bilgilerinizi bırakın.
+            {t("quoteEstPrice")} <span className="font-medium text-foreground">{formatTRY(price)}</span>. {t("quoteSubtitle")}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={submit} className="space-y-3">
           <div>
-            <Label htmlFor="q-name">Ad Soyad</Label>
+            <Label htmlFor="q-name">{t("contactNameLabel")}</Label>
             <Input id="q-name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
           </div>
           <div>
-            <Label htmlFor="q-email">E-posta</Label>
+            <Label htmlFor="q-email">{t("contactEmailLabel")}</Label>
             <Input id="q-email" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
           </div>
           <div>
-            <Label htmlFor="q-phone">Telefon</Label>
+            <Label htmlFor="q-phone">{t("contactPhoneLabel")}</Label>
             <Input id="q-phone" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
           </div>
           <div>
-            <Label htmlFor="q-notes">Notlar</Label>
+            <Label htmlFor="q-notes">{t("notes")}</Label>
             <Textarea id="q-notes" rows={3} value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
           </div>
           <DialogFooter>
             <Button type="submit" disabled={submitting} className="w-full bg-gradient-neon text-white">
-              {submitting ? "Gönderiliyor..." : "Teklif İste"}
+              {submitting ? t("submitting") : t("quoteSubmit")}
             </Button>
           </DialogFooter>
         </form>

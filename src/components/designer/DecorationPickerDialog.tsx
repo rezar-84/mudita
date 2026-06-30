@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { DECORATIONS, DECORATION_CATEGORY_LABEL, type DecorationPreset } from "@/data/decorations";
 import { useDesigner } from "@/components/configurator/DesignerContext";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { Search } from "lucide-react";
 
@@ -17,6 +18,7 @@ export function DecorationPickerDialog({
   onOpenChange: (v: boolean) => void;
 }) {
   const { config, addDecoration } = useDesigner();
+  const t = useT();
   const [cat, setCat] = useState<Cat>("all");
   const [query, setQuery] = useState("");
 
@@ -48,7 +50,7 @@ export function DecorationPickerDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="z-[210] max-h-[85vh] w-[min(720px,96vw)] max-w-none overflow-hidden p-0">
         <DialogHeader className="border-b border-border px-4 py-3">
-          <DialogTitle>Süsleme / İkon Ekle</DialogTitle>
+          <DialogTitle>{t("decoPickerTitle")}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-3 border-b border-border bg-card/60 px-4 py-3">
@@ -57,7 +59,7 @@ export function DecorationPickerDialog({
             <Input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Ara: kalp, yıldız, kahve..."
+              placeholder={t("decoPickerSearchPlaceholder")}
               className="pl-9"
             />
           </div>
@@ -74,7 +76,7 @@ export function DecorationPickerDialog({
                     : "border-border text-muted-foreground hover:bg-accent/40",
                 )}
               >
-                {c === "all" ? "Hepsi" : DECORATION_CATEGORY_LABEL[c]}
+                {c === "all" ? t("decoPickerAll") : DECORATION_CATEGORY_LABEL[c]}
               </button>
             ))}
           </div>
@@ -112,16 +114,14 @@ export function DecorationPickerDialog({
             ))}
             {filtered.length === 0 && (
               <p className="col-span-full py-10 text-center text-sm text-muted-foreground">
-                Sonuç bulunamadı.
+                {t("noResults")}
               </p>
             )}
           </div>
         </div>
 
         <div className="border-t border-border bg-card/80 px-4 py-3 text-xs text-muted-foreground">
-          🎨 İkonlar renk, boyut ve döndürmeyle özelleştirilebilir. Kendi SVG'ni
-          yüklemek için sol araç çubuğundan <strong className="text-foreground">SVG Yükle</strong>'yi
-          kullan.
+          {t("decoPickerFooterA")}<strong className="text-foreground">{t("toolSvgUpload")}</strong>{t("decoPickerFooterB")}
         </div>
       </DialogContent>
     </Dialog>
