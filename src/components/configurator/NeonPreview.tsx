@@ -194,6 +194,21 @@ export function NeonPreview() {
           </div>
         </div>
 
+        {selection.kind === "text" && !isEmpty && (
+          <SelectionHandles
+            canvasRef={containerRef}
+            layerXPct={posX}
+            layerYPct={posY}
+            sizePct={Math.max(6, Math.min(40, zoom * 15))}
+            rotation={rotation}
+            onClose={() => update({ text: "" })}
+            onResize={(s) =>
+              update({ zoom: Math.max(0.6, Math.min(1.8, s / 15)) })
+            }
+            onRotate={(r) => update({ rotationDeg: r })}
+          />
+        )}
+
         {/* Decoration / SVG layers */}
         <DecorationOverlay />
 
