@@ -308,9 +308,6 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
           if (!l) return null;
           return { cx: l.x, cy: l.y, half: l.sizePct / 2 };
         }
-        if (sel.kind === "text") {
-          return { cx: cur.positionX ?? 0, cy: cur.positionY ?? 0, half: 0 };
-        }
         return null;
       };
 
@@ -416,13 +413,18 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
                 : l,
             ),
           };
-        } else if (t.kind === "text") {
-          nextCur = {
-            ...nextCur,
-            ...(nextX !== null ? { positionX: nextX } : {}),
-            ...(nextY !== null ? { positionY: nextY } : {}),
-          };
         }
+      }
+      commit(nextCur);
+    },
+    [selection, commit],
+  );
+
+
+  const resetDesign = useCallback(() => {
+    commit({ ...defaultConfig });
+    setSelection({ kind: "textLayer", id: BASE_TEXT_ID });
+  }, [commit]);
       }
       commit(nextCur);
     },
