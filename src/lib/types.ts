@@ -179,7 +179,8 @@ export type EditorSelection =
   | { kind: "canvas" }
   | { kind: "text" }
   | { kind: "textLayer"; id: string }
-  | { kind: "decoration"; id: string };
+  | { kind: "decoration"; id: string }
+  | { kind: "multi"; ids: string[]; kinds: ("textLayer" | "decoration")[] };
 
 export interface PriceLineItem {
   label: string;
