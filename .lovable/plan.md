@@ -1,65 +1,43 @@
+
 ## Goals
 
-1. Unify base "Mudita" text with `TextLayer[]` so every text on the canvas has identical controls (content, font, color, size, rotation, flip, position, z-order, lock/hide, duplicate, delete).
-2. Decouple text from the global "sign" config — global `text`, `fontId`, `colorId`, `positionX/Y`, `rotationDeg`, `zoom` no longer control any specific layer.
-3. Guarantee the canvas always has at least one visible item (text or SVG); deletion of the last layer is blocked.
-4. Ambient glow on the canvas aggregates ALL visible layers, independent of selection.
-5. Fix the alignment icon mapping — horizontal-align actions show vertical-baseline icons, vertical-align actions show horizontal-baseline icons.
+Fix five UX regressions / bugs in the designer:
 
-## Architectural change
+1. **Text & Style tabs feel weak now.** Restore the rich UI (live font preview tiles, large color swatches, size/rotation sliders) but make them act on the *currently selected text layer* instead of the deprecated global text. When nothing is selected, fall back to editing the first/base text layer so the editor never feels empty.
+2. **Confusing context switch.** Today Text/Style live in `ConfiguratorPanel`, but when a layer is clicked the inspector hides them and shows `TextLayerProperties` somewhere else. Unify: Text + Style tabs render the per-layer controls inline (same component for selected text layer OR base layer), so the user edits in one consistent place. The right-hand "Decoration" inspector stays only for SVG/icon layers.
+3. **Scene tab cleanup.** Remove view-only controls that belong to layers (rotation, position sliders inside `PreviewControls`). Scene keeps only scene-level things: background, zoom, brightness, light on/off, AI idea panel.
+4. **Hide alignment when nothing selectable.** `AlignmentControls` should render only when `selection.kind` is `textLayer`, `decoration`, or `multi`. Hide for `canvas` / `none`.
+5. **Background tool button does nothing.** Wire the left ToolRail "background" icon to open the Scene tab (or jump-scroll to the `BackgroundToggle`) and select canvas. Implement via a small event (`mudita:open-scene`) that `ConfiguratorPanel` listens to and switches its `Tabs` value.
 
-Treat the base text as a regular `TextLayer` with a stable id `"base"` auto-seeded into `config.textLayers` when the array is empty. No special-case rendering path.
+Also fix the reported hydration mismatch on the Home nav link (server renders Turkish "Ana Sayfa", client renders English "Home"). Cause: language is read from `localStorage` at first render. Fix by initializing the language state to the SSR-safe default ("tr") and hydrating from localStorage in a `useEffect`, so server + first client render match.
 
-### `src/lib/types.ts`
-- Mark `NeonDesignConfig.text`, `fontId`, `colorId`, `positionX/Y`, `rotationDeg` as deprecated/optional — kept only for legacy share-URL decode.
-- `textLayers` becomes the single source of truth for all on-canvas text.
+## Files to change
 
-### `src/components/configurator/DesignerContext.tsx`
-- `defaultConfig` seeds `textLayers: [{ id: "base", text: "Mudita", fontId: "pacifico", colorId: "pink", sizePct: 18, x: 0, y: 0, rotation: 0 }]`.
-- Reducer "replace": if `cfg.textLayers` is empty AND legacy `cfg.text` is set, migrate into a single `"base"` layer.
-- `removeTextLayer` / `removeDecoration`: refuse when it would leave zero combined layers; toast `t("layerLastWarning")` instead.
-- Default `selection` becomes `{ kind: "textLayer", id: "base" }`.
-- Remove the `{ kind: "text" }` branch from `alignSelected` / `boundsOf`.
-
-### `src/components/configurator/NeonPreview.tsx`
-- Remove the dedicated "main text" render block, the drag handler bound to `positionX/Y`, and the base-text `SelectionHandles`.
-- Canvas renders: ambient glow halo (aggregated over ALL visible layers — see below), `DecorationOverlay`, `TextLayerOverlay`, measurement overlays, floating docks.
-- **Ambient glow**: build a `radial-gradient` for each visible text + decoration layer using its own color's `glow`, position (`x`,`y` in %), and a radius derived from `sizePct`. Compose them as a layered `background-image` on the halo div (multiple radial gradients separated by commas). Falls back to dim canvas when nothing visible.
-- "Center" button centers the currently selected layer (or no-op when `canvas`).
-
-### `src/components/designer/TextLayerOverlay.tsx`
-- Already per-layer; now also renders the `"base"` layer — no behavioral change.
-
-### `src/components/designer/TextLayerProperties.tsx`
-- Works for `"base"` automatically. Hide "Delete" when it is the only remaining item.
-
-### `src/lib/pricing.ts`
-- `getDimensions` and length calculations derive from `textLayers` (longest layer text + sum of glyphs) instead of `config.text`, with a small minimum.
-
-### `src/lib/share.ts`
-- Encoder writes `textLayers` (already supported). Migration done in reducer.
-
-### `src/components/configurator/ConfiguratorPanel.tsx` (Yazı tab)
-- Remove global text/font/color inputs (they duplicated per-layer controls). Replace with a helper note + "Add text layer" button. Per-layer edits happen via the inspector when a layer is selected.
-
-### `src/components/designer/AlignmentControls.tsx` — icon fix
-Swap so the glyph matches the action:
-```
-horizontal (left/centerH/right) → AlignStartVertical, AlignCenterVertical, AlignEndVertical
-vertical   (top/centerV/bottom) → AlignStartHorizontal, AlignCenterHorizontal, AlignEndHorizontal
-```
-Rationale: `AlignStartVertical` shows a vertical baseline with items right of it — the correct visual for "align objects to a shared left edge". The current code has these reversed.
+- `src/components/configurator/ConfiguratorPanel.tsx`
+  - Replace the placeholder "Text" tab with the rich editor: text input/textarea, font preview tiles, color swatches, size slider, rotation slider, flip, plus "+ New text layer" button.
+  - Replace the placeholder "Style" tab with a per-layer style block (font + color + size + rotation), same target layer as Text tab.
+  - Both tabs target a single `activeTextLayer` derived as:
+    `selection.kind === "textLayer"` → that layer; else first visible layer; else `textLayers[0]` (always exists post-migration).
+  - All edits route through `updateTextLayer(active.id, …)` — no writes to deprecated global `text/fontId/colorId`.
+  - Listen for `mudita:open-scene` and switch Tabs to `scene`.
+- `src/components/configurator/PreviewControls.tsx` — drop rotation + positionX/Y sliders (they were global and meaningless now). Keep zoom, brightness, light on/off.
+- `src/components/designer/PropertiesPanel.tsx` — when `selection.kind === "textLayer"`, render the same `ConfiguratorPanel` (so right panel mirrors editor) OR keep `TextLayerProperties` but remove its duplicate font/color/size controls (since they live in the unified tabs). Choose: drop `TextLayerProperties` and let the unified tabs in `ConfiguratorPanel` be the single source; the right panel for textLayer shows just `AlignmentControls` + transform/flip/lock/hide/delete/z-order quick actions + `LayersPanel`.
+- `src/components/designer/AlignmentControls.tsx` — early-return `null` when selection isn't `textLayer | decoration | multi`. Update `PropertiesPanel` "scene" branch to not render it.
+- `src/components/designer/ToolRail.tsx` — `background` tool dispatches `window.dispatchEvent(new CustomEvent("mudita:open-scene"))` and sets selection to `canvas`.
+- `src/lib/i18n.ts` — add small helper `getInitialLanguage()` that always returns `"tr"` during SSR and the first client render; expose `useLanguage()` that hydrates from localStorage in `useEffect`. Update any consumers that currently read `localStorage` synchronously during render.
+- `src/components/configurator/FontSelector.tsx` — accept optional `value` / `onChange` props so it can drive a layer's font instead of the deprecated `config.fontId`. Keep current behavior as default.
 
 ## Out of scope
 
-- Backend, pricing coefficients, routing, editor shell visual redesign.
-- Only one new i18n key: `layerLastWarning` (TR + EN).
+- Pricing engine, share encoding, backend, route changes.
+- No new translation strings beyond what's needed for the unified tab headers (reuse existing keys where possible).
 
 ## Verification
 
-1. `/tasarla`: "Mudita" appears as a normal selected text layer with full inspector. Selection handles, drag, rotate, resize, close all behave like any other layer.
-2. Delete every layer one by one — last layer cannot be deleted; toast explains why.
-3. Two text layers with different colors visibly contribute their own glow halo to the canvas, even when nothing is selected.
-4. Multi-select + alignment buttons show icons that visually match the action.
-5. Old share URL with `text=` / `fontId=` is migrated into a single `"base"` text layer.
-6. `bun run build` + tsgo pass.
+1. `/tasarla` Text tab: rich textarea + font tiles + color swatches act on the selected (or base) layer. Editing reflects on canvas immediately.
+2. Clicking a different text layer updates the Text/Style tab contents to that layer.
+3. Scene tab no longer shows rotation/position sliders; only zoom/brightness/light/background/AI idea.
+4. With no selection, the right-side `AlignmentControls` is hidden.
+5. Clicking the Background icon in the left rail switches the editor to the Scene tab and scrolls to the background section.
+6. Hard refresh `/` — no hydration warning in console; nav label matches SSR. Language toggle still works after mount.
+7. `bun run build` and `bunx tsgo --noEmit` pass.
