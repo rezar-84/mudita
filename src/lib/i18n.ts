@@ -500,6 +500,8 @@ const en: Dict = {
   textTabHelper: "All text on the canvas lives as a layer. Click a text in the canvas to edit it, or add a new layer below.",
   textTabAdd: "Add new text layer",
   defaultStyleHint: "This style is used as the starting point for newly added text and decorations.",
+  editingLayer: "Editing",
+  editingLayerHint: "Click a different layer in the canvas to edit it.",
 
   badgePopular: "Popular",
   badgePremium: "Premium",
