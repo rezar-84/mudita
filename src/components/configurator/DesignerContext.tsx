@@ -103,7 +103,22 @@ const MAX_HISTORY = 60;
 
 export function DesignerProvider({ children }: { children: ReactNode }) {
   const [config, dispatch] = useReducer(reducer, defaultConfig);
-  const [selection, setSelection] = useState<EditorSelection>({ kind: "text" });
+  const [selection, setSelectionState] = useState<EditorSelection>({ kind: "text" });
+  // Ordered history of recent selections (oldest..newest), used for align references.
+  const selHistoryRef = useRef<EditorSelection[]>([{ kind: "text" }]);
+  const setSelection = useCallback((sel: EditorSelection) => {
+    setSelectionState(sel);
+    const last = selHistoryRef.current[selHistoryRef.current.length - 1];
+    const same =
+      last &&
+      last.kind === sel.kind &&
+      (("id" in last ? last.id : undefined) === ("id" in sel ? sel.id : undefined));
+    if (!same) {
+      selHistoryRef.current.push(sel);
+      if (selHistoryRef.current.length > 12) selHistoryRef.current.shift();
+    }
+  }, []);
+
 
   // history of snapshots
   const pastRef = useRef<NeonDesignConfig[]>([]);
