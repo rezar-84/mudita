@@ -140,7 +140,7 @@ function GalleryPage() {
                 href={buildDesignUrl(it)}
                 className="mt-1 inline-flex w-full items-center justify-center rounded-full bg-gradient-neon px-4 py-2 text-xs font-semibold text-white shadow-glow"
               >
-                Benzerini Tasarla
+                {t("useThisDesign")}
               </a>
 
             </div>
