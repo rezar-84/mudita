@@ -16,9 +16,12 @@ import type {
   TextLayer,
 } from "@/lib/types";
 import { decodeConfig } from "@/lib/share";
+import { toast } from "sonner";
+
+const BASE_TEXT_ID = "base";
 
 export const defaultConfig: NeonDesignConfig = {
-  text: "Mudita",
+  text: "",
   fontId: "pacifico",
   colorId: "pink",
   sizeId: "medium",
@@ -31,14 +34,22 @@ export const defaultConfig: NeonDesignConfig = {
   notes: "",
   background: "dark-room",
   decorations: [],
-  textLayers: [],
+  textLayers: [
+    {
+      id: BASE_TEXT_ID,
+      text: "Mudita",
+      fontId: "pacifico",
+      colorId: "pink",
+      sizePct: 22,
+      x: 0,
+      y: 0,
+      rotation: 0,
+    },
+  ],
   brightness: 100,
   flicker: true,
   zoom: 1,
   isLightOn: true,
-  positionX: 0,
-  positionY: 0,
-  rotationDeg: 0,
   realSizeMode: false,
   showMeasurements: false,
   showBackboardBounds: false,
@@ -49,15 +60,36 @@ export const defaultConfig: NeonDesignConfig = {
 type Action =
   | { type: "replace"; cfg: NeonDesignConfig };
 
+/** Migrate legacy share-URL or saved configs (which had a global `text`) into the layer model. */
+function migrateConfig(cfg: NeonDesignConfig): NeonDesignConfig {
+  const layers: TextLayer[] = cfg.textLayers ? [...cfg.textLayers] : [];
+  const hasBase = layers.some((l) => l.id === BASE_TEXT_ID);
+  const legacyText = (cfg.text ?? "").trim();
+  if (!hasBase && legacyText) {
+    layers.unshift({
+      id: BASE_TEXT_ID,
+      text: cfg.text ?? "",
+      fontId: cfg.fontId ?? defaultConfig.fontId,
+      colorId: cfg.colorId ?? defaultConfig.colorId,
+      sizePct: 22,
+      x: cfg.positionX ?? 0,
+      y: cfg.positionY ?? 0,
+      rotation: cfg.rotationDeg ?? 0,
+    });
+  }
+  return {
+    ...defaultConfig,
+    ...cfg,
+    text: "",
+    decorations: cfg.decorations ?? [],
+    textLayers: layers,
+  };
+}
+
 function reducer(_state: NeonDesignConfig, action: Action): NeonDesignConfig {
   switch (action.type) {
     case "replace":
-      return {
-        ...defaultConfig,
-        ...action.cfg,
-        decorations: action.cfg.decorations ?? [],
-        textLayers: action.cfg.textLayers ?? [],
-      };
+      return migrateConfig(action.cfg);
   }
 }
 
