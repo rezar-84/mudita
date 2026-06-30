@@ -3,7 +3,7 @@ import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Lightbulb, LightbulbOff, RotateCcw, Crosshair } from "lucide-react";
+import { Lightbulb, LightbulbOff, RotateCcw } from "lucide-react";
 import { useT } from "@/lib/i18n";
 
 export function PreviewControls() {
@@ -13,7 +13,6 @@ export function PreviewControls() {
   const zoom = config.zoom ?? 1;
   const flicker = config.flicker ?? true;
   const isLightOn = config.isLightOn ?? true;
-  const rotation = config.rotationDeg ?? 0;
   const realSize = config.realSizeMode ?? false;
 
   return (
@@ -43,14 +42,6 @@ export function PreviewControls() {
           <span className="text-muted-foreground">{Math.round(zoom * 100)}%</span>
         </Label>
         <Slider min={60} max={140} step={5} value={[Math.round(zoom * 100)]} onValueChange={([v]) => update({ zoom: v / 100 })} />
-      </div>
-
-      <div>
-        <Label className="mb-2 flex items-center justify-between text-xs">
-          <span className="font-medium">{t("rotate")}</span>
-          <span className="text-muted-foreground">{rotation}°</span>
-        </Label>
-        <Slider min={-15} max={15} step={1} value={[rotation]} onValueChange={([v]) => update({ rotationDeg: v })} />
       </div>
 
       <div className="flex items-center justify-between">
@@ -85,10 +76,7 @@ export function PreviewControls() {
       </div>
 
       <div className="flex flex-wrap gap-2 pt-1">
-        <Button type="button" variant="outline" size="sm" onClick={() => update({ positionX: 0, positionY: 0 })}>
-          <Crosshair className="mr-1.5 h-3.5 w-3.5" /> {t("center")}
-        </Button>
-        <Button type="button" variant="outline" size="sm" onClick={() => update({ positionX: 0, positionY: 0, rotationDeg: 0, zoom: 1, brightness: 100 })}>
+        <Button type="button" variant="outline" size="sm" onClick={() => update({ zoom: 1, brightness: 100 })}>
           <RotateCcw className="mr-1.5 h-3.5 w-3.5" /> {t("resetView")}
         </Button>
       </div>
