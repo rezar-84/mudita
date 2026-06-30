@@ -145,6 +145,13 @@ export function TextLayerOverlay() {
             aria-label={l.text || "Metin katmanı"}
           >
             {l.text || "Yazı"}
+            {isMulti && (
+              <div
+                aria-hidden
+                className="pointer-events-none absolute -inset-2 rounded-md border border-dashed border-neon-cyan/70"
+                style={{ filter: "none", textShadow: "none" }}
+              />
+            )}
             {isSelected && !l.locked && (
               <SelectionHandles
                 canvasRef={containerRef}
