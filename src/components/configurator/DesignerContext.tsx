@@ -135,9 +135,10 @@ const MAX_HISTORY = 60;
 
 export function DesignerProvider({ children }: { children: ReactNode }) {
   const [config, dispatch] = useReducer(reducer, defaultConfig);
-  const [selection, setSelectionState] = useState<EditorSelection>({ kind: "text" });
+  const initialSel: EditorSelection = { kind: "textLayer", id: BASE_TEXT_ID };
+  const [selection, setSelectionState] = useState<EditorSelection>(initialSel);
   // Ordered history of recent selections (oldest..newest), used for align references.
-  const selHistoryRef = useRef<EditorSelection[]>([{ kind: "text" }]);
+  const selHistoryRef = useRef<EditorSelection[]>([initialSel]);
   const setSelection = useCallback((sel: EditorSelection) => {
     setSelectionState(sel);
     const last = selHistoryRef.current[selHistoryRef.current.length - 1];
@@ -186,6 +187,11 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
   );
   const replace = useCallback((cfg: NeonDesignConfig) => commit(cfg), [commit]);
 
+  /** Count of visible (non-hidden) layers, used to prevent zero-layer designs. */
+  const visibleLayerCount = (cfg: NeonDesignConfig) =>
+    (cfg.textLayers ?? []).filter((l) => !l.hidden).length +
+    (cfg.decorations ?? []).filter((d) => !d.hidden).length;
+
   const addDecoration = useCallback(
     (decoration: Decoration) => {
       const next: NeonDesignConfig = {
@@ -213,11 +219,15 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
 
   const removeDecoration = useCallback(
     (id: string) => {
-      commit({
-        ...configRef.current,
-        decorations: (configRef.current.decorations ?? []).filter((d) => d.id !== id),
-      });
-      setSelection({ kind: "text" });
+      const cur = configRef.current;
+      const filtered = (cur.decorations ?? []).filter((d) => d.id !== id);
+      const nextCfg: NeonDesignConfig = { ...cur, decorations: filtered };
+      if (visibleLayerCount(nextCfg) === 0) {
+        toast.error("Tasarımda en az bir görünür katman olmalı.");
+        return;
+      }
+      commit(nextCfg);
+      setSelection({ kind: "canvas" });
     },
     [commit],
   );
@@ -247,11 +257,15 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
 
   const removeTextLayer = useCallback(
     (id: string) => {
-      commit({
-        ...configRef.current,
-        textLayers: (configRef.current.textLayers ?? []).filter((l) => l.id !== id),
-      });
-      setSelection({ kind: "text" });
+      const cur = configRef.current;
+      const filtered = (cur.textLayers ?? []).filter((l) => l.id !== id);
+      const nextCfg: NeonDesignConfig = { ...cur, textLayers: filtered };
+      if (visibleLayerCount(nextCfg) === 0) {
+        toast.error("Tasarımda en az bir görünür katman olmalı.");
+        return;
+      }
+      commit(nextCfg);
+      setSelection({ kind: "canvas" });
     },
     [commit],
   );
