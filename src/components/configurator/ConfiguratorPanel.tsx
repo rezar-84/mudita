@@ -448,3 +448,44 @@ export function ConfiguratorPanel() {
     </div>
   );
 }
+
+function ActiveLayerBadge({
+  label,
+  hint,
+  editing,
+  layers,
+  activeId,
+  onPick,
+}: {
+  label: string;
+  hint: string;
+  editing: string;
+  layers: { id: string; text: string }[];
+  activeId: string;
+  onPick: (id: string) => void;
+}) {
+  return (
+    <div className="rounded-md border border-dashed border-border bg-secondary/40 p-3">
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-xs">
+          <span className="font-semibold">{editing}:</span>{" "}
+          <span className="text-foreground/80">{label.slice(0, 28) || "—"}</span>
+        </p>
+        {layers.length > 1 && (
+          <select
+            value={activeId}
+            onChange={(e) => onPick(e.target.value)}
+            className="rounded-md border border-border bg-background px-2 py-1 text-[11px]"
+          >
+            {layers.map((l, i) => (
+              <option key={l.id} value={l.id}>
+                #{i + 1} {l.text.slice(0, 16) || "—"}
+              </option>
+            ))}
+          </select>
+        )}
+      </div>
+      <p className="mt-1 text-[10px] text-muted-foreground">{hint}</p>
+    </div>
+  );
+}
