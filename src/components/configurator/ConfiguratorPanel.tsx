@@ -104,21 +104,26 @@ export function ConfiguratorPanel() {
           <TabsTrigger value="extras">{t("tabExtras")}</TabsTrigger>
         </TabsList>
 
-        {/* TEXT — edits the active layer directly */}
+        {/* TEXT — edits the selected layer directly */}
         <TabsContent value="text" className="space-y-5 pt-4">
-          {activeLayer && (
-            <ActiveLayerBadge
-              label={activeLayer.text || t("textTabAdd")}
-              hint={t("editingLayerHint")}
-              editing={t("editingLayer")}
+          {!activeLayer && (
+            <NoLayerSelected
               layers={layers}
-              activeId={activeLayer.id}
               onPick={(id) => setSelection({ kind: "textLayer", id })}
             />
           )}
 
           {activeLayer && (
             <>
+              <ActiveLayerBadge
+                label={activeLayer.text || t("textTabAdd")}
+                hint={t("editingLayerHint")}
+                editing={t("editingLayer")}
+                layers={layers}
+                activeId={activeLayer.id}
+                onPick={(id) => setSelection({ kind: "textLayer", id })}
+              />
+
               <div>
                 <Label className="mb-2 block text-sm font-medium">{t("enterText")}</Label>
                 <Textarea
@@ -202,66 +207,69 @@ export function ConfiguratorPanel() {
           </button>
         </TabsContent>
 
-        {/* STYLE — font + color for the active layer */}
+        {/* STYLE — font + color for the selected layer */}
         <TabsContent value="style" className="space-y-6 pt-4">
-          {activeLayer && (
-            <ActiveLayerBadge
-              label={activeLayer.text || t("textTabAdd")}
-              hint={t("editingLayerHint")}
-              editing={t("editingLayer")}
+          {!activeLayer && (
+            <NoLayerSelected
               layers={layers}
-              activeId={activeLayer.id}
               onPick={(id) => setSelection({ kind: "textLayer", id })}
             />
           )}
 
-          <div>
-            <Label className="mb-2 block text-sm font-medium">{t("fontType")}</Label>
-            <FontSelector
-              value={activeLayer?.fontId}
-              onChange={(id) =>
-                activeLayer
-                  ? updateTextLayer(activeLayer.id, { fontId: id })
-                  : update({ fontId: id })
-              }
-            />
-          </div>
+          {activeLayer && (
+            <>
+              <ActiveLayerBadge
+                label={activeLayer.text || t("textTabAdd")}
+                hint={t("editingLayerHint")}
+                editing={t("editingLayer")}
+                layers={layers}
+                activeId={activeLayer.id}
+                onPick={(id) => setSelection({ kind: "textLayer", id })}
+              />
 
-          <div>
-            <Label className="mb-2 block text-sm font-medium">{t("pickColor")}</Label>
-            <div className="grid grid-cols-5 gap-2 sm:grid-cols-10">
-              {COLORS.map((c) => {
-                const selected = activeLayer ? activeLayer.colorId === c.id : config.colorId === c.id;
-                return (
-                  <button
-                    key={c.id}
-                    type="button"
-                    title={c.label}
-                    onClick={() =>
-                      activeLayer
-                        ? updateTextLayer(activeLayer.id, { colorId: c.id })
-                        : update({ colorId: c.id })
-                    }
-                    className={cn(
-                      "h-10 rounded-full border-2 transition",
-                      selected ? "border-foreground scale-110" : "border-border",
-                    )}
-                    style={{
-                      background: c.rgb
-                        ? "conic-gradient(red, orange, yellow, lime, cyan, blue, magenta, red)"
-                        : c.hex,
-                      boxShadow: `0 0 12px ${c.glow}`,
-                    }}
-                  />
-                );
-              })}
-            </div>
-            <p className="mt-2 text-xs text-muted-foreground">
-              {t("selectedColor")}:{" "}
-              {COLORS.find((c) => c.id === (activeLayer?.colorId ?? config.colorId))?.label}
-            </p>
-          </div>
+              <div>
+                <Label className="mb-2 block text-sm font-medium">{t("fontType")}</Label>
+                <FontSelector
+                  value={activeLayer.fontId}
+                  onChange={(id) => updateTextLayer(activeLayer.id, { fontId: id })}
+                />
+              </div>
+
+              <div>
+                <Label className="mb-2 block text-sm font-medium">{t("pickColor")}</Label>
+                <div className="grid grid-cols-5 gap-2 sm:grid-cols-10">
+                  {COLORS.map((c) => {
+                    const selected = activeLayer.colorId === c.id;
+                    return (
+                      <button
+                        key={c.id}
+                        type="button"
+                        title={c.label}
+                        onClick={() => updateTextLayer(activeLayer.id, { colorId: c.id })}
+                        className={cn(
+                          "h-10 rounded-full border-2 transition",
+                          selected ? "border-foreground scale-110" : "border-border",
+                        )}
+                        style={{
+                          background: c.rgb
+                            ? "conic-gradient(red, orange, yellow, lime, cyan, blue, magenta, red)"
+                            : c.hex,
+                          boxShadow: `0 0 12px ${c.glow}`,
+                        }}
+                      />
+                    );
+                  })}
+                </div>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  {t("selectedColor")}:{" "}
+                  {COLORS.find((c) => c.id === activeLayer.colorId)?.label}
+                </p>
+              </div>
+            </>
+          )}
         </TabsContent>
+
+
 
 
         {/* SIZE */}
