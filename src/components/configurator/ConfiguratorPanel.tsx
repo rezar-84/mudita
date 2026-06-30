@@ -77,24 +77,36 @@ export function ConfiguratorPanel() {
           <TabsTrigger value="extras">{t("tabExtras")}</TabsTrigger>
         </TabsList>
 
-        {/* TEXT */}
+        {/* TEXT — text now lives entirely on layers */}
         <TabsContent value="text" className="space-y-4 pt-4">
-          <div>
-            <Label htmlFor="neon-text" className="mb-2 block text-sm font-medium">{t("enterText")}</Label>
-            <Textarea
-              id="neon-text"
-              rows={3}
-              maxLength={60}
-              placeholder={t("textPlaceholder")}
-              value={config.text}
-              onChange={(e) => update({ text: e.target.value })}
-            />
-            <p className="mt-1 text-xs text-muted-foreground">{config.text.length}/60 {t("textCharsHint")}</p>
-          </div>
+          <p className="rounded-md border border-dashed border-border bg-secondary/40 p-3 text-xs leading-relaxed text-muted-foreground">
+            {t("textTabHelper")}
+          </p>
+          <button
+            type="button"
+            onClick={() => {
+              const id = `tl-${Date.now()}`;
+              addTextLayer({
+                id,
+                text: t("toolNewTextDefault"),
+                fontId: config.fontId,
+                colorId: config.colorId,
+                sizePct: 16,
+                x: 0,
+                y: 12,
+                rotation: 0,
+              });
+              setSelection({ kind: "textLayer", id });
+            }}
+            className="w-full rounded-lg border border-foreground/30 bg-accent/40 px-3 py-2 text-sm font-medium transition hover:bg-accent"
+          >
+            + {t("textTabAdd")}
+          </button>
         </TabsContent>
 
-        {/* STYLE: font + color */}
+        {/* STYLE: default font + color for NEW layers */}
         <TabsContent value="style" className="space-y-6 pt-4">
+          <p className="text-[11px] text-muted-foreground">{t("defaultStyleHint")}</p>
           <div>
             <Label className="mb-2 block text-sm font-medium">{t("fontType")}</Label>
             <FontSelector />
