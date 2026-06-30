@@ -100,6 +100,7 @@ export function DecorationOverlay() {
         const color = COLORS.find((c) => c.id === d.colorId) ?? COLORS[0];
         const preset = d.source === "preset" ? DECORATIONS.find((p) => p.id === d.presetId) : null;
         const isSelected = selection.kind === "decoration" && selection.id === d.id;
+        const isMulti = selection.kind === "multi" && selection.ids.includes(d.id);
         const isLightOn = config.isLightOn ?? true;
         const brightness = (config.brightness ?? 100) / 100;
         const glow = color.glow;
