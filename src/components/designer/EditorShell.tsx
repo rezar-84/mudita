@@ -5,6 +5,7 @@ import { ToolRail } from "./ToolRail";
 import { EditorTopBar } from "./EditorTopBar";
 import { PropertiesPanel } from "./PropertiesPanel";
 import { DecorationPickerDialog } from "./DecorationPickerDialog";
+import { EditorPropertiesToolbar } from "./EditorPropertiesToolbar";
 import { cn } from "@/lib/utils";
 
 /**
@@ -72,11 +73,16 @@ export function EditorShell({
       <div className="flex min-h-0 flex-1 flex-col lg:flex-row">
         <ToolRail onPickDecoration={() => setPickerOpen(true)} />
 
-        {/* Canvas */}
-        <div className="relative min-h-[320px] min-w-0 flex-1 overflow-auto bg-canvas/40">
-          <div className="mx-auto flex h-full max-w-5xl items-center justify-center p-3 sm:p-5">
-            <div className="w-full">
-              <NeonPreview />
+        {/* Canvas column with top contextual toolbar */}
+        <div className="relative flex min-h-[320px] min-w-0 flex-1 flex-col overflow-hidden bg-canvas/40">
+          <EditorPropertiesToolbar />
+
+          {/* Scrollable canvas area */}
+          <div className="flex-1 overflow-auto">
+            <div className="mx-auto flex min-h-full max-w-5xl items-center justify-center p-3 sm:p-5">
+              <div className="w-full">
+                <NeonPreview />
+              </div>
             </div>
           </div>
         </div>
