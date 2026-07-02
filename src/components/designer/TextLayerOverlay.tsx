@@ -119,6 +119,20 @@ export function TextLayerOverlay() {
           : "none";
         const scaleX = l.flipX ? -1 : 1;
         const scaleY = l.flipY ? -1 : 1;
+        const ledEffect = config.ledEffect ?? "none";
+        const ledClass =
+          isLightOn && ledEffect !== "none"
+            ? ledEffect === "blinking"
+              ? "led-blinking"
+              : ledEffect === "strobe"
+                ? "led-strobe"
+                : ledEffect === "fade"
+                  ? "led-fade"
+                  : ledEffect === "flashlight"
+                    ? "led-flashlight"
+                    : ""
+            : "";
+
         return (
           <div
             key={l.id}
@@ -127,7 +141,7 @@ export function TextLayerOverlay() {
               "pointer-events-auto absolute touch-none select-none",
               l.locked ? "cursor-default" : "cursor-grab active:cursor-grabbing",
               isLightOn && color.rgb ? "neon-rgb" : isLightOn ? "neon-text" : "",
-              (!flicker || !isLightOn) && "neon-no-flicker",
+              ledClass,
             )}
             style={{
               left: `${50 + l.x}%`,

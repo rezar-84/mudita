@@ -16,6 +16,8 @@ import { MeasurementOverlay } from "./MeasurementOverlay";
 import { DecorationOverlay } from "@/components/designer/DecorationOverlay";
 import { TextLayerOverlay } from "@/components/designer/TextLayerOverlay";
 import { AlignmentGuides } from "@/components/designer/AlignmentGuides";
+import { DrawingCanvas } from "@/components/designer/DrawingCanvas";
+import { PenToolCanvas } from "@/components/designer/PenToolCanvas";
 
 const BG_CLASS: Record<string, string> = Object.fromEntries(
   BACKGROUNDS.map((b) => [b.id, b.thumb]),
@@ -131,6 +133,12 @@ export function NeonPreview() {
 
         {/* Decoration / SVG layers */}
         <DecorationOverlay />
+
+        {/* Freehand drawing canvas */}
+        <DrawingCanvas />
+
+        {/* Vector pen tool canvas */}
+        <PenToolCanvas />
 
         {/* All text layers (including the seeded base "Mudita" layer) */}
         <TextLayerOverlay />

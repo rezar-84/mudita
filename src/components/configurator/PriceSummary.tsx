@@ -6,14 +6,14 @@ import { useState } from "react";
 import { encodeConfig } from "@/lib/share";
 import { toast } from "sonner";
 import { QuoteDialog } from "./QuoteDialog";
-import { addToCart } from "@/lib/cart";
+import { addToCart, updateCartItem } from "@/lib/cart";
 import { useNavigate } from "@tanstack/react-router";
 import { FONTS, COLORS, BACKBOARDS } from "@/data/options";
 import { useT } from "@/lib/i18n";
 
 export function PriceSummary() {
   const t = useT();
-  const { config } = useDesigner();
+  const { config, editCartId } = useDesigner();
   const breakdown = calculatePrice(config);
   const [quoteOpen, setQuoteOpen] = useState(false);
   const navigate = useNavigate();
@@ -61,8 +61,13 @@ export function PriceSummary() {
   };
 
   const onAddCart = () => {
-    addToCart(config, breakdown.total);
-    toast.success(t("productAddedToCart"));
+    if (editCartId) {
+      updateCartItem(editCartId, config, breakdown.total);
+      toast.success("Sepetteki tasarım güncellendi.");
+    } else {
+      addToCart(config, breakdown.total);
+      toast.success(t("productAddedToCart"));
+    }
     setTimeout(() => navigate({ to: "/sepet" }), 400);
   };
 

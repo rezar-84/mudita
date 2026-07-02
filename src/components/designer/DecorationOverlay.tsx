@@ -109,6 +109,20 @@ export function DecorationOverlay() {
           ? `drop-shadow(0 0 ${g(2)}px ${color.hex}) drop-shadow(0 0 ${g(6)}px ${glow}) drop-shadow(0 0 ${g(14)}px ${glow}) drop-shadow(0 0 ${g(28)}px ${glow})`
           : "none";
 
+        const ledEffect = config.ledEffect ?? "none";
+        const ledClass =
+          isLightOn && ledEffect !== "none"
+            ? ledEffect === "blinking"
+              ? "led-blinking"
+              : ledEffect === "strobe"
+                ? "led-strobe"
+                : ledEffect === "fade"
+                  ? "led-fade"
+                  : ledEffect === "flashlight"
+                    ? "led-flashlight"
+                    : ""
+            : "";
+
         return (
           <div
             key={d.id}
@@ -116,12 +130,13 @@ export function DecorationOverlay() {
             className={cn(
               "pointer-events-auto absolute touch-none select-none",
               d.locked ? "cursor-default" : "cursor-grab active:cursor-grabbing",
+              ledClass,
             )}
             style={{
               left: `${50 + d.x}%`,
               top: `${50 + d.y}%`,
               width: `${d.sizePct}%`,
-              aspectRatio: "1 / 1",
+              aspectRatio: `${d.aspectRatio ?? 1}`,
               transform: `translate(-50%, -50%) rotate(${d.rotation}deg) scale(${d.flipX ? -1 : 1}, ${d.flipY ? -1 : 1})`,
               color: isLightOn ? color.hex : "rgba(255,255,255,0.18)",
               filter: glowFilter,
@@ -147,7 +162,11 @@ export function DecorationOverlay() {
             ) : d.svgMarkup ? (
               <div
                 className="h-full w-full [&_svg]:h-full [&_svg]:w-full"
-                dangerouslySetInnerHTML={{ __html: d.svgMarkup }}
+                dangerouslySetInnerHTML={{
+                  __html: d.strokeWidth
+                    ? d.svgMarkup.replace(/stroke-width="[^"]*"/g, `stroke-width="${d.strokeWidth}"`)
+                    : d.svgMarkup,
+                }}
               />
             ) : null}
 

@@ -16,6 +16,7 @@ import type {
   TextLayer,
 } from "@/lib/types";
 import { decodeConfig } from "@/lib/share";
+import { getCart } from "@/lib/cart";
 import { toast } from "sonner";
 
 const BASE_TEXT_ID = "base";
@@ -47,9 +48,12 @@ export const defaultConfig: NeonDesignConfig = {
     },
   ],
   brightness: 100,
-  flicker: true,
+  flicker: false,
+  ledEffect: "none",
   zoom: 1,
   isLightOn: true,
+  drawStrokeWidth: 6,
+  penStrokeWidth: 6,
   realSizeMode: false,
   showMeasurements: false,
   showBackboardBounds: false,
@@ -151,6 +155,10 @@ interface Ctx {
   setSelection: (sel: EditorSelection) => void;
   /** Most recent alignment reference, briefly shown as a guideline overlay. Null when no overlay should render. */
   alignmentGuide: AlignmentGuide | null;
+  activeTool: "select" | "draw" | "pen";
+  setActiveTool: (tool: "select" | "draw" | "pen") => void;
+  editCartId: string | null;
+  setEditCartId: (id: string | null) => void;
 }
 
 const DesignerCtx = createContext<Ctx | null>(null);
@@ -161,6 +169,8 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
   const [config, dispatch] = useReducer(reducer, defaultConfig);
   const initialSel: EditorSelection = { kind: "textLayer", id: BASE_TEXT_ID };
   const [selection, setSelectionState] = useState<EditorSelection>(initialSel);
+  const [activeTool, setActiveTool] = useState<"select" | "draw" | "pen">("select");
+  const [editCartId, setEditCartId] = useState<string | null>(null);
   // Ordered history of recent selections (oldest..newest), used for align references.
   const selHistoryRef = useRef<EditorSelection[]>([initialSel]);
   const setSelection = useCallback((sel: EditorSelection) => {
@@ -208,10 +218,24 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
     setHistoryTick((t) => t + 1);
   }, []);
 
-  // Load from share URL once
+  // Load from share URL or cart once
   useEffect(() => {
     if (typeof window === "undefined") return;
     const params = new URLSearchParams(window.location.search);
+    
+    // 1. Check if editing a cart item
+    const cartId = params.get("editCartId");
+    if (cartId) {
+      const items = getCart();
+      const item = items.find((i) => i.id === cartId);
+      if (item) {
+        setEditCartId(cartId);
+        dispatch({ type: "replace", cfg: item.config });
+        return;
+      }
+    }
+
+    // 2. Check if loading from share parameter
     const d = params.get("d");
     if (!d) return;
     const decoded = decodeConfig(d);
@@ -572,6 +596,10 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
       selection,
       setSelection,
       alignmentGuide,
+      activeTool,
+      setActiveTool,
+      editCartId,
+      setEditCartId,
     }),
     // historyTick included so canUndo/canRedo refresh
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -593,6 +621,8 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
       redo,
       selection,
       alignmentGuide,
+      activeTool,
+      editCartId,
       historyTick,
     ],
   );

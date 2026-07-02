@@ -1,6 +1,6 @@
 import { useDesigner } from "@/components/configurator/DesignerContext";
 import { calculatePrice, formatTRY } from "@/lib/pricing";
-import { addToCart } from "@/lib/cart";
+import { addToCart, updateCartItem } from "@/lib/cart";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
@@ -20,13 +20,18 @@ export function EditorTopBar({
   rightPanelOpen: boolean;
 }) {
   const t = useT();
-  const { config, undo, redo, canUndo, canRedo } = useDesigner();
+  const { config, undo, redo, canUndo, canRedo, editCartId } = useDesigner();
   const navigate = useNavigate();
   const breakdown = calculatePrice(config);
 
   const onAdd = () => {
-    addToCart(config, breakdown.total);
-    toast.success(t("productAddedToCart"));
+    if (editCartId) {
+      updateCartItem(editCartId, config, breakdown.total);
+      toast.success("Sepetteki tasarım güncellendi.");
+    } else {
+      addToCart(config, breakdown.total);
+      toast.success(t("productAddedToCart"));
+    }
     setTimeout(() => navigate({ to: "/sepet" }), 400);
   };
 

@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Lightbulb, LightbulbOff, RotateCcw } from "lucide-react";
 import { useT } from "@/lib/i18n";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export function PreviewControls() {
   const t = useT();
@@ -44,9 +45,28 @@ export function PreviewControls() {
         <Slider min={60} max={140} step={5} value={[Math.round(zoom * 100)]} onValueChange={([v]) => update({ zoom: v / 100 })} />
       </div>
 
-      <div className="flex items-center justify-between">
-        <Label className="text-xs font-medium">{t("flicker")}</Label>
-        <Switch checked={flicker} onCheckedChange={(v) => update({ flicker: v })} />
+      <div className="space-y-1.5">
+        <Label className="text-xs font-medium text-foreground">LED Işık Efekti (Tüm Katmanlar)</Label>
+        <Select
+          value={config.ledEffect ?? "none"}
+          onValueChange={(val) =>
+            update({
+              ledEffect: val as any,
+              flicker: val !== "none",
+            })
+          }
+        >
+          <SelectTrigger className="w-full text-xs bg-background/50 border-input">
+            <SelectValue placeholder="Işık Efekti Seçin" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="none">Sabit / Efektsiz</SelectItem>
+            <SelectItem value="blinking">Flaşör (Blinking)</SelectItem>
+            <SelectItem value="strobe">Stroboskop (Strobe)</SelectItem>
+            <SelectItem value="fade">Nefes Alma (Fade)</SelectItem>
+            <SelectItem value="flashlight">Gerçekçi Titreme (Flicker)</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="flex items-center justify-between">

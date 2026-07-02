@@ -4,7 +4,7 @@ import { getCart, removeFromCart, clearCart } from "@/lib/cart";
 import { formatTRY } from "@/lib/pricing";
 import type { CartItem } from "@/lib/types";
 import { Button } from "@/components/ui/button";
-import { Trash2, ShoppingBag } from "lucide-react";
+import { Trash2, ShoppingBag, Pencil } from "lucide-react";
 import { FONTS, COLORS } from "@/data/options";
 import { useT } from "@/lib/i18n";
 
@@ -69,12 +69,20 @@ function CartPage() {
                 </div>
                 <div className="text-right">
                   <div className="font-semibold">{formatTRY(it.price)}</div>
-                  <button
-                    onClick={() => { removeFromCart(it.id); refresh(); }}
-                    className="mt-1 inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive"
-                  >
-                    <Trash2 className="h-3 w-3" /> {t("cartRemoveBtn")}
-                  </button>
+                  <div className="mt-1 flex items-center justify-end gap-3">
+                    <Link
+                      to={`/tasarla?editCartId=${it.id}`}
+                      className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors"
+                    >
+                      <Pencil className="h-3 w-3" /> Düzenle
+                    </Link>
+                    <button
+                      onClick={() => { removeFromCart(it.id); refresh(); }}
+                      className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive transition-colors"
+                    >
+                      <Trash2 className="h-3 w-3" /> {t("cartRemoveBtn")}
+                    </button>
+                  </div>
                 </div>
               </li>
             );

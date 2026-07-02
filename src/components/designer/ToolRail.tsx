@@ -18,6 +18,8 @@ import {
   Redo2,
   Layers,
   Trash2,
+  Pencil,
+  PenTool,
 } from "lucide-react";
 
 interface Tool {
@@ -44,6 +46,8 @@ export function ToolRail({ onPickDecoration }: { onPickDecoration: () => void })
     canUndo,
     canRedo,
     resetDesign,
+    activeTool,
+    setActiveTool,
   } = useDesigner();
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -51,23 +55,19 @@ export function ToolRail({ onPickDecoration }: { onPickDecoration: () => void })
     setSelection({ kind: "canvas" });
   }
   function handleTextTool() {
-    // Select the first existing text layer if one exists, otherwise add a new one.
-    const first = (config.textLayers ?? []).find((l) => !l.hidden);
-    if (first) {
-      setSelection({ kind: "textLayer", id: first.id });
-    } else {
-      const id = `tl-${Date.now()}`;
-      addTextLayer({
-        id,
-        text: t("toolNewTextDefault"),
-        fontId: config.fontId,
-        colorId: config.colorId,
-        sizePct: 18,
-        x: 0,
-        y: 0,
-        rotation: 0,
-      });
-    }
+    const id = `tl-${Date.now()}`;
+    const offset = ((config.textLayers ?? []).length * 8) % 32;
+    addTextLayer({
+      id,
+      text: t("toolNewTextDefault"),
+      fontId: config.fontId,
+      colorId: config.colorId,
+      sizePct: 18,
+      x: 0,
+      y: Math.round(offset),
+      rotation: 0,
+    });
+    toast.success(t("toolTextLayerAdded"));
   }
   function openLayers() {
     setSelection({ kind: "canvas" });
@@ -111,8 +111,31 @@ export function ToolRail({ onPickDecoration }: { onPickDecoration: () => void })
       id: "select",
       icon: MousePointer2,
       label: t("toolSelect"),
-      onClick: handleSelectTool,
-      active: selection.kind === "canvas",
+      onClick: () => {
+        setActiveTool("select");
+        handleSelectTool();
+      },
+      active: activeTool === "select",
+    },
+    {
+      id: "draw",
+      icon: Pencil,
+      label: "Serbest Çizim (Smooth)",
+      onClick: () => {
+        setActiveTool("draw");
+        setSelection({ kind: "canvas" });
+      },
+      active: activeTool === "draw",
+    },
+    {
+      id: "pen",
+      icon: PenTool,
+      label: "Vektör Kalem (Pen Tool)",
+      onClick: () => {
+        setActiveTool("pen");
+        setSelection({ kind: "canvas" });
+      },
+      active: activeTool === "pen",
     },
     {
       id: "text",
@@ -122,24 +145,6 @@ export function ToolRail({ onPickDecoration }: { onPickDecoration: () => void })
       active:
         selection.kind === "textLayer" ||
         (selection.kind === "multi" && selection.kinds.includes("textLayer")),
-    },
-    {
-      id: "new-text-layer",
-      icon: TextCursorInput,
-      label: t("toolNewTextLayer"),
-      onClick: () => {
-        addTextLayer({
-          id: `tl-${Date.now()}`,
-          text: t("toolNewTextDefault"),
-          fontId: config.fontId,
-          colorId: config.colorId,
-          sizePct: 14,
-          x: 0,
-          y: 15,
-          rotation: 0,
-        });
-        toast.success(t("toolTextLayerAdded"));
-      },
     },
     {
       id: "decoration",

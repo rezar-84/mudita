@@ -1,9 +1,17 @@
 import { Link } from "@tanstack/react-router";
 import logo from "@/assets/logo.png";
-import { Menu, X, Globe } from "lucide-react";
+import { Menu, X, Globe, User, History, Package, Settings, LogIn } from "lucide-react";
 import { useState } from "react";
 import { useT, useLocale, setLocale, type Locale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const NAV = [
   { to: "/", key: "navHome" as const },
@@ -27,6 +35,44 @@ function LanguageSelector({ className }: { className?: string }) {
         </button>
       ))}
     </div>
+  );
+}
+
+function UserMenu() {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button className="rounded-md border border-border p-2 text-sm hover:bg-accent transition cursor-pointer flex items-center gap-1.5 focus:outline-none">
+          <User className="h-4 w-4" />
+          <span className="hidden md:inline">Hesabım</span>
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-56 bg-card border border-border shadow-soft z-50">
+        <DropdownMenuLabel className="font-semibold text-foreground">Kullanıcı Paneli</DropdownMenuLabel>
+        <DropdownMenuSeparator className="bg-border" />
+        <DropdownMenuItem disabled className="opacity-70 flex items-center gap-2 text-foreground focus:bg-accent cursor-not-allowed">
+          <LogIn className="h-4 w-4" />
+          <span>Giriş Yap / Kayıt Ol</span>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator className="bg-border" />
+        <DropdownMenuLabel className="text-[11px] text-muted-foreground font-semibold px-2 py-1 uppercase tracking-wider">Tasarımlar & Siparişler</DropdownMenuLabel>
+        <DropdownMenuItem asChild>
+          <Link to="/tasarla" className="w-full flex items-center gap-2 cursor-pointer text-foreground focus:bg-accent">
+            <History className="h-4 w-4" />
+            <span>Önceki Tasarımlarım</span>
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem disabled className="opacity-70 flex items-center gap-2 text-foreground focus:bg-accent cursor-not-allowed">
+          <Package className="h-4 w-4" />
+          <span>Siparişlerim</span>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator className="bg-border" />
+        <DropdownMenuItem disabled className="opacity-70 flex items-center gap-2 text-foreground focus:bg-accent cursor-not-allowed">
+          <Settings className="h-4 w-4" />
+          <span>Hesap Ayarları</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
@@ -54,6 +100,7 @@ export function SiteHeader() {
           <Link to="/sepet" className="rounded-md border border-border px-3 py-2 text-sm hover:bg-accent">
             {t("navCart")}
           </Link>
+          <UserMenu />
           <button className="rounded-md border border-border p-2 lg:hidden" onClick={() => setOpen((v) => !v)} aria-label={t("menuAria")}>
             {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </button>

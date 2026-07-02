@@ -130,7 +130,6 @@
 }
 
 .neon-text {
-  animation: neon-flicker 6s infinite;
   letter-spacing: 0.02em;
   line-height: 1.1;
 }
@@ -140,10 +139,41 @@
   100% { filter: hue-rotate(360deg); }
 }
 .neon-rgb {
-  animation: neon-flicker 6s infinite, rgb-shift 8s linear infinite;
+  animation: rgb-shift 8s linear infinite;
 }
 .neon-no-flicker {
   animation: none !important;
+}
+
+/* LED Lighting Effects */
+@keyframes led-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+@keyframes led-strobe {
+  0%, 15%, 30%, 45%, 60%, 75%, 90% { opacity: 1; }
+  7.5%, 22.5%, 37.5%, 52.5%, 67.5%, 82.5%, 95% { opacity: 0.15; }
+}
+@keyframes led-fade {
+  0%, 100% { opacity: 0.25; filter: brightness(0.6); }
+  50% { opacity: 1; filter: brightness(1.2); }
+}
+@keyframes led-flashlight {
+  0%, 90%, 94%, 98%, 100% { opacity: 1; }
+  92%, 96% { opacity: 0.3; }
+}
+
+.led-blinking {
+  animation: led-blink 1.2s steps(2) infinite;
+}
+.led-strobe {
+  animation: led-strobe 1.5s linear infinite;
+}
+.led-fade {
+  animation: led-fade 2.5s ease-in-out infinite;
+}
+.led-flashlight {
+  animation: led-flashlight 4s ease-in-out infinite;
 }
 
 /* Background presets for the preview canvas */

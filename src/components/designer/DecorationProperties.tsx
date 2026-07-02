@@ -109,6 +109,21 @@ export function DecorationProperties() {
         <Slider min={5} max={40} step={1} value={[d.sizePct]} onValueChange={([v]) => updateDecoration(d.id, { sizePct: v })} />
       </div>
 
+      {d.source === "draw" && (
+        <div>
+          <Label className="mb-2 flex items-center justify-between text-sm">
+            Çizgi Kalınlığı <span className="text-muted-foreground">{d.strokeWidth ?? 6}px</span>
+          </Label>
+          <Slider
+            min={2}
+            max={16}
+            step={1}
+            value={[d.strokeWidth ?? 6]}
+            onValueChange={([v]) => updateDecoration(d.id, { strokeWidth: v })}
+          />
+        </div>
+      )}
+
       <div>
         <Label className="mb-2 flex items-center justify-between text-sm">
           {t("rotation")} <span className="text-muted-foreground">{d.rotation}°</span>

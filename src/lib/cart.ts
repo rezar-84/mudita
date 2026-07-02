@@ -32,6 +32,21 @@ export function removeFromCart(id: string) {
   saveCart(getCart().filter((i) => i.id !== id));
 }
 
+export function updateCartItem(id: string, config: NeonDesignConfig, price: number) {
+  const items = getCart();
+  const idx = items.findIndex((i) => i.id === id);
+  if (idx >= 0) {
+    items[idx] = {
+      ...items[idx],
+      config,
+      price,
+    };
+    saveCart(items);
+    return true;
+  }
+  return false;
+}
+
 export function clearCart() {
   saveCart([]);
 }

@@ -94,7 +94,7 @@ export type BackgroundPreset =
 /** Decoration / SVG layer (preset icon or user-uploaded SVG). */
 export interface Decoration {
   id: string;
-  source: "preset" | "upload";
+  source: "preset" | "upload" | "draw";
   /** Preset id from DECORATIONS table (when source === "preset"). */
   presetId?: string;
   /** Sanitised inline SVG markup (when source === "upload"). */
@@ -113,10 +113,14 @@ export interface Decoration {
   /** Mirror horizontally / vertically. */
   flipX?: boolean;
   flipY?: boolean;
+  /** Aspect ratio of custom drawings or uploads. */
+  aspectRatio?: number;
   /** Glow intensity multiplier 60..140 (default 100). */
   glow?: number;
   hidden?: boolean;
   locked?: boolean;
+  /** Stroke width for custom drawings, 2..16. */
+  strokeWidth?: number;
 }
 
 /** Additional text layer on the canvas (multi-text support). */
@@ -165,8 +169,11 @@ export interface NeonDesignConfig {
   // Visual preview-only options (do not affect price)
   brightness?: number;   // 40 – 120, default 100
   flicker?: boolean;     // default true
+  ledEffect?: "none" | "blinking" | "strobe" | "fade" | "flashlight";
   zoom?: number;         // 0.6 – 1.4, default 1
   isLightOn?: boolean;   // default true — turns glow off when false
+  drawStrokeWidth?: number; // Active stroke width for Freehand tool (range 2..16, default 6)
+  penStrokeWidth?: number;  // Active stroke width for Pen tool (range 2..16, default 6)
   /** @deprecated layer positions live on each layer now. */
   positionX?: number;
   /** @deprecated */
