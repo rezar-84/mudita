@@ -646,6 +646,8 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
       updateTextLayer,
       removeTextLayer,
       reorder,
+      layerOrder,
+      zIndexFor,
       alignSelected,
       deleteSelection,
       resetDesign,
