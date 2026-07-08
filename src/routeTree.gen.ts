@@ -28,6 +28,7 @@ import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedHesapTasarimlarRouteImport } from './routes/_authenticated/hesap.tasarimlar'
 import { Route as AuthenticatedHesapSiparislerRouteImport } from './routes/_authenticated/hesap.siparisler'
 import { Route as AuthenticatedHesapProfilRouteImport } from './routes/_authenticated/hesap.profil'
+import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
 import { Route as AuthenticatedAdminOrdersRouteImport } from './routes/_authenticated/admin.orders'
 
 const YukleRoute = YukleRouteImport.update({
@@ -127,6 +128,11 @@ const AuthenticatedHesapProfilRoute =
     path: '/profil',
     getParentRoute: () => AuthenticatedHesapRoute,
   } as any)
+const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 const AuthenticatedAdminOrdersRoute =
   AuthenticatedAdminOrdersRouteImport.update({
     id: '/orders',
@@ -149,6 +155,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/hesap': typeof AuthenticatedHesapRouteWithChildren
   '/admin/orders': typeof AuthenticatedAdminOrdersRoute
+  '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/hesap/profil': typeof AuthenticatedHesapProfilRoute
   '/hesap/siparisler': typeof AuthenticatedHesapSiparislerRoute
   '/hesap/tasarimlar': typeof AuthenticatedHesapTasarimlarRoute
@@ -168,6 +175,7 @@ export interface FileRoutesByTo {
   '/tasarla': typeof TasarlaRoute
   '/yukle': typeof YukleRoute
   '/admin/orders': typeof AuthenticatedAdminOrdersRoute
+  '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/hesap/profil': typeof AuthenticatedHesapProfilRoute
   '/hesap/siparisler': typeof AuthenticatedHesapSiparislerRoute
   '/hesap/tasarimlar': typeof AuthenticatedHesapTasarimlarRoute
@@ -191,6 +199,7 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/hesap': typeof AuthenticatedHesapRouteWithChildren
   '/_authenticated/admin/orders': typeof AuthenticatedAdminOrdersRoute
+  '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/hesap/profil': typeof AuthenticatedHesapProfilRoute
   '/_authenticated/hesap/siparisler': typeof AuthenticatedHesapSiparislerRoute
   '/_authenticated/hesap/tasarimlar': typeof AuthenticatedHesapTasarimlarRoute
@@ -214,6 +223,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/hesap'
     | '/admin/orders'
+    | '/admin/users'
     | '/hesap/profil'
     | '/hesap/siparisler'
     | '/hesap/tasarimlar'
@@ -233,6 +243,7 @@ export interface FileRouteTypes {
     | '/tasarla'
     | '/yukle'
     | '/admin/orders'
+    | '/admin/users'
     | '/hesap/profil'
     | '/hesap/siparisler'
     | '/hesap/tasarimlar'
@@ -255,6 +266,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/_authenticated/hesap'
     | '/_authenticated/admin/orders'
+    | '/_authenticated/admin/users'
     | '/_authenticated/hesap/profil'
     | '/_authenticated/hesap/siparisler'
     | '/_authenticated/hesap/tasarimlar'
@@ -412,6 +424,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedHesapProfilRouteImport
       parentRoute: typeof AuthenticatedHesapRoute
     }
+    '/_authenticated/admin/users': {
+      id: '/_authenticated/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/orders': {
       id: '/_authenticated/admin/orders'
       path: '/orders'
@@ -424,11 +443,13 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminOrdersRoute: typeof AuthenticatedAdminOrdersRoute
+  AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminOrdersRoute: AuthenticatedAdminOrdersRoute,
+  AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
 }
 
