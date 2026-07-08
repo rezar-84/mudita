@@ -7,12 +7,12 @@ export const Route = createFileRoute("/_authenticated/hesap")({
   component: HesapLayout,
 });
 
-const LINKS = [
+const LINKS: { to: string; label: string; icon: typeof LayoutGrid; exact?: boolean }[] = [
   { to: "/hesap", label: "Genel Bakış", icon: LayoutGrid, exact: true },
   { to: "/hesap/tasarimlar", label: "Tasarımlarım", icon: Bookmark },
   { to: "/hesap/siparisler", label: "Siparişlerim", icon: Package },
   { to: "/hesap/profil", label: "Profil", icon: User },
-] as const;
+];
 
 function HesapLayout() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });

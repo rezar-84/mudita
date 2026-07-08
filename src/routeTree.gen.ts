@@ -13,11 +13,15 @@ import { Route as YukleRouteImport } from './routes/yukle'
 import { Route as TasarlaRouteImport } from './routes/tasarla'
 import { Route as SssRouteImport } from './routes/sss'
 import { Route as SepetRouteImport } from './routes/sepet'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as OdemeRouteImport } from './routes/odeme'
 import { Route as IletisimRouteImport } from './routes/iletisim'
 import { Route as HakkimizdaRouteImport } from './routes/hakkimizda'
 import { Route as GaleriRouteImport } from './routes/galeri'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedHesapRouteImport } from './routes/_authenticated/hesap'
 
 const YukleRoute = YukleRouteImport.update({
   id: '/yukle',
@@ -37,6 +41,11 @@ const SssRoute = SssRouteImport.update({
 const SepetRoute = SepetRouteImport.update({
   id: '/sepet',
   path: '/sepet',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OdemeRoute = OdemeRouteImport.update({
@@ -59,88 +68,125 @@ const GaleriRoute = GaleriRouteImport.update({
   path: '/galeri',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedHesapRoute = AuthenticatedHesapRouteImport.update({
+  id: '/hesap',
+  path: '/hesap',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/galeri': typeof GaleriRoute
   '/hakkimizda': typeof HakkimizdaRoute
   '/iletisim': typeof IletisimRoute
   '/odeme': typeof OdemeRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/sepet': typeof SepetRoute
   '/sss': typeof SssRoute
   '/tasarla': typeof TasarlaRoute
   '/yukle': typeof YukleRoute
+  '/hesap': typeof AuthenticatedHesapRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/galeri': typeof GaleriRoute
   '/hakkimizda': typeof HakkimizdaRoute
   '/iletisim': typeof IletisimRoute
   '/odeme': typeof OdemeRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/sepet': typeof SepetRoute
   '/sss': typeof SssRoute
   '/tasarla': typeof TasarlaRoute
   '/yukle': typeof YukleRoute
+  '/hesap': typeof AuthenticatedHesapRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
   '/galeri': typeof GaleriRoute
   '/hakkimizda': typeof HakkimizdaRoute
   '/iletisim': typeof IletisimRoute
   '/odeme': typeof OdemeRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/sepet': typeof SepetRoute
   '/sss': typeof SssRoute
   '/tasarla': typeof TasarlaRoute
   '/yukle': typeof YukleRoute
+  '/_authenticated/hesap': typeof AuthenticatedHesapRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth'
     | '/galeri'
     | '/hakkimizda'
     | '/iletisim'
     | '/odeme'
+    | '/reset-password'
     | '/sepet'
     | '/sss'
     | '/tasarla'
     | '/yukle'
+    | '/hesap'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/auth'
     | '/galeri'
     | '/hakkimizda'
     | '/iletisim'
     | '/odeme'
+    | '/reset-password'
     | '/sepet'
     | '/sss'
     | '/tasarla'
     | '/yukle'
+    | '/hesap'
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
+    | '/auth'
     | '/galeri'
     | '/hakkimizda'
     | '/iletisim'
     | '/odeme'
+    | '/reset-password'
     | '/sepet'
     | '/sss'
     | '/tasarla'
     | '/yukle'
+    | '/_authenticated/hesap'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
   GaleriRoute: typeof GaleriRoute
   HakkimizdaRoute: typeof HakkimizdaRoute
   IletisimRoute: typeof IletisimRoute
   OdemeRoute: typeof OdemeRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   SepetRoute: typeof SepetRoute
   SssRoute: typeof SssRoute
   TasarlaRoute: typeof TasarlaRoute
@@ -177,6 +223,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SepetRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/odeme': {
       id: '/odeme'
       path: '/odeme'
@@ -205,6 +258,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GaleriRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -212,15 +279,36 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/hesap': {
+      id: '/_authenticated/hesap'
+      path: '/hesap'
+      fullPath: '/hesap'
+      preLoaderRoute: typeof AuthenticatedHesapRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedHesapRoute: typeof AuthenticatedHesapRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedHesapRoute: AuthenticatedHesapRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
   GaleriRoute: GaleriRoute,
   HakkimizdaRoute: HakkimizdaRoute,
   IletisimRoute: IletisimRoute,
   OdemeRoute: OdemeRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   SepetRoute: SepetRoute,
   SssRoute: SssRoute,
   TasarlaRoute: TasarlaRoute,
