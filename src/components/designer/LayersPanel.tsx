@@ -6,17 +6,36 @@ import { useT } from "@/lib/i18n";
 
 export function LayersPanel() {
   const t = useT();
-  const { config, selection, setSelection, reorder, updateDecoration, updateTextLayer, removeDecoration, removeTextLayer } = useDesigner();
+  const {
+    config,
+    selection,
+    setSelection,
+    reorder,
+    updateDecoration,
+    updateTextLayer,
+    removeDecoration,
+    removeTextLayer,
+    layerOrder,
+  } = useDesigner();
 
   const decos = config.decorations ?? [];
   const texts = config.textLayers ?? [];
 
-  type Item = { id: string; kind: "decoration" | "textLayer"; label: string; hidden?: boolean; locked?: boolean; };
+  type Item = { id: string; kind: "decoration" | "textLayer"; label: string; hidden?: boolean; locked?: boolean };
+  const decoById = new Map(decos.map((d) => [d.id, d]));
+  const textById = new Map(texts.map((l) => [l.id, l]));
 
-  const items: Item[] = [
-    ...texts.map<Item>((l) => ({ id: l.id, kind: "textLayer", label: l.text?.trim() || t("textLayerFallback"), hidden: l.hidden, locked: l.locked })),
-    ...decos.map<Item>((d) => ({ id: d.id, kind: "decoration", label: d.label || (d.source === "upload" ? t("decoSourceUpload") : t("decoration")), hidden: d.hidden, locked: d.locked })),
-  ].reverse();
+  // Build the unified list top → bottom (reverse of bottom → top layerOrder).
+  const items: Item[] = [...layerOrder]
+    .reverse()
+    .map((id): Item | null => {
+      const l = textById.get(id);
+      if (l) return { id, kind: "textLayer", label: l.text?.trim() || t("textLayerFallback"), hidden: l.hidden, locked: l.locked };
+      const d = decoById.get(id);
+      if (d) return { id, kind: "decoration", label: d.label || (d.source === "upload" ? t("decoSourceUpload") : t("decoration")), hidden: d.hidden, locked: d.locked };
+      return null;
+    })
+    .filter((x): x is Item => x !== null);
 
   if (items.length === 0) {
     return (
