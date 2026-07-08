@@ -78,8 +78,9 @@ function AuthPage() {
 
   const google = async () => {
     setBusy(true);
+    const nextPath = safeNext(next);
     const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin + "/auth",
+      redirect_uri: `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextPath)}`,
     });
     if (result.error) {
       toast.error(result.error.message ?? "Google girişi başarısız");
@@ -87,7 +88,7 @@ function AuthPage() {
       return;
     }
     if (result.redirected) return;
-    navigate({ to: safeNext(next), replace: true });
+    navigate({ to: nextPath, replace: true });
   };
 
   const forgotPassword = async () => {

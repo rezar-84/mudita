@@ -21,6 +21,7 @@ import { Route as GaleriRouteImport } from './routes/galeri'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AuthenticatedHesapRouteImport } from './routes/_authenticated/hesap'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedHesapIndexRouteImport } from './routes/_authenticated/hesap.index'
@@ -93,6 +94,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/callback',
+  path: '/callback',
+  getParentRoute: () => AuthRoute,
+} as any)
 const AuthenticatedHesapRoute = AuthenticatedHesapRouteImport.update({
   id: '/hesap',
   path: '/hesap',
@@ -163,7 +169,7 @@ const AuthenticatedAdminAnalyticsRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/galeri': typeof GaleriRoute
   '/hakkimizda': typeof HakkimizdaRoute
   '/iletisim': typeof IletisimRoute
@@ -175,6 +181,7 @@ export interface FileRoutesByFullPath {
   '/yukle': typeof YukleRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/hesap': typeof AuthenticatedHesapRouteWithChildren
+  '/auth/callback': typeof AuthCallbackRoute
   '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/admin/gallery': typeof AuthenticatedAdminGalleryRoute
   '/admin/orders': typeof AuthenticatedAdminOrdersRoute
@@ -188,7 +195,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/galeri': typeof GaleriRoute
   '/hakkimizda': typeof HakkimizdaRoute
   '/iletisim': typeof IletisimRoute
@@ -198,6 +205,7 @@ export interface FileRoutesByTo {
   '/sss': typeof SssRoute
   '/tasarla': typeof TasarlaRoute
   '/yukle': typeof YukleRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/admin/gallery': typeof AuthenticatedAdminGalleryRoute
   '/admin/orders': typeof AuthenticatedAdminOrdersRoute
@@ -213,7 +221,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/galeri': typeof GaleriRoute
   '/hakkimizda': typeof HakkimizdaRoute
   '/iletisim': typeof IletisimRoute
@@ -225,6 +233,7 @@ export interface FileRoutesById {
   '/yukle': typeof YukleRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/hesap': typeof AuthenticatedHesapRouteWithChildren
+  '/auth/callback': typeof AuthCallbackRoute
   '/_authenticated/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/_authenticated/admin/gallery': typeof AuthenticatedAdminGalleryRoute
   '/_authenticated/admin/orders': typeof AuthenticatedAdminOrdersRoute
@@ -252,6 +261,7 @@ export interface FileRouteTypes {
     | '/yukle'
     | '/admin'
     | '/hesap'
+    | '/auth/callback'
     | '/admin/analytics'
     | '/admin/gallery'
     | '/admin/orders'
@@ -275,6 +285,7 @@ export interface FileRouteTypes {
     | '/sss'
     | '/tasarla'
     | '/yukle'
+    | '/auth/callback'
     | '/admin/analytics'
     | '/admin/gallery'
     | '/admin/orders'
@@ -301,6 +312,7 @@ export interface FileRouteTypes {
     | '/yukle'
     | '/_authenticated/admin'
     | '/_authenticated/hesap'
+    | '/auth/callback'
     | '/_authenticated/admin/analytics'
     | '/_authenticated/admin/gallery'
     | '/_authenticated/admin/orders'
@@ -316,7 +328,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
-  AuthRoute: typeof AuthRoute
+  AuthRoute: typeof AuthRouteWithChildren
   GaleriRoute: typeof GaleriRoute
   HakkimizdaRoute: typeof HakkimizdaRoute
   IletisimRoute: typeof IletisimRoute
@@ -413,6 +425,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/auth/callback': {
+      id: '/auth/callback'
+      path: '/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
+      parentRoute: typeof AuthRoute
     }
     '/_authenticated/hesap': {
       id: '/_authenticated/hesap'
@@ -552,10 +571,20 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface AuthRouteChildren {
+  AuthCallbackRoute: typeof AuthCallbackRoute
+}
+
+const AuthRouteChildren: AuthRouteChildren = {
+  AuthCallbackRoute: AuthCallbackRoute,
+}
+
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
-  AuthRoute: AuthRoute,
+  AuthRoute: AuthRouteWithChildren,
   GaleriRoute: GaleriRoute,
   HakkimizdaRoute: HakkimizdaRoute,
   IletisimRoute: IletisimRoute,
