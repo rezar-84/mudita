@@ -12,9 +12,9 @@ import { useT } from "@/lib/i18n";
 export const Route = createFileRoute("/iletisim")({
   head: () => ({
     meta: [
-      { title: "İletişim · Mudita Dekorasyon" },
+      { title: "İletişim · MudiNeon" },
       { name: "description", content: "Sorularınız ve teklif talepleriniz için bize ulaşın. WhatsApp, e-posta ve form ile destek." },
-      { property: "og:title", content: "İletişim · Mudita Dekorasyon" },
+      { property: "og:title", content: "İletişim · MudiNeon" },
       { property: "og:description", content: "Bize ulaşın, sorularınızı cevaplayalım." },
     ],
   }),
@@ -53,11 +53,11 @@ function ContactPage() {
               <div className="text-sm text-muted-foreground">{t("contactWhatsAppDesc")}</div>
             </div>
           </a>
-          <a href="mailto:info@mudita.com" className="flex items-center gap-3 rounded-2xl border border-border bg-card p-4 hover:bg-accent">
+          <a href="mailto:info@mudineon.com" className="flex items-center gap-3 rounded-2xl border border-border bg-card p-4 hover:bg-accent">
             <Mail className="h-5 w-5 text-neon-cyan" />
             <div>
               <div className="font-medium">{t("contactEmail")}</div>
-              <div className="text-sm text-muted-foreground">info@mudita.com</div>
+              <div className="text-sm text-muted-foreground">info@mudineon.com</div>
             </div>
           </a>
           <div className="flex items-center gap-3 rounded-2xl border border-border bg-card p-4">

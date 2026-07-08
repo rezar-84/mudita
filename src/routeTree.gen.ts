@@ -13,11 +13,26 @@ import { Route as YukleRouteImport } from './routes/yukle'
 import { Route as TasarlaRouteImport } from './routes/tasarla'
 import { Route as SssRouteImport } from './routes/sss'
 import { Route as SepetRouteImport } from './routes/sepet'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as OdemeRouteImport } from './routes/odeme'
 import { Route as IletisimRouteImport } from './routes/iletisim'
 import { Route as HakkimizdaRouteImport } from './routes/hakkimizda'
 import { Route as GaleriRouteImport } from './routes/galeri'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedHesapRouteImport } from './routes/_authenticated/hesap'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedHesapIndexRouteImport } from './routes/_authenticated/hesap.index'
+import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as AuthenticatedHesapTasarimlarRouteImport } from './routes/_authenticated/hesap.tasarimlar'
+import { Route as AuthenticatedHesapSiparislerRouteImport } from './routes/_authenticated/hesap.siparisler'
+import { Route as AuthenticatedHesapProfilRouteImport } from './routes/_authenticated/hesap.profil'
+import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
+import { Route as AuthenticatedAdminPricingRouteImport } from './routes/_authenticated/admin.pricing'
+import { Route as AuthenticatedAdminOrdersRouteImport } from './routes/_authenticated/admin.orders'
+import { Route as AuthenticatedAdminGalleryRouteImport } from './routes/_authenticated/admin.gallery'
+import { Route as AuthenticatedAdminAnalyticsRouteImport } from './routes/_authenticated/admin.analytics'
 
 const YukleRoute = YukleRouteImport.update({
   id: '/yukle',
@@ -37,6 +52,11 @@ const SssRoute = SssRouteImport.update({
 const SepetRoute = SepetRouteImport.update({
   id: '/sepet',
   path: '/sepet',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OdemeRoute = OdemeRouteImport.update({
@@ -59,88 +79,249 @@ const GaleriRoute = GaleriRouteImport.update({
   path: '/galeri',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedHesapRoute = AuthenticatedHesapRouteImport.update({
+  id: '/hesap',
+  path: '/hesap',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedHesapIndexRoute = AuthenticatedHesapIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedHesapRoute,
+} as any)
+const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const AuthenticatedHesapTasarimlarRoute =
+  AuthenticatedHesapTasarimlarRouteImport.update({
+    id: '/tasarimlar',
+    path: '/tasarimlar',
+    getParentRoute: () => AuthenticatedHesapRoute,
+  } as any)
+const AuthenticatedHesapSiparislerRoute =
+  AuthenticatedHesapSiparislerRouteImport.update({
+    id: '/siparisler',
+    path: '/siparisler',
+    getParentRoute: () => AuthenticatedHesapRoute,
+  } as any)
+const AuthenticatedHesapProfilRoute =
+  AuthenticatedHesapProfilRouteImport.update({
+    id: '/profil',
+    path: '/profil',
+    getParentRoute: () => AuthenticatedHesapRoute,
+  } as any)
+const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const AuthenticatedAdminPricingRoute =
+  AuthenticatedAdminPricingRouteImport.update({
+    id: '/pricing',
+    path: '/pricing',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminOrdersRoute =
+  AuthenticatedAdminOrdersRouteImport.update({
+    id: '/orders',
+    path: '/orders',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminGalleryRoute =
+  AuthenticatedAdminGalleryRouteImport.update({
+    id: '/gallery',
+    path: '/gallery',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminAnalyticsRoute =
+  AuthenticatedAdminAnalyticsRouteImport.update({
+    id: '/analytics',
+    path: '/analytics',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/galeri': typeof GaleriRoute
   '/hakkimizda': typeof HakkimizdaRoute
   '/iletisim': typeof IletisimRoute
   '/odeme': typeof OdemeRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/sepet': typeof SepetRoute
   '/sss': typeof SssRoute
   '/tasarla': typeof TasarlaRoute
   '/yukle': typeof YukleRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/hesap': typeof AuthenticatedHesapRouteWithChildren
+  '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
+  '/admin/gallery': typeof AuthenticatedAdminGalleryRoute
+  '/admin/orders': typeof AuthenticatedAdminOrdersRoute
+  '/admin/pricing': typeof AuthenticatedAdminPricingRoute
+  '/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/hesap/profil': typeof AuthenticatedHesapProfilRoute
+  '/hesap/siparisler': typeof AuthenticatedHesapSiparislerRoute
+  '/hesap/tasarimlar': typeof AuthenticatedHesapTasarimlarRoute
+  '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/hesap/': typeof AuthenticatedHesapIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/galeri': typeof GaleriRoute
   '/hakkimizda': typeof HakkimizdaRoute
   '/iletisim': typeof IletisimRoute
   '/odeme': typeof OdemeRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/sepet': typeof SepetRoute
   '/sss': typeof SssRoute
   '/tasarla': typeof TasarlaRoute
   '/yukle': typeof YukleRoute
+  '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
+  '/admin/gallery': typeof AuthenticatedAdminGalleryRoute
+  '/admin/orders': typeof AuthenticatedAdminOrdersRoute
+  '/admin/pricing': typeof AuthenticatedAdminPricingRoute
+  '/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/hesap/profil': typeof AuthenticatedHesapProfilRoute
+  '/hesap/siparisler': typeof AuthenticatedHesapSiparislerRoute
+  '/hesap/tasarimlar': typeof AuthenticatedHesapTasarimlarRoute
+  '/admin': typeof AuthenticatedAdminIndexRoute
+  '/hesap': typeof AuthenticatedHesapIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
   '/galeri': typeof GaleriRoute
   '/hakkimizda': typeof HakkimizdaRoute
   '/iletisim': typeof IletisimRoute
   '/odeme': typeof OdemeRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/sepet': typeof SepetRoute
   '/sss': typeof SssRoute
   '/tasarla': typeof TasarlaRoute
   '/yukle': typeof YukleRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/_authenticated/hesap': typeof AuthenticatedHesapRouteWithChildren
+  '/_authenticated/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
+  '/_authenticated/admin/gallery': typeof AuthenticatedAdminGalleryRoute
+  '/_authenticated/admin/orders': typeof AuthenticatedAdminOrdersRoute
+  '/_authenticated/admin/pricing': typeof AuthenticatedAdminPricingRoute
+  '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/_authenticated/hesap/profil': typeof AuthenticatedHesapProfilRoute
+  '/_authenticated/hesap/siparisler': typeof AuthenticatedHesapSiparislerRoute
+  '/_authenticated/hesap/tasarimlar': typeof AuthenticatedHesapTasarimlarRoute
+  '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/hesap/': typeof AuthenticatedHesapIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth'
     | '/galeri'
     | '/hakkimizda'
     | '/iletisim'
     | '/odeme'
+    | '/reset-password'
     | '/sepet'
     | '/sss'
     | '/tasarla'
     | '/yukle'
+    | '/admin'
+    | '/hesap'
+    | '/admin/analytics'
+    | '/admin/gallery'
+    | '/admin/orders'
+    | '/admin/pricing'
+    | '/admin/users'
+    | '/hesap/profil'
+    | '/hesap/siparisler'
+    | '/hesap/tasarimlar'
+    | '/admin/'
+    | '/hesap/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/auth'
     | '/galeri'
     | '/hakkimizda'
     | '/iletisim'
     | '/odeme'
+    | '/reset-password'
     | '/sepet'
     | '/sss'
     | '/tasarla'
     | '/yukle'
+    | '/admin/analytics'
+    | '/admin/gallery'
+    | '/admin/orders'
+    | '/admin/pricing'
+    | '/admin/users'
+    | '/hesap/profil'
+    | '/hesap/siparisler'
+    | '/hesap/tasarimlar'
+    | '/admin'
+    | '/hesap'
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
+    | '/auth'
     | '/galeri'
     | '/hakkimizda'
     | '/iletisim'
     | '/odeme'
+    | '/reset-password'
     | '/sepet'
     | '/sss'
     | '/tasarla'
     | '/yukle'
+    | '/_authenticated/admin'
+    | '/_authenticated/hesap'
+    | '/_authenticated/admin/analytics'
+    | '/_authenticated/admin/gallery'
+    | '/_authenticated/admin/orders'
+    | '/_authenticated/admin/pricing'
+    | '/_authenticated/admin/users'
+    | '/_authenticated/hesap/profil'
+    | '/_authenticated/hesap/siparisler'
+    | '/_authenticated/hesap/tasarimlar'
+    | '/_authenticated/admin/'
+    | '/_authenticated/hesap/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
   GaleriRoute: typeof GaleriRoute
   HakkimizdaRoute: typeof HakkimizdaRoute
   IletisimRoute: typeof IletisimRoute
   OdemeRoute: typeof OdemeRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   SepetRoute: typeof SepetRoute
   SssRoute: typeof SssRoute
   TasarlaRoute: typeof TasarlaRoute
@@ -177,6 +358,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SepetRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/odeme': {
       id: '/odeme'
       path: '/odeme'
@@ -205,6 +393,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GaleriRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -212,15 +414,153 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/hesap': {
+      id: '/_authenticated/hesap'
+      path: '/hesap'
+      fullPath: '/hesap'
+      preLoaderRoute: typeof AuthenticatedHesapRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/hesap/': {
+      id: '/_authenticated/hesap/'
+      path: '/'
+      fullPath: '/hesap/'
+      preLoaderRoute: typeof AuthenticatedHesapIndexRouteImport
+      parentRoute: typeof AuthenticatedHesapRoute
+    }
+    '/_authenticated/admin/': {
+      id: '/_authenticated/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/hesap/tasarimlar': {
+      id: '/_authenticated/hesap/tasarimlar'
+      path: '/tasarimlar'
+      fullPath: '/hesap/tasarimlar'
+      preLoaderRoute: typeof AuthenticatedHesapTasarimlarRouteImport
+      parentRoute: typeof AuthenticatedHesapRoute
+    }
+    '/_authenticated/hesap/siparisler': {
+      id: '/_authenticated/hesap/siparisler'
+      path: '/siparisler'
+      fullPath: '/hesap/siparisler'
+      preLoaderRoute: typeof AuthenticatedHesapSiparislerRouteImport
+      parentRoute: typeof AuthenticatedHesapRoute
+    }
+    '/_authenticated/hesap/profil': {
+      id: '/_authenticated/hesap/profil'
+      path: '/profil'
+      fullPath: '/hesap/profil'
+      preLoaderRoute: typeof AuthenticatedHesapProfilRouteImport
+      parentRoute: typeof AuthenticatedHesapRoute
+    }
+    '/_authenticated/admin/users': {
+      id: '/_authenticated/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/pricing': {
+      id: '/_authenticated/admin/pricing'
+      path: '/pricing'
+      fullPath: '/admin/pricing'
+      preLoaderRoute: typeof AuthenticatedAdminPricingRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/orders': {
+      id: '/_authenticated/admin/orders'
+      path: '/orders'
+      fullPath: '/admin/orders'
+      preLoaderRoute: typeof AuthenticatedAdminOrdersRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/gallery': {
+      id: '/_authenticated/admin/gallery'
+      path: '/gallery'
+      fullPath: '/admin/gallery'
+      preLoaderRoute: typeof AuthenticatedAdminGalleryRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/analytics': {
+      id: '/_authenticated/admin/analytics'
+      path: '/analytics'
+      fullPath: '/admin/analytics'
+      preLoaderRoute: typeof AuthenticatedAdminAnalyticsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
   }
 }
 
+interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminAnalyticsRoute: typeof AuthenticatedAdminAnalyticsRoute
+  AuthenticatedAdminGalleryRoute: typeof AuthenticatedAdminGalleryRoute
+  AuthenticatedAdminOrdersRoute: typeof AuthenticatedAdminOrdersRoute
+  AuthenticatedAdminPricingRoute: typeof AuthenticatedAdminPricingRoute
+  AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
+  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+}
+
+const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminAnalyticsRoute: AuthenticatedAdminAnalyticsRoute,
+  AuthenticatedAdminGalleryRoute: AuthenticatedAdminGalleryRoute,
+  AuthenticatedAdminOrdersRoute: AuthenticatedAdminOrdersRoute,
+  AuthenticatedAdminPricingRoute: AuthenticatedAdminPricingRoute,
+  AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
+  AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+}
+
+const AuthenticatedAdminRouteWithChildren =
+  AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
+
+interface AuthenticatedHesapRouteChildren {
+  AuthenticatedHesapProfilRoute: typeof AuthenticatedHesapProfilRoute
+  AuthenticatedHesapSiparislerRoute: typeof AuthenticatedHesapSiparislerRoute
+  AuthenticatedHesapTasarimlarRoute: typeof AuthenticatedHesapTasarimlarRoute
+  AuthenticatedHesapIndexRoute: typeof AuthenticatedHesapIndexRoute
+}
+
+const AuthenticatedHesapRouteChildren: AuthenticatedHesapRouteChildren = {
+  AuthenticatedHesapProfilRoute: AuthenticatedHesapProfilRoute,
+  AuthenticatedHesapSiparislerRoute: AuthenticatedHesapSiparislerRoute,
+  AuthenticatedHesapTasarimlarRoute: AuthenticatedHesapTasarimlarRoute,
+  AuthenticatedHesapIndexRoute: AuthenticatedHesapIndexRoute,
+}
+
+const AuthenticatedHesapRouteWithChildren =
+  AuthenticatedHesapRoute._addFileChildren(AuthenticatedHesapRouteChildren)
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
+  AuthenticatedHesapRoute: typeof AuthenticatedHesapRouteWithChildren
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
+  AuthenticatedHesapRoute: AuthenticatedHesapRouteWithChildren,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
   GaleriRoute: GaleriRoute,
   HakkimizdaRoute: HakkimizdaRoute,
   IletisimRoute: IletisimRoute,
   OdemeRoute: OdemeRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   SepetRoute: SepetRoute,
   SssRoute: SssRoute,
   TasarlaRoute: TasarlaRoute,
@@ -229,12 +569,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}

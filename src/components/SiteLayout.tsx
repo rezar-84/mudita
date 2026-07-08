@@ -1,9 +1,12 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import logo from "@/assets/logo.png";
-import { Menu, X, Globe, User, History, Package, Settings, LogIn } from "lucide-react";
+import { Menu, X, Globe, User, History, Package, Settings, LogIn, Shield, LogOut } from "lucide-react";
 import { useState } from "react";
 import { useT, useLocale, setLocale, type Locale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import { useAuth, useIsAdmin } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,37 +42,79 @@ function LanguageSelector({ className }: { className?: string }) {
 }
 
 function UserMenu() {
+  const { user, loading } = useAuth();
+  const isAdmin = useIsAdmin(user);
+  const navigate = useNavigate();
+  const qc = useQueryClient();
+
+  const signOut = async () => {
+    await qc.cancelQueries();
+    qc.clear();
+    await supabase.auth.signOut();
+    navigate({ to: "/", replace: true });
+  };
+
+  if (loading) {
+    return <div className="h-9 w-9 animate-pulse rounded-md bg-muted" />;
+  }
+
+  if (!user) {
+    return (
+      <Link to="/auth" className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-sm hover:bg-accent">
+        <LogIn className="h-4 w-4" />
+        <span className="hidden md:inline">Giriş</span>
+      </Link>
+    );
+  }
+
+  const initial = (user.email ?? "?").charAt(0).toUpperCase();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="rounded-md border border-border p-2 text-sm hover:bg-accent transition cursor-pointer flex items-center gap-1.5 focus:outline-none">
-          <User className="h-4 w-4" />
-          <span className="hidden md:inline">Hesabım</span>
+        <button className="flex items-center gap-2 rounded-md border border-border p-1.5 pr-2 text-sm hover:bg-accent transition cursor-pointer focus:outline-none">
+          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-gradient-neon text-xs font-semibold text-white">
+            {initial}
+          </span>
+          <span className="hidden max-w-[8rem] truncate md:inline">{user.email}</span>
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56 bg-card border border-border shadow-soft z-50">
-        <DropdownMenuLabel className="font-semibold text-foreground">Kullanıcı Paneli</DropdownMenuLabel>
+        <DropdownMenuLabel className="font-semibold text-foreground truncate">{user.email}</DropdownMenuLabel>
         <DropdownMenuSeparator className="bg-border" />
-        <DropdownMenuItem disabled className="opacity-70 flex items-center gap-2 text-foreground focus:bg-accent cursor-not-allowed">
-          <LogIn className="h-4 w-4" />
-          <span>Giriş Yap / Kayıt Ol</span>
-        </DropdownMenuItem>
-        <DropdownMenuSeparator className="bg-border" />
-        <DropdownMenuLabel className="text-[11px] text-muted-foreground font-semibold px-2 py-1 uppercase tracking-wider">Tasarımlar & Siparişler</DropdownMenuLabel>
         <DropdownMenuItem asChild>
-          <Link to="/tasarla" className="w-full flex items-center gap-2 cursor-pointer text-foreground focus:bg-accent">
-            <History className="h-4 w-4" />
-            <span>Önceki Tasarımlarım</span>
+          <Link to="/hesap" className="flex w-full items-center gap-2 cursor-pointer">
+            <User className="h-4 w-4" /> <span>Hesabım</span>
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem disabled className="opacity-70 flex items-center gap-2 text-foreground focus:bg-accent cursor-not-allowed">
-          <Package className="h-4 w-4" />
-          <span>Siparişlerim</span>
+        <DropdownMenuItem asChild>
+          <Link to="/hesap/tasarimlar" className="flex w-full items-center gap-2 cursor-pointer">
+            <History className="h-4 w-4" /> <span>Tasarımlarım</span>
+          </Link>
         </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link to="/hesap/siparisler" className="flex w-full items-center gap-2 cursor-pointer">
+            <Package className="h-4 w-4" /> <span>Siparişlerim</span>
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link to="/hesap/profil" className="flex w-full items-center gap-2 cursor-pointer">
+            <Settings className="h-4 w-4" /> <span>Profil</span>
+          </Link>
+        </DropdownMenuItem>
+        {isAdmin && (
+          <>
+            <DropdownMenuSeparator className="bg-border" />
+            <DropdownMenuItem asChild>
+              <Link to="/admin" className="flex w-full items-center gap-2 cursor-pointer text-neon-pink">
+                <Shield className="h-4 w-4" /> <span>Admin Paneli</span>
+              </Link>
+            </DropdownMenuItem>
+          </>
+        )}
         <DropdownMenuSeparator className="bg-border" />
-        <DropdownMenuItem disabled className="opacity-70 flex items-center gap-2 text-foreground focus:bg-accent cursor-not-allowed">
-          <Settings className="h-4 w-4" />
-          <span>Hesap Ayarları</span>
+        <DropdownMenuItem onClick={signOut} className="flex items-center gap-2 cursor-pointer text-destructive focus:text-destructive">
+          <LogOut className="h-4 w-4" /> <span>Çıkış Yap</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -83,7 +128,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3">
         <Link to="/" className="flex shrink-0 items-center gap-2">
-          <img src={logo} alt="Mudita Dekorasyon" className="h-9 w-auto" />
+          <img src={logo} alt="MudiNeon" className="h-9 w-auto" />
         </Link>
         <nav className="hidden min-w-0 items-center gap-1 lg:flex">
           {NAV.map((n) => (
@@ -131,7 +176,7 @@ export function SiteFooter() {
     <footer className="mt-20 border-t border-border bg-card">
       <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 md:grid-cols-3">
         <div>
-          <img src={logo} alt="Mudita Dekorasyon" className="h-10 w-auto" />
+          <img src={logo} alt="MudiNeon" className="h-10 w-auto" />
           <p className="mt-3 max-w-xs text-sm text-muted-foreground">{t("footerTagline")}</p>
         </div>
         <div>
@@ -153,7 +198,7 @@ export function SiteFooter() {
         </div>
       </div>
       <div className="border-t border-border py-4 text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} Mudita Dekorasyon · {t("footerRights")}
+        © {new Date().getFullYear()} MudiNeon · {t("footerRights")}
       </div>
     </footer>
   );

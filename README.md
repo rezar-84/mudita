@@ -1,6 +1,6 @@
-# Mudita Dekorasyon Neon Designer
+# MudiNeon Neon Designer
 
-Custom LED neon sign storefront and design tool for Mudita Dekorasyon. The app lets customers design a sign, preview it live, estimate the TRY price, save designs to a local cart, share designs by URL, and request a custom quote for uploaded artwork.
+Custom LED neon sign storefront and design tool for MudiNeon. The app lets customers design a sign, preview it live, estimate the TRY price, save designs to a local cart, share designs by URL, and request a custom quote for uploaded artwork.
 
 ## Tech Stack
 

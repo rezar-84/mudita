@@ -1,8 +1,11 @@
-import { Outlet, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import { Outlet, createRootRouteWithContext, HeadContent, Scripts, useRouter } from "@tanstack/react-router";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { SiteHeader, SiteFooter } from "@/components/SiteLayout";
 import { Toaster } from "@/components/ui/sonner";
 import { WhatsAppWidget } from "@/components/WhatsAppWidget";
 import { useLocale } from "@/lib/i18n";
+import { supabase } from "@/integrations/supabase/client";
 import appCss from "../styles.css?url";
 
 function NotFoundComponent() {
@@ -19,25 +22,25 @@ function NotFoundComponent() {
   );
 }
 
-export const Route = createRootRoute({
+export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Mudita Dekorasyon · Kişiye Özel LED Neon Tabela" },
+      { title: "MudiNeon · Kişiye Özel LED Neon Tabela" },
       { name: "description", content: "Kişiye özel LED neon tabela tasarla, anında fiyat al. Türkiye geneli kargo, el emeği üretim." },
-      { name: "author", content: "Mudita Dekorasyon" },
-      { property: "og:title", content: "Mudita Dekorasyon · Kişiye Özel LED Neon Tabela" },
+      { name: "author", content: "MudiNeon" },
+      { property: "og:title", content: "MudiNeon · Kişiye Özel LED Neon Tabela" },
       { property: "og:description", content: "Kişiye özel LED neon tabela tasarla, anında fiyat al. Türkiye geneli kargo, el emeği üretim." },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://mudineon.com" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:title", content: "Mudita Dekorasyon · Kişiye Özel LED Neon Tabela" },
+      { name: "twitter:title", content: "MudiNeon · Kişiye Özel LED Neon Tabela" },
       { name: "twitter:description", content: "Kişiye özel LED neon tabela tasarla, anında fiyat al. Türkiye geneli kargo, el emeği üretim." },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/7d50e153-e1a7-4217-b9c9-517eff5016f5" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/7d50e153-e1a7-4217-b9c9-517eff5016f5" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
+      { rel: "canonical", href: "https://mudineon.com" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
@@ -65,18 +68,33 @@ function RootShell({ children }: { children: React.ReactNode }) {
   );
 }
 
+function AuthStateSync() {
+  const router = useRouter();
+  useEffect(() => {
+    const { data: sub } = supabase.auth.onAuthStateChange((event) => {
+      if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
+      router.invalidate();
+    });
+    return () => sub.subscription.unsubscribe();
+  }, [router]);
+  return null;
+}
+
 function RootComponent() {
-  // Subscribe to locale so the whole tree re-renders on language change.
   useLocale();
+  const { queryClient } = Route.useRouteContext();
   return (
-    <div className="flex min-h-screen flex-col overflow-x-hidden">
-      <SiteHeader />
-      <main className="flex-1 overflow-x-clip">
-        <Outlet />
-      </main>
-      <SiteFooter />
-      <Toaster richColors position="top-center" />
-      <WhatsAppWidget />
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <AuthStateSync />
+      <div className="flex min-h-screen flex-col overflow-x-hidden">
+        <SiteHeader />
+        <main className="flex-1 overflow-x-clip">
+          <Outlet />
+        </main>
+        <SiteFooter />
+        <Toaster richColors position="top-center" />
+        <WhatsAppWidget />
+      </div>
+    </QueryClientProvider>
   );
 }

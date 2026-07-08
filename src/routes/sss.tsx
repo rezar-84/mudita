@@ -5,9 +5,9 @@ import { useT, type TKey } from "@/lib/i18n";
 export const Route = createFileRoute("/sss")({
   head: () => ({
     meta: [
-      { title: "Sıkça Sorulan Sorular · LED Neon Tabela · Mudita Dekorasyon" },
+      { title: "Sıkça Sorulan Sorular · LED Neon Tabela · MudiNeon" },
       { name: "description", content: "Fiyat, üretim süresi, dış mekan kullanımı, kurulum, garanti, kargo ve tasarım onayı hakkında sık sorulan sorular." },
-      { property: "og:title", content: "S.S.S. · Mudita Dekorasyon" },
+      { property: "og:title", content: "S.S.S. · MudiNeon" },
       { property: "og:description", content: "Neon tabela üretimi ve sipariş süreci hakkında her şey." },
     ],
   }),

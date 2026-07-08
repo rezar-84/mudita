@@ -1,16 +1,29 @@
 import { FONTS, COLORS, SIZES, BACKBOARDS, MOUNTINGS } from "@/data/options";
 import type { NeonDesignConfig, PriceBreakdown } from "./types";
 
-const BASE_RATE_PER_CM2 = 1.6; // TRY per cm² baseline
-const OUTDOOR_MULT = 1.25;
-const RGB_MULT = 1.35;
-const URGENT_MULT = 1.2;
-const EXTRA_LINE_FEE = 250;
-const ADAPTER_PRICE = { tr: 0, eu: 120 };
-const SHIPPING_TR = 250;
+export interface PricingOverrides {
+  base_rate_per_cm2?: number | null;
+  outdoor_mult?: number | null;
+  rgb_mult?: number | null;
+  urgent_mult?: number | null;
+  extra_line_fee?: number | null;
+  shipping_tr?: number | null;
+  decoration_preset_base?: number | null;
+  decoration_upload_base?: number | null;
+  adapter_prices?: { tr?: number; eu?: number } | null;
+}
 
-const DECORATION_PRESET_BASE = 120;
-const DECORATION_UPLOAD_BASE = 250;
+const DEFAULTS = {
+  BASE_RATE_PER_CM2: 1.6,
+  OUTDOOR_MULT: 1.25,
+  RGB_MULT: 1.35,
+  URGENT_MULT: 1.2,
+  EXTRA_LINE_FEE: 250,
+  ADAPTER_PRICE: { tr: 0, eu: 120 },
+  SHIPPING_TR: 250,
+  DECORATION_PRESET_BASE: 120,
+  DECORATION_UPLOAD_BASE: 250,
+};
 
 export function getDimensions(cfg: NeonDesignConfig) {
   if (cfg.sizeId === "custom") {
@@ -23,7 +36,21 @@ export function getDimensions(cfg: NeonDesignConfig) {
   return { width: s.width, height: s.height };
 }
 
-export function calculatePrice(cfg: NeonDesignConfig): PriceBreakdown {
+export function calculatePrice(cfg: NeonDesignConfig, overrides?: PricingOverrides | null): PriceBreakdown {
+  const o = overrides ?? {};
+  const BASE_RATE_PER_CM2 = o.base_rate_per_cm2 ?? DEFAULTS.BASE_RATE_PER_CM2;
+  const OUTDOOR_MULT = o.outdoor_mult ?? DEFAULTS.OUTDOOR_MULT;
+  const RGB_MULT = o.rgb_mult ?? DEFAULTS.RGB_MULT;
+  const URGENT_MULT = o.urgent_mult ?? DEFAULTS.URGENT_MULT;
+  const EXTRA_LINE_FEE = o.extra_line_fee ?? DEFAULTS.EXTRA_LINE_FEE;
+  const SHIPPING_TR = o.shipping_tr ?? DEFAULTS.SHIPPING_TR;
+  const DECORATION_PRESET_BASE = o.decoration_preset_base ?? DEFAULTS.DECORATION_PRESET_BASE;
+  const DECORATION_UPLOAD_BASE = o.decoration_upload_base ?? DEFAULTS.DECORATION_UPLOAD_BASE;
+  const ADAPTER_PRICE = {
+    tr: o.adapter_prices?.tr ?? DEFAULTS.ADAPTER_PRICE.tr,
+    eu: o.adapter_prices?.eu ?? DEFAULTS.ADAPTER_PRICE.eu,
+  };
+
   const font = FONTS.find((f) => f.id === cfg.fontId) ?? FONTS[0];
   const color = COLORS.find((c) => c.id === cfg.colorId) ?? COLORS[0];
   const backboard = BACKBOARDS.find((b) => b.id === cfg.backboard) ?? BACKBOARDS[0];

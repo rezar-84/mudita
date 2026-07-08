@@ -38,7 +38,7 @@ export const defaultConfig: NeonDesignConfig = {
   textLayers: [
     {
       id: BASE_TEXT_ID,
-      text: "Mudita",
+      text: "MudiNeon",
       fontId: "pacifico",
       colorId: "pink",
       sizePct: 22,

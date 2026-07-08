@@ -10,11 +10,13 @@ import { addToCart, updateCartItem } from "@/lib/cart";
 import { useNavigate } from "@tanstack/react-router";
 import { FONTS, COLORS, BACKBOARDS } from "@/data/options";
 import { useT } from "@/lib/i18n";
+import { usePricingOverrides } from "@/hooks/usePricing";
 
 export function PriceSummary() {
   const t = useT();
   const { config, editCartId } = useDesigner();
-  const breakdown = calculatePrice(config);
+  const pricing = usePricingOverrides();
+  const breakdown = calculatePrice(config, pricing);
   const [quoteOpen, setQuoteOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -43,7 +45,7 @@ export function PriceSummary() {
 
   const onWhatsapp = () => {
     const lines = [
-      "Merhaba Mudita Dekorasyon 👋",
+      "Merhaba MudiNeon 👋",
       "Aşağıdaki neon tabela tasarımı için fiyat teklifi ve üretim süresi öğrenmek istiyorum.",
       "",
       `✍️ Yazı: ${primaryText.replace(/\n/g, " / ") || "(henüz girilmedi)"}`,

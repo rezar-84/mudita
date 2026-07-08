@@ -13,13 +13,14 @@ import { addToCart } from "@/lib/cart";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
 import { t } from "@/lib/i18n";
+import { usePricingOverrides } from "@/hooks/usePricing";
 
 export const Route = createFileRoute("/tasarla")({
   head: () => ({
     meta: [
-      { title: "Neon Tabelanı Tasarla · Mudita Dekorasyon" },
+      { title: "Neon Tabelanı Tasarla · MudiNeon" },
       { name: "description", content: "Figma tarzı editörle kişiye özel LED neon tabelanı tasarla. Anında TRY fiyat." },
-      { property: "og:title", content: "Neon Tabelanı Tasarla · Mudita Dekorasyon" },
+      { property: "og:title", content: "Neon Tabelanı Tasarla · MudiNeon" },
       { property: "og:description", content: "Yazını, fontunu, rengini ve süslemelerini seç. Anında fiyat al." },
     ],
   }),
@@ -59,7 +60,8 @@ function DesignerPage() {
 
 function MobilePriceBar() {
   const { config } = useDesigner();
-  const breakdown = calculatePrice(config);
+  const pricing = usePricingOverrides();
+  const breakdown = calculatePrice(config, pricing);
   const navigate = useNavigate();
 
   const onAdd = () => {

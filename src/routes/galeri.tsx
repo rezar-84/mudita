@@ -9,9 +9,9 @@ import { useT, type TKey } from "@/lib/i18n";
 export const Route = createFileRoute("/galeri")({
   head: () => ({
     meta: [
-      { title: "İlham Galerisi · Neon Tabela Örnekleri · Mudita Dekorasyon" },
+      { title: "İlham Galerisi · Neon Tabela Örnekleri · MudiNeon" },
       { name: "description", content: "Ev, ofis, kafe, düğün, bebek odası, logo ve mağaza için ürettiğimiz neon tabelalardan ilham al ve kendi tasarımını yap." },
-      { property: "og:title", content: "Neon Tabela İlham Galerisi · Mudita Dekorasyon" },
+      { property: "og:title", content: "Neon Tabela İlham Galerisi · MudiNeon" },
       { property: "og:description", content: "Kategoriye göre filtrele, beğendiğin tarzın benzerini birkaç tıkla tasarla." },
     ],
   }),
@@ -55,7 +55,7 @@ const ITEMS: Item[] = [
   { text: "Defne", fontId: "pacifico", fontFamily: "'Pacifico', cursive", colorId: "warm-white", color: "#fff1c1", glow: "#ffd56b", cat: "Bebek Odası", title: "İsme Özel Bebek Tabelası", useCase: "Bebeğin ismi ile özel hediye" },
   { text: "Work", fontId: "montserrat", fontFamily: "'Montserrat', sans-serif", colorId: "cool-white", color: "#eaf6ff", glow: "#9ed8ff", cat: "Ofis", title: "Work · Modern Ofis", useCase: "Ofis ve toplantı odası" },
   { text: "Ideas", fontId: "bungee", fontFamily: "'Bungee', sans-serif", colorId: "green", color: "#8fffb0", glow: "#00d96b", cat: "Ofis", title: "Ideas · Çalışma Köşesi", useCase: "Ajans ve yaratıcı ofis" },
-  { text: "Mudita", fontId: "pacifico", fontFamily: "'Pacifico', cursive", colorId: "pink", color: "#ff8ad1", glow: "#ff3eb5", cat: "Logo", title: "Marka Logosu Neon", useCase: "Marka logonuzun neon versiyonu" },
+  { text: "MudiNeon", fontId: "pacifico", fontFamily: "'Pacifico', cursive", colorId: "pink", color: "#ff8ad1", glow: "#ff3eb5", cat: "Logo", title: "Marka Logosu Neon", useCase: "Marka logonuzun neon versiyonu" },
 ];
 
 const CATEGORIES: Category[] = ["Tümü", "Ev", "Ofis", "Kafe", "Düğün", "Bebek Odası", "Logo", "Mağaza"];

@@ -5,9 +5,9 @@ import { useT } from "@/lib/i18n";
 export const Route = createFileRoute("/hakkimizda")({
   head: () => ({
     meta: [
-      { title: "Hakkımızda · Mudita Dekorasyon" },
+      { title: "Hakkımızda · MudiNeon" },
       { name: "description", content: "İki kız kardeşin 2021'de evinde başlayan, dünyaya açılan el emeği dekorasyon hikayesi." },
-      { property: "og:title", content: "Mudita Dekorasyon Hikayesi" },
+      { property: "og:title", content: "MudiNeon Hikayesi" },
       { property: "og:description", content: "El emeği, samimiyet ve tasarım sevgisiyle." },
     ],
   }),
