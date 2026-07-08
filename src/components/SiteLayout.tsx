@@ -107,7 +107,7 @@ function UserMenu() {
   };
 
   if (loading) {
-    return <div className="h-9 w-9 animate-pulse rounded-md bg-muted" />;
+    return <div className="h-5 w-16 animate-pulse rounded-full bg-muted" />;
   }
 
   if (!user) {
