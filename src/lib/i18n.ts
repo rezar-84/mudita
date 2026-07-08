@@ -401,6 +401,44 @@ const tr: Dict = {
   submitting: "Gönderiliyor...",
   quoteSubmit: "Teklif İste",
 
+  // User menu
+  userMenuSignIn: "Giriş",
+  userMenuMyAccount: "Hesabım",
+  userMenuMyDesigns: "Tasarımlarım",
+  userMenuMyOrders: "Siparişlerim",
+  userMenuProfile: "Profil",
+  userMenuAdmin: "Admin Paneli",
+  userMenuSignOut: "Çıkış Yap",
+  userMenuLanguage: "Dil",
+
+  // Checkout / billing
+  checkoutContactHeader: "İletişim Bilgileri",
+  checkoutShippingHeader: "Teslimat Adresi",
+  checkoutInvoiceHeader: "Fatura (Opsiyonel)",
+  billFullName: "Ad Soyad",
+  billEmail: "E-posta",
+  billPhone: "Telefon",
+  billAddressLine1: "Adres",
+  billAddressLine2: "Adres (devamı)",
+  billCity: "İl",
+  billDistrict: "İlçe / Semt",
+  billPostalCode: "Posta Kodu",
+  billCountry: "Ülke",
+  billTaxId: "Vergi No / TC Kimlik",
+  billNotes: "Sipariş Notu",
+  billSaveToProfile: "Bu adresi profilime kaydet",
+  placeOrderCta: "Siparişi Ver",
+  placingOrder: "Gönderiliyor…",
+  checkoutSignInFirst: "Siparişi tamamlamak için giriş yap",
+  checkoutMissingRequired: "Lütfen ad, e-posta ve adres bilgilerini doldur.",
+  orderPlaced: "Sipariş oluşturuldu",
+
+  // Profile page
+  profileTitle: "Profil ve Adres",
+  profileSubtitle: "Bir sonraki siparişte otomatik doldurulur.",
+  profileSave: "Kaydet",
+  profileSaved: "Profil kaydedildi",
+
 };
 
 const en: Dict = {
@@ -791,6 +829,44 @@ const en: Dict = {
   quoteSuccess: "Your quote request has been received! We will get back to you as soon as possible.",
   submitting: "Submitting...",
   quoteSubmit: "Request Quote",
+
+  // User menu
+  userMenuSignIn: "Sign in",
+  userMenuMyAccount: "My account",
+  userMenuMyDesigns: "My designs",
+  userMenuMyOrders: "My orders",
+  userMenuProfile: "Profile",
+  userMenuAdmin: "Admin panel",
+  userMenuSignOut: "Sign out",
+  userMenuLanguage: "Language",
+
+  // Checkout / billing
+  checkoutContactHeader: "Contact details",
+  checkoutShippingHeader: "Shipping address",
+  checkoutInvoiceHeader: "Invoice (optional)",
+  billFullName: "Full name",
+  billEmail: "Email",
+  billPhone: "Phone",
+  billAddressLine1: "Street address",
+  billAddressLine2: "Apartment, suite, etc.",
+  billCity: "City",
+  billDistrict: "District / Neighborhood",
+  billPostalCode: "Postal code",
+  billCountry: "Country",
+  billTaxId: "Tax ID / National ID",
+  billNotes: "Order note",
+  billSaveToProfile: "Save this address to my profile",
+  placeOrderCta: "Place order",
+  placingOrder: "Submitting…",
+  checkoutSignInFirst: "Sign in to complete your order",
+  checkoutMissingRequired: "Please fill in name, email and address.",
+  orderPlaced: "Order placed",
+
+  // Profile page
+  profileTitle: "Profile & address",
+  profileSubtitle: "Auto-filled at your next checkout.",
+  profileSave: "Save",
+  profileSaved: "Profile saved",
 
 };
 
