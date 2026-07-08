@@ -41,12 +41,13 @@ export const defaultConfig: NeonDesignConfig = {
       text: "MudiNeon",
       fontId: "pacifico",
       colorId: "pink",
-      sizePct: 22,
+      sizePct: 14,
       x: 0,
       y: 0,
       rotation: 0,
     },
   ],
+  zOrder: [BASE_TEXT_ID],
   brightness: 100,
   flicker: false,
   ledEffect: "none",
@@ -60,6 +61,33 @@ export const defaultConfig: NeonDesignConfig = {
   showSafeArea: false,
   showSizeBadge: true,
 };
+
+/**
+ * Return a bottom → top ordered array of layer ids for the given config.
+ * Uses `cfg.zOrder` when present (filtered to still-existing ids), then
+ * appends any layers missing from it (decorations first, then text) so a
+ * freshly loaded legacy config keeps a sensible stack.
+ */
+export function mergedOrder(cfg: NeonDesignConfig): string[] {
+  const decoIds = (cfg.decorations ?? []).map((d) => d.id);
+  const textIds = (cfg.textLayers ?? []).map((l) => l.id);
+  const known = new Set<string>([...decoIds, ...textIds]);
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const id of cfg.zOrder ?? []) {
+    if (known.has(id) && !seen.has(id)) {
+      out.push(id);
+      seen.add(id);
+    }
+  }
+  for (const id of [...decoIds, ...textIds]) {
+    if (!seen.has(id)) {
+      out.push(id);
+      seen.add(id);
+    }
+  }
+  return out;
+}
 
 type Action =
   | { type: "replace"; cfg: NeonDesignConfig };
