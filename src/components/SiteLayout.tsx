@@ -114,10 +114,10 @@ function UserMenu() {
     return (
       <Link
         to="/auth"
-        className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-sm hover:bg-accent"
+        className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-[11px] font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition"
       >
-        <LogIn className="h-4 w-4" />
-        <span className="hidden md:inline">{t("userMenuSignIn")}</span>
+        <LogIn className="h-3.5 w-3.5" />
+        <span className="hidden sm:inline">{t("userMenuSignIn")}</span>
       </Link>
     );
   }
