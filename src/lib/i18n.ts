@@ -841,6 +841,8 @@ const en: Dict = {
   userMenuAdmin: "Admin panel",
   userMenuSignOut: "Sign out",
   userMenuLanguage: "Language",
+  authCallbackTitle: "Signing you in…",
+  authCallbackError: "Sign-in could not be completed. Please try again.",
 
   // Checkout / billing
   checkoutContactHeader: "Contact details",
