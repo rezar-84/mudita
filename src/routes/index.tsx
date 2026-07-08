@@ -4,9 +4,9 @@ import { Sparkles, Truck, ShieldCheck, Pencil, FileCheck2, Factory, PackageCheck
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Mudita Dekorasyon · Kişiye Özel LED Neon Tabela" },
+      { title: "MudiNeon · Kişiye Özel LED Neon Tabela" },
       { name: "description", content: "Kişiye özel LED neon tabelanı kendin tasarla, anında fiyat gör. Tasarım onayıyla üretim, Türkiye geneli güvenli kargo." },
-      { property: "og:title", content: "Mudita Dekorasyon · Kişiye Özel LED Neon Tabela" },
+      { property: "og:title", content: "MudiNeon · Kişiye Özel LED Neon Tabela" },
       { property: "og:description", content: "Yazını gir, rengini ve ölçünü seç, neon tabelanı tasarla. Üretime başlamadan tasarım onayı." },
     ],
   }),
@@ -14,7 +14,7 @@ export const Route = createFileRoute("/")({
 });
 
 const SAMPLES = [
-  { text: "Mudita", font: "'Pacifico', cursive", color: "#ff8ad1", glow: "#ff3eb5" },
+  { text: "MudiNeon", font: "'Pacifico', cursive", color: "#ff8ad1", glow: "#ff3eb5" },
   { text: "Sevgi", font: "'Monoton', cursive", color: "#7ab8ff", glow: "#1e90ff" },
   { text: "Hayal", font: "'Bungee', sans-serif", color: "#fff48a", glow: "#ffd400" },
   { text: "Mutluluk", font: "'Caveat', cursive", color: "#8fffb0", glow: "#00d96b" },

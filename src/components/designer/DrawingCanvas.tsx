@@ -5,7 +5,8 @@ import { toast } from "sonner";
 import { Check, X } from "lucide-react";
 
 // Ramer-Douglas-Peucker path simplification
-function simplifyPath(points: Array<{ x: number; y: number }>, tolerance: number) {
+type Pt = { x: number; y: number };
+function simplifyPath(points: Pt[], tolerance: number): Pt[] {
   if (points.length <= 2) return points;
 
   let maxSqDist = 0;

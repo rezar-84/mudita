@@ -140,7 +140,7 @@ export function NeonPreview() {
         {/* Vector pen tool canvas */}
         <PenToolCanvas />
 
-        {/* All text layers (including the seeded base "Mudita" layer) */}
+        {/* All text layers (including the seeded base "MudiNeon" layer) */}
         <TextLayerOverlay />
 
         {/* Measurement overlays (width/height/backboard/safe area) */}

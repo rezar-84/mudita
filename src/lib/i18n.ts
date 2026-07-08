@@ -3,7 +3,7 @@ import { useEffect, useSyncExternalStore } from "react";
 type Dict = Record<string, string>;
 
 const tr: Dict = {
-  brand: "Mudita Dekorasyon",
+  brand: "MudiNeon",
   brandTagline: "El emeğiyle, kalbimizle üretiyoruz",
   navHome: "Ana Sayfa",
   navDesign: "Tasarla",
@@ -58,7 +58,7 @@ const tr: Dict = {
   tabScene: "Sahne",
   tabExtras: "Ekstra",
   emptyHint: "Tasarımına başlamak için aşağıdaki kutuya yazını gir.",
-  textPlaceholder: "Mudita",
+  textPlaceholder: "MudiNeon",
   textCharsHint: "karakter · Enter ile yeni satır",
   width: "Genişlik",
   height: "Yükseklik",
@@ -211,7 +211,7 @@ const tr: Dict = {
   faqA11: "Tüm ürünler kişiye özel üretildiği için iade kapsamı dışındadır. Üretim hatası, kargo hasarı veya onayladığınız tasarımdan farklı bir ürün gelmesi durumunda ücretsiz değişim sağlıyoruz.",
 
   // About
-  aboutTitle: "Mudita Dekorasyon Kimdir?",
+  aboutTitle: "MudiNeon Kimdir?",
   aboutP1: "Merhaba! Biz iki kız kardeş olarak 2021 yılında evimizin bir köşesinde başladık bu yolculuğa. Amacımız basitti: el emeğimizi, tasarım sevgimizi ve kalbimizi koyduğumuz ürünlerle hem evimize ek gelir sağlamak hem de insanların yaşam alanlarına küçük mutluluklar katmak.",
   aboutP2: "Tamamen el yapımı ürünlerden oluşan koleksiyonumuz, zamanla sadece yakın çevremizin değil, dünyanın dört bir yanındaki dekorasyon severlerin ilgisini çekti. Derken ne oldu? Bir sabah baktık ki küçük işletmemiz büyümüş, tescilli bir markaya dönüşmüşüz ve artık dünya çapında gönderim yapan kocaman bir aileyiz.",
   aboutP3: "Müşteri memnuniyetini her şeyin önünde tuttuk, çünkü bizce bir ürünü güzel yapan sadece görüntüsü değil, arkasındaki samimiyet ve hizmettir. Her koleksiyonumuzda günün trendlerini takip ederek, modern ve özgün tasarımlar sunmaya çalışıyoruz. Ev dekorasyonunda modaya ayak uydururken, kendi tarzımızı da unutmadan!",
@@ -404,7 +404,7 @@ const tr: Dict = {
 };
 
 const en: Dict = {
-  brand: "Mudita Decor",
+  brand: "MudiNeon",
   brandTagline: "Handcrafted with love",
   navHome: "Home",
   navDesign: "Design",
@@ -455,7 +455,7 @@ const en: Dict = {
   tabScene: "Scene",
   tabExtras: "Extras",
   emptyHint: "Type your text in the box below to start designing.",
-  textPlaceholder: "Mudita",
+  textPlaceholder: "MudiNeon",
   textCharsHint: "characters · Enter for a new line",
   width: "Width",
   height: "Height",
@@ -602,7 +602,7 @@ const en: Dict = {
   faqA11: "All products are custom-made, so they're not eligible for return. We offer free replacement for production defects, shipping damage, or items different from the approved design.",
 
   // About
-  aboutTitle: "Who is Mudita Decor?",
+  aboutTitle: "Who is MudiNeon?",
   aboutP1: "Hi! We're two sisters who started this journey in 2021 in a corner of our home. The goal was simple: combine handcraft, design love, and heart into products that add a bit of income for our family and small joys to people's living spaces.",
   aboutP2: "Our entirely handmade collection has grown beyond our immediate circle to attract decor lovers worldwide. One morning we woke up to find our little workshop had grown into a registered brand shipping globally.",
   aboutP3: "We've always put customer satisfaction first — because what makes a product beautiful isn't only how it looks, but the sincerity and service behind it. Every collection follows current trends with modern, original designs, while keeping our own style.",

@@ -12,7 +12,7 @@ import { useT } from "@/lib/i18n";
 export const Route = createFileRoute("/yukle")({
   head: () => ({
     meta: [
-      { title: "Logo / Görsel ile Teklif Al · Mudita Dekorasyon" },
+      { title: "Logo / Görsel ile Teklif Al · MudiNeon" },
       { name: "description", content: "Logonu, çizimini, referans fotoğrafını veya marka tasarımını yükle, sana özel LED neon tabela teklifi hazırlayalım." },
       { property: "og:title", content: "Logo / Görsel ile Teklif Al" },
       { property: "og:description", content: "PNG, JPG, PDF, SVG — dosyanı yükle, ölçü ve detayları paylaş, ücretsiz teklif al." },

@@ -83,7 +83,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3">
         <Link to="/" className="flex shrink-0 items-center gap-2">
-          <img src={logo} alt="Mudita Dekorasyon" className="h-9 w-auto" />
+          <img src={logo} alt="MudiNeon" className="h-9 w-auto" />
         </Link>
         <nav className="hidden min-w-0 items-center gap-1 lg:flex">
           {NAV.map((n) => (
@@ -131,7 +131,7 @@ export function SiteFooter() {
     <footer className="mt-20 border-t border-border bg-card">
       <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 md:grid-cols-3">
         <div>
-          <img src={logo} alt="Mudita Dekorasyon" className="h-10 w-auto" />
+          <img src={logo} alt="MudiNeon" className="h-10 w-auto" />
           <p className="mt-3 max-w-xs text-sm text-muted-foreground">{t("footerTagline")}</p>
         </div>
         <div>
@@ -153,7 +153,7 @@ export function SiteFooter() {
         </div>
       </div>
       <div className="border-t border-border py-4 text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} Mudita Dekorasyon · {t("footerRights")}
+        © {new Date().getFullYear()} MudiNeon · {t("footerRights")}
       </div>
     </footer>
   );

@@ -72,7 +72,7 @@ export function EditorPropertiesToolbar() {
           {/* Quick Font & Color info */}
           <div className="flex items-center gap-1.5 shrink-0">
             <span className="text-muted-foreground">Yazı Tipi:</span>
-            <span className="font-medium text-foreground">{font.name}</span>
+            <span className="font-medium text-foreground">{font.label}</span>
           </div>
 
           <div className="flex items-center gap-2 shrink-0">

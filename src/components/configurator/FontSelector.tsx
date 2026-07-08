@@ -85,7 +85,7 @@ function FontGroup({
                 className="block truncate text-xl leading-none"
                 style={{ fontFamily: f.family }}
               >
-                Mudita
+                MudiNeon
               </span>
               <span className="mt-1 truncate text-[10px] text-muted-foreground">
                 {f.label}

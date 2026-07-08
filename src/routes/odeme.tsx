@@ -5,7 +5,7 @@ import { useT, type TKey } from "@/lib/i18n";
 export const Route = createFileRoute("/odeme")({
   head: () => ({
     meta: [
-      { title: "Ödeme · Mudita Dekorasyon" },
+      { title: "Ödeme · MudiNeon" },
       { name: "description", content: "Ödeme yöntemleri yakında aktif olacak. Şimdilik teklif veya WhatsApp ile sipariş verebilirsiniz." },
     ],
   }),

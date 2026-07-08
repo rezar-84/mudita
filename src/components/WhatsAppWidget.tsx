@@ -7,7 +7,7 @@ const WHATSAPP_NUMBER = "905555555555";
 export function WhatsAppWidget() {
   const t = useT();
   const [open, setOpen] = useState(false);
-  const href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("Merhaba! Mudita Dekorasyon neon tabela hakkında bilgi almak istiyorum.")}`;
+  const href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("Merhaba! MudiNeon neon tabela hakkında bilgi almak istiyorum.")}`;
 
   return (
     <div className="fixed bottom-4 left-4 z-40 flex flex-col items-start gap-2 print:hidden md:bottom-6 md:left-6">

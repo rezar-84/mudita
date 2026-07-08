@@ -17,9 +17,9 @@ import { t } from "@/lib/i18n";
 export const Route = createFileRoute("/tasarla")({
   head: () => ({
     meta: [
-      { title: "Neon Tabelanı Tasarla · Mudita Dekorasyon" },
+      { title: "Neon Tabelanı Tasarla · MudiNeon" },
       { name: "description", content: "Figma tarzı editörle kişiye özel LED neon tabelanı tasarla. Anında TRY fiyat." },
-      { property: "og:title", content: "Neon Tabelanı Tasarla · Mudita Dekorasyon" },
+      { property: "og:title", content: "Neon Tabelanı Tasarla · MudiNeon" },
       { property: "og:description", content: "Yazını, fontunu, rengini ve süslemelerini seç. Anında fiyat al." },
     ],
   }),

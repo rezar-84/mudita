@@ -11,7 +11,7 @@ import { useT } from "@/lib/i18n";
 export const Route = createFileRoute("/sepet")({
   head: () => ({
     meta: [
-      { title: "Sepetim · Mudita Dekorasyon" },
+      { title: "Sepetim · MudiNeon" },
       { name: "description", content: "Sepetindeki neon tabela tasarımları." },
     ],
   }),
