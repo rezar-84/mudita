@@ -26,23 +26,19 @@ const NAV = [
   { to: "/iletisim", key: "navContact" as const },
 ] as const;
 
-function LanguagePill({ className, orientation = "horizontal" }: { className?: string; orientation?: "horizontal" | "vertical" }) {
+function LanguagePill({ className }: { className?: string }) {
   const t = useT();
   const locale = useLocale();
-  const vertical = orientation === "vertical";
   return (
     <div
       role="group"
       aria-label={t("language")}
       className={cn(
-        "border border-border bg-card font-semibold",
-        vertical
-          ? "inline-flex flex-col items-stretch gap-0.5 rounded-md p-0.5 text-[10px] leading-none"
-          : "inline-flex items-center gap-0.5 rounded-full p-0.5 text-xs",
+        "inline-flex items-center gap-0.5 rounded-full border border-border bg-card p-0.5 text-xs font-semibold",
         className,
       )}
     >
-      {!vertical && <Globe className="ml-1.5 h-3.5 w-3.5 text-muted-foreground" aria-hidden />}
+      <Globe className="ml-1.5 h-3.5 w-3.5 text-muted-foreground" aria-hidden />
       {(["tr", "en"] as Locale[]).map((l) => (
         <button
           key={l}
@@ -50,8 +46,7 @@ function LanguagePill({ className, orientation = "horizontal" }: { className?: s
           onClick={() => setLocale(l)}
           aria-pressed={locale === l}
           className={cn(
-            "transition",
-            vertical ? "rounded px-1.5 py-0.5" : "min-w-[2rem] rounded-full px-2 py-1",
+            "min-w-[2rem] rounded-full px-2 py-1 transition",
             locale === l ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground",
           )}
         >
@@ -59,6 +54,40 @@ function LanguagePill({ className, orientation = "horizontal" }: { className?: s
         </button>
       ))}
     </div>
+  );
+}
+
+function LanguageDropdown() {
+  const t = useT();
+  const locale = useLocale();
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          type="button"
+          aria-label={t("language")}
+          className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-[11px] font-semibold text-muted-foreground hover:bg-accent hover:text-foreground transition"
+        >
+          <Globe className="h-3.5 w-3.5" />
+          <span className="tabular-nums">{locale.toUpperCase()}</span>
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="min-w-[7rem] bg-card border border-border">
+        {(["tr", "en"] as Locale[]).map((l) => (
+          <DropdownMenuItem
+            key={l}
+            onClick={() => setLocale(l)}
+            className={cn(
+              "cursor-pointer text-sm",
+              locale === l && "bg-accent font-semibold text-foreground",
+            )}
+          >
+            {l === "tr" ? "Türkçe" : "English"}
+            <span className="ml-auto text-[10px] text-muted-foreground">{l.toUpperCase()}</span>
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
@@ -78,17 +107,17 @@ function UserMenu() {
   };
 
   if (loading) {
-    return <div className="h-9 w-9 animate-pulse rounded-md bg-muted" />;
+    return <div className="h-5 w-16 animate-pulse rounded-full bg-muted" />;
   }
 
   if (!user) {
     return (
       <Link
         to="/auth"
-        className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-sm hover:bg-accent"
+        className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-[11px] font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition"
       >
-        <LogIn className="h-4 w-4" />
-        <span className="hidden md:inline">{t("userMenuSignIn")}</span>
+        <LogIn className="h-3.5 w-3.5" />
+        <span className="hidden sm:inline">{t("userMenuSignIn")}</span>
       </Link>
     );
   }
@@ -98,11 +127,11 @@ function UserMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="flex items-center gap-2 rounded-full border border-border py-1 pl-1 pr-3 text-sm hover:bg-accent transition cursor-pointer focus:outline-none">
-          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-neon text-xs font-semibold text-white">
+        <button className="flex items-center gap-1.5 rounded-full py-0.5 pl-0.5 pr-2 text-xs hover:bg-accent transition cursor-pointer focus:outline-none">
+          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-gradient-neon text-[10px] font-semibold text-white">
             {initial}
           </span>
-          <span className="hidden max-w-[10rem] truncate lg:inline">{user.email}</span>
+          <span className="hidden max-w-[9rem] truncate lg:inline">{user.email}</span>
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-64 bg-card border border-border shadow-soft z-50">
@@ -187,18 +216,20 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur-md">
-      {/* Utility topbar: language (vertical), cart, user menu */}
+      {/* Utility topbar: compact — language dropdown, cart, user menu */}
       <div className="border-b border-border/60 bg-card/40">
-        <div className="mx-auto flex max-w-7xl items-center justify-end gap-3 px-4 py-1.5">
-          <LanguagePill orientation="vertical" />
+        <div className="mx-auto flex max-w-7xl items-center justify-end gap-1 px-4 py-1">
+          <LanguageDropdown />
+          <span className="h-4 w-px bg-border/70" aria-hidden />
           <Link
             to="/sepet"
             aria-label={t("navCart")}
-            className="inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-xs hover:bg-accent"
+            className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-[11px] font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition"
           >
             <ShoppingCart className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">{t("navCart")}</span>
           </Link>
+          <span className="h-4 w-px bg-border/70" aria-hidden />
           <UserMenu />
         </div>
       </div>
