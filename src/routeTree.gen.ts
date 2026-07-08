@@ -25,6 +25,7 @@ import { Route as AuthenticatedHesapRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedHesapIndexRouteImport } from './routes/_authenticated/hesap.index'
 import { Route as AuthenticatedHesapTasarimlarRouteImport } from './routes/_authenticated/hesap.tasarimlar'
 import { Route as AuthenticatedHesapSiparislerRouteImport } from './routes/_authenticated/hesap.siparisler'
+import { Route as AuthenticatedHesapProfilRouteImport } from './routes/_authenticated/hesap.profil'
 
 const YukleRoute = YukleRouteImport.update({
   id: '/yukle',
@@ -107,6 +108,12 @@ const AuthenticatedHesapSiparislerRoute =
     path: '/siparisler',
     getParentRoute: () => AuthenticatedHesapRoute,
   } as any)
+const AuthenticatedHesapProfilRoute =
+  AuthenticatedHesapProfilRouteImport.update({
+    id: '/profil',
+    path: '/profil',
+    getParentRoute: () => AuthenticatedHesapRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -121,6 +128,7 @@ export interface FileRoutesByFullPath {
   '/tasarla': typeof TasarlaRoute
   '/yukle': typeof YukleRoute
   '/hesap': typeof AuthenticatedHesapRouteWithChildren
+  '/hesap/profil': typeof AuthenticatedHesapProfilRoute
   '/hesap/siparisler': typeof AuthenticatedHesapSiparislerRoute
   '/hesap/tasarimlar': typeof AuthenticatedHesapTasarimlarRoute
   '/hesap/': typeof AuthenticatedHesapIndexRoute
@@ -137,6 +145,7 @@ export interface FileRoutesByTo {
   '/sss': typeof SssRoute
   '/tasarla': typeof TasarlaRoute
   '/yukle': typeof YukleRoute
+  '/hesap/profil': typeof AuthenticatedHesapProfilRoute
   '/hesap/siparisler': typeof AuthenticatedHesapSiparislerRoute
   '/hesap/tasarimlar': typeof AuthenticatedHesapTasarimlarRoute
   '/hesap': typeof AuthenticatedHesapIndexRoute
@@ -156,6 +165,7 @@ export interface FileRoutesById {
   '/tasarla': typeof TasarlaRoute
   '/yukle': typeof YukleRoute
   '/_authenticated/hesap': typeof AuthenticatedHesapRouteWithChildren
+  '/_authenticated/hesap/profil': typeof AuthenticatedHesapProfilRoute
   '/_authenticated/hesap/siparisler': typeof AuthenticatedHesapSiparislerRoute
   '/_authenticated/hesap/tasarimlar': typeof AuthenticatedHesapTasarimlarRoute
   '/_authenticated/hesap/': typeof AuthenticatedHesapIndexRoute
@@ -175,6 +185,7 @@ export interface FileRouteTypes {
     | '/tasarla'
     | '/yukle'
     | '/hesap'
+    | '/hesap/profil'
     | '/hesap/siparisler'
     | '/hesap/tasarimlar'
     | '/hesap/'
@@ -191,6 +202,7 @@ export interface FileRouteTypes {
     | '/sss'
     | '/tasarla'
     | '/yukle'
+    | '/hesap/profil'
     | '/hesap/siparisler'
     | '/hesap/tasarimlar'
     | '/hesap'
@@ -209,6 +221,7 @@ export interface FileRouteTypes {
     | '/tasarla'
     | '/yukle'
     | '/_authenticated/hesap'
+    | '/_authenticated/hesap/profil'
     | '/_authenticated/hesap/siparisler'
     | '/_authenticated/hesap/tasarimlar'
     | '/_authenticated/hesap/'
@@ -343,16 +356,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedHesapSiparislerRouteImport
       parentRoute: typeof AuthenticatedHesapRoute
     }
+    '/_authenticated/hesap/profil': {
+      id: '/_authenticated/hesap/profil'
+      path: '/profil'
+      fullPath: '/hesap/profil'
+      preLoaderRoute: typeof AuthenticatedHesapProfilRouteImport
+      parentRoute: typeof AuthenticatedHesapRoute
+    }
   }
 }
 
 interface AuthenticatedHesapRouteChildren {
+  AuthenticatedHesapProfilRoute: typeof AuthenticatedHesapProfilRoute
   AuthenticatedHesapSiparislerRoute: typeof AuthenticatedHesapSiparislerRoute
   AuthenticatedHesapTasarimlarRoute: typeof AuthenticatedHesapTasarimlarRoute
   AuthenticatedHesapIndexRoute: typeof AuthenticatedHesapIndexRoute
 }
 
 const AuthenticatedHesapRouteChildren: AuthenticatedHesapRouteChildren = {
+  AuthenticatedHesapProfilRoute: AuthenticatedHesapProfilRoute,
   AuthenticatedHesapSiparislerRoute: AuthenticatedHesapSiparislerRoute,
   AuthenticatedHesapTasarimlarRoute: AuthenticatedHesapTasarimlarRoute,
   AuthenticatedHesapIndexRoute: AuthenticatedHesapIndexRoute,
