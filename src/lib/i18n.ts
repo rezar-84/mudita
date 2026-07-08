@@ -410,6 +410,8 @@ const tr: Dict = {
   userMenuAdmin: "Admin Paneli",
   userMenuSignOut: "Çıkış Yap",
   userMenuLanguage: "Dil",
+  authCallbackTitle: "Giriş yapılıyor…",
+  authCallbackError: "Giriş tamamlanamadı. Lütfen tekrar deneyin.",
 
   // Checkout / billing
   checkoutContactHeader: "İletişim Bilgileri",
