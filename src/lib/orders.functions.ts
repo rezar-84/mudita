@@ -88,16 +88,14 @@ export const getMyOrder = createServerFn({ method: "GET" })
 
 // -------------------- Admin ------------------
 
-async function requireAdmin(context: { supabase: ReturnType<typeof requireSupabaseAuth> extends unknown ? never : never; userId: string }) {
-  // placeholder — real check done inline
-  void context;
+async function assertAdmin(context: { supabase: import("@supabase/supabase-js").SupabaseClient; userId: string }) {
+  const { data, error } = await context.supabase.rpc("has_role", {
+    _user_id: context.userId,
+    _role: "admin",
+  });
+  if (error) throw new Error(error.message);
+  if (!data) throw new Error("Forbidden");
 }
-void requireAdmin;
-
-async function assertAdmin(context: {
-  supabase: import("@supabase/supabase-js").SupabaseClient;
-  userId: string;
-}) {
   const { data, error } = await context.supabase.rpc("has_role", {
     _user_id: context.userId,
     _role: "admin",
