@@ -59,7 +59,8 @@ function DesignerPage() {
 
 function MobilePriceBar() {
   const { config } = useDesigner();
-  const breakdown = calculatePrice(config);
+  const pricing = usePricingOverrides();
+  const breakdown = calculatePrice(config, pricing);
   const navigate = useNavigate();
 
   const onAdd = () => {
