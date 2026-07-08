@@ -127,11 +127,11 @@ function UserMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="flex items-center gap-2 rounded-full border border-border py-1 pl-1 pr-3 text-sm hover:bg-accent transition cursor-pointer focus:outline-none">
-          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-neon text-xs font-semibold text-white">
+        <button className="flex items-center gap-1.5 rounded-full py-0.5 pl-0.5 pr-2 text-xs hover:bg-accent transition cursor-pointer focus:outline-none">
+          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-gradient-neon text-[10px] font-semibold text-white">
             {initial}
           </span>
-          <span className="hidden max-w-[10rem] truncate lg:inline">{user.email}</span>
+          <span className="hidden max-w-[9rem] truncate lg:inline">{user.email}</span>
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-64 bg-card border border-border shadow-soft z-50">
