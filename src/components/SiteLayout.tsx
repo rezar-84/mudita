@@ -26,19 +26,23 @@ const NAV = [
   { to: "/iletisim", key: "navContact" as const },
 ] as const;
 
-function LanguagePill({ className }: { className?: string }) {
+function LanguagePill({ className, orientation = "horizontal" }: { className?: string; orientation?: "horizontal" | "vertical" }) {
   const t = useT();
   const locale = useLocale();
+  const vertical = orientation === "vertical";
   return (
     <div
       role="group"
       aria-label={t("language")}
       className={cn(
-        "inline-flex items-center gap-0.5 rounded-full border border-border bg-card p-0.5 text-xs font-semibold",
+        "border border-border bg-card font-semibold",
+        vertical
+          ? "inline-flex flex-col items-stretch gap-0.5 rounded-md p-0.5 text-[10px] leading-none"
+          : "inline-flex items-center gap-0.5 rounded-full p-0.5 text-xs",
         className,
       )}
     >
-      <Globe className="ml-1.5 h-3.5 w-3.5 text-muted-foreground" aria-hidden />
+      {!vertical && <Globe className="ml-1.5 h-3.5 w-3.5 text-muted-foreground" aria-hidden />}
       {(["tr", "en"] as Locale[]).map((l) => (
         <button
           key={l}
@@ -46,7 +50,8 @@ function LanguagePill({ className }: { className?: string }) {
           onClick={() => setLocale(l)}
           aria-pressed={locale === l}
           className={cn(
-            "min-w-[2rem] rounded-full px-2 py-1 transition",
+            "transition",
+            vertical ? "rounded px-1.5 py-0.5" : "min-w-[2rem] rounded-full px-2 py-1",
             locale === l ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground",
           )}
         >
@@ -182,6 +187,22 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur-md">
+      {/* Utility topbar: language (vertical), cart, user menu */}
+      <div className="border-b border-border/60 bg-card/40">
+        <div className="mx-auto flex max-w-7xl items-center justify-end gap-3 px-4 py-1.5">
+          <LanguagePill orientation="vertical" />
+          <Link
+            to="/sepet"
+            aria-label={t("navCart")}
+            className="inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-xs hover:bg-accent"
+          >
+            <ShoppingCart className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">{t("navCart")}</span>
+          </Link>
+          <UserMenu />
+        </div>
+      </div>
+
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3.5">
         <Link to="/" className="flex shrink-0 items-center gap-2">
           <img src={logo} alt="MudiNeon" className="h-9 w-auto" />
@@ -204,26 +225,12 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex shrink-0 items-center gap-2">
-          {/* Language pill inline only on xl+; otherwise it lives in the user menu / drawer */}
-          <LanguagePill className="hidden xl:inline-flex" />
-
           <Link
             to="/tasarla"
             className="hidden rounded-full bg-gradient-neon px-4 py-2 text-sm font-medium text-white shadow-glow transition hover:opacity-90 xl:inline-block"
           >
             {t("ctaDesign")}
           </Link>
-
-          <Link
-            to="/sepet"
-            aria-label={t("navCart")}
-            className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-2 text-sm hover:bg-accent"
-          >
-            <ShoppingCart className="h-4 w-4" />
-            <span className="hidden lg:inline">{t("navCart")}</span>
-          </Link>
-
-          <UserMenu />
 
           <button
             className="rounded-md border border-border p-2 xl:hidden"
@@ -234,6 +241,7 @@ export function SiteHeader() {
           </button>
         </div>
       </div>
+
 
       {open && (
         <nav className="border-t border-border bg-background xl:hidden">
