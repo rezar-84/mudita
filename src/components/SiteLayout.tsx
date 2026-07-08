@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import logo from "@/assets/logo.png";
 import { Menu, X, Globe, User, History, Package, Settings, LogIn, Shield, LogOut, ShoppingCart } from "lucide-react";
 import { useState } from "react";
@@ -98,6 +98,7 @@ function UserMenu() {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const locale = useLocale();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   const signOut = async () => {
     await qc.cancelQueries();
@@ -111,9 +112,11 @@ function UserMenu() {
   }
 
   if (!user) {
+    const currentPath = pathname && pathname !== "/auth" && !pathname.startsWith("/auth/") ? pathname : undefined;
     return (
       <Link
         to="/auth"
+        search={{ next: currentPath }}
         className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-[11px] font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition"
       >
         <LogIn className="h-3.5 w-3.5" />
