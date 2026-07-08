@@ -32,6 +32,7 @@ import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminPricingRouteImport } from './routes/_authenticated/admin.pricing'
 import { Route as AuthenticatedAdminOrdersRouteImport } from './routes/_authenticated/admin.orders'
 import { Route as AuthenticatedAdminGalleryRouteImport } from './routes/_authenticated/admin.gallery'
+import { Route as AuthenticatedAdminAnalyticsRouteImport } from './routes/_authenticated/admin.analytics'
 
 const YukleRoute = YukleRouteImport.update({
   id: '/yukle',
@@ -153,6 +154,12 @@ const AuthenticatedAdminGalleryRoute =
     path: '/gallery',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminAnalyticsRoute =
+  AuthenticatedAdminAnalyticsRouteImport.update({
+    id: '/analytics',
+    path: '/analytics',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -168,6 +175,7 @@ export interface FileRoutesByFullPath {
   '/yukle': typeof YukleRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/hesap': typeof AuthenticatedHesapRouteWithChildren
+  '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/admin/gallery': typeof AuthenticatedAdminGalleryRoute
   '/admin/orders': typeof AuthenticatedAdminOrdersRoute
   '/admin/pricing': typeof AuthenticatedAdminPricingRoute
@@ -190,6 +198,7 @@ export interface FileRoutesByTo {
   '/sss': typeof SssRoute
   '/tasarla': typeof TasarlaRoute
   '/yukle': typeof YukleRoute
+  '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/admin/gallery': typeof AuthenticatedAdminGalleryRoute
   '/admin/orders': typeof AuthenticatedAdminOrdersRoute
   '/admin/pricing': typeof AuthenticatedAdminPricingRoute
@@ -216,6 +225,7 @@ export interface FileRoutesById {
   '/yukle': typeof YukleRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/hesap': typeof AuthenticatedHesapRouteWithChildren
+  '/_authenticated/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/_authenticated/admin/gallery': typeof AuthenticatedAdminGalleryRoute
   '/_authenticated/admin/orders': typeof AuthenticatedAdminOrdersRoute
   '/_authenticated/admin/pricing': typeof AuthenticatedAdminPricingRoute
@@ -242,6 +252,7 @@ export interface FileRouteTypes {
     | '/yukle'
     | '/admin'
     | '/hesap'
+    | '/admin/analytics'
     | '/admin/gallery'
     | '/admin/orders'
     | '/admin/pricing'
@@ -264,6 +275,7 @@ export interface FileRouteTypes {
     | '/sss'
     | '/tasarla'
     | '/yukle'
+    | '/admin/analytics'
     | '/admin/gallery'
     | '/admin/orders'
     | '/admin/pricing'
@@ -289,6 +301,7 @@ export interface FileRouteTypes {
     | '/yukle'
     | '/_authenticated/admin'
     | '/_authenticated/hesap'
+    | '/_authenticated/admin/analytics'
     | '/_authenticated/admin/gallery'
     | '/_authenticated/admin/orders'
     | '/_authenticated/admin/pricing'
@@ -478,10 +491,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminGalleryRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/analytics': {
+      id: '/_authenticated/admin/analytics'
+      path: '/analytics'
+      fullPath: '/admin/analytics'
+      preLoaderRoute: typeof AuthenticatedAdminAnalyticsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
   }
 }
 
 interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminAnalyticsRoute: typeof AuthenticatedAdminAnalyticsRoute
   AuthenticatedAdminGalleryRoute: typeof AuthenticatedAdminGalleryRoute
   AuthenticatedAdminOrdersRoute: typeof AuthenticatedAdminOrdersRoute
   AuthenticatedAdminPricingRoute: typeof AuthenticatedAdminPricingRoute
@@ -490,6 +511,7 @@ interface AuthenticatedAdminRouteChildren {
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminAnalyticsRoute: AuthenticatedAdminAnalyticsRoute,
   AuthenticatedAdminGalleryRoute: AuthenticatedAdminGalleryRoute,
   AuthenticatedAdminOrdersRoute: AuthenticatedAdminOrdersRoute,
   AuthenticatedAdminPricingRoute: AuthenticatedAdminPricingRoute,

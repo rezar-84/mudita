@@ -1,9 +1,12 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import logo from "@/assets/logo.png";
-import { Menu, X, Globe, User, History, Package, Settings, LogIn } from "lucide-react";
+import { Menu, X, Globe, User, History, Package, Settings, LogIn, Shield, LogOut } from "lucide-react";
 import { useState } from "react";
 import { useT, useLocale, setLocale, type Locale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import { useAuth, useIsAdmin } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   DropdownMenu,
   DropdownMenuContent,
