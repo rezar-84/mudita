@@ -216,18 +216,20 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur-md">
-      {/* Utility topbar: language (vertical), cart, user menu */}
+      {/* Utility topbar: compact — language dropdown, cart, user menu */}
       <div className="border-b border-border/60 bg-card/40">
-        <div className="mx-auto flex max-w-7xl items-center justify-end gap-3 px-4 py-1.5">
-          <LanguagePill orientation="vertical" />
+        <div className="mx-auto flex max-w-7xl items-center justify-end gap-1 px-4 py-1">
+          <LanguageDropdown />
+          <span className="h-4 w-px bg-border/70" aria-hidden />
           <Link
             to="/sepet"
             aria-label={t("navCart")}
-            className="inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-xs hover:bg-accent"
+            className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-[11px] font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition"
           >
             <ShoppingCart className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">{t("navCart")}</span>
           </Link>
+          <span className="h-4 w-px bg-border/70" aria-hidden />
           <UserMenu />
         </div>
       </div>
