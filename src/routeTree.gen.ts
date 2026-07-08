@@ -30,6 +30,7 @@ import { Route as AuthenticatedHesapSiparislerRouteImport } from './routes/_auth
 import { Route as AuthenticatedHesapProfilRouteImport } from './routes/_authenticated/hesap.profil'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
 import { Route as AuthenticatedAdminOrdersRouteImport } from './routes/_authenticated/admin.orders'
+import { Route as AuthenticatedAdminGalleryRouteImport } from './routes/_authenticated/admin.gallery'
 
 const YukleRoute = YukleRouteImport.update({
   id: '/yukle',
@@ -139,6 +140,12 @@ const AuthenticatedAdminOrdersRoute =
     path: '/orders',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminGalleryRoute =
+  AuthenticatedAdminGalleryRouteImport.update({
+    id: '/gallery',
+    path: '/gallery',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -154,6 +161,7 @@ export interface FileRoutesByFullPath {
   '/yukle': typeof YukleRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/hesap': typeof AuthenticatedHesapRouteWithChildren
+  '/admin/gallery': typeof AuthenticatedAdminGalleryRoute
   '/admin/orders': typeof AuthenticatedAdminOrdersRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/hesap/profil': typeof AuthenticatedHesapProfilRoute
@@ -174,6 +182,7 @@ export interface FileRoutesByTo {
   '/sss': typeof SssRoute
   '/tasarla': typeof TasarlaRoute
   '/yukle': typeof YukleRoute
+  '/admin/gallery': typeof AuthenticatedAdminGalleryRoute
   '/admin/orders': typeof AuthenticatedAdminOrdersRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/hesap/profil': typeof AuthenticatedHesapProfilRoute
@@ -198,6 +207,7 @@ export interface FileRoutesById {
   '/yukle': typeof YukleRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/hesap': typeof AuthenticatedHesapRouteWithChildren
+  '/_authenticated/admin/gallery': typeof AuthenticatedAdminGalleryRoute
   '/_authenticated/admin/orders': typeof AuthenticatedAdminOrdersRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/hesap/profil': typeof AuthenticatedHesapProfilRoute
@@ -222,6 +232,7 @@ export interface FileRouteTypes {
     | '/yukle'
     | '/admin'
     | '/hesap'
+    | '/admin/gallery'
     | '/admin/orders'
     | '/admin/users'
     | '/hesap/profil'
@@ -242,6 +253,7 @@ export interface FileRouteTypes {
     | '/sss'
     | '/tasarla'
     | '/yukle'
+    | '/admin/gallery'
     | '/admin/orders'
     | '/admin/users'
     | '/hesap/profil'
@@ -265,6 +277,7 @@ export interface FileRouteTypes {
     | '/yukle'
     | '/_authenticated/admin'
     | '/_authenticated/hesap'
+    | '/_authenticated/admin/gallery'
     | '/_authenticated/admin/orders'
     | '/_authenticated/admin/users'
     | '/_authenticated/hesap/profil'
@@ -438,16 +451,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminOrdersRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/gallery': {
+      id: '/_authenticated/admin/gallery'
+      path: '/gallery'
+      fullPath: '/admin/gallery'
+      preLoaderRoute: typeof AuthenticatedAdminGalleryRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
   }
 }
 
 interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminGalleryRoute: typeof AuthenticatedAdminGalleryRoute
   AuthenticatedAdminOrdersRoute: typeof AuthenticatedAdminOrdersRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminGalleryRoute: AuthenticatedAdminGalleryRoute,
   AuthenticatedAdminOrdersRoute: AuthenticatedAdminOrdersRoute,
   AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
