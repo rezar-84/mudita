@@ -103,7 +103,7 @@ function migrateConfig(cfg: NeonDesignConfig): NeonDesignConfig {
       text: cfg.text ?? "",
       fontId: cfg.fontId ?? defaultConfig.fontId,
       colorId: cfg.colorId ?? defaultConfig.colorId,
-      sizePct: 22,
+      sizePct: 14,
       x: cfg.positionX ?? 0,
       y: cfg.positionY ?? 0,
       rotation: cfg.rotationDeg ?? 0,
@@ -124,13 +124,16 @@ function migrateConfig(cfg: NeonDesignConfig): NeonDesignConfig {
       };
     }
   }
-  return {
+  const merged: NeonDesignConfig = {
     ...defaultConfig,
     ...cfg,
     text: "",
     decorations: cfg.decorations ?? [],
     textLayers: layers,
   };
+  // Rebuild zOrder using the shared helper so legacy configs get a sensible stack.
+  merged.zOrder = mergedOrder(merged);
+  return merged;
 }
 
 function reducer(_state: NeonDesignConfig, action: Action): NeonDesignConfig {
