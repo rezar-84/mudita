@@ -57,6 +57,40 @@ function LanguagePill({ className }: { className?: string }) {
   );
 }
 
+function LanguageDropdown() {
+  const t = useT();
+  const locale = useLocale();
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          type="button"
+          aria-label={t("language")}
+          className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-[11px] font-semibold text-muted-foreground hover:bg-accent hover:text-foreground transition"
+        >
+          <Globe className="h-3.5 w-3.5" />
+          <span className="tabular-nums">{locale.toUpperCase()}</span>
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="min-w-[7rem] bg-card border border-border">
+        {(["tr", "en"] as Locale[]).map((l) => (
+          <DropdownMenuItem
+            key={l}
+            onClick={() => setLocale(l)}
+            className={cn(
+              "cursor-pointer text-sm",
+              locale === l && "bg-accent font-semibold text-foreground",
+            )}
+          >
+            {l === "tr" ? "Türkçe" : "English"}
+            <span className="ml-auto text-[10px] text-muted-foreground">{l.toUpperCase()}</span>
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
 function UserMenu() {
   const t = useT();
   const { user, loading } = useAuth();
