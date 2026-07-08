@@ -9,7 +9,7 @@ function clamp(v: number, lo: number, hi: number) {
 }
 
 export function TextLayerOverlay() {
-  const { config, selection, setSelection, updateTextLayer, removeTextLayer } =
+  const { config, selection, setSelection, updateTextLayer, removeTextLayer, zIndexFor } =
     useDesigner();
   const layers = config.textLayers ?? [];
   const containerRef = useRef<HTMLDivElement>(null);
@@ -100,7 +100,7 @@ export function TextLayerOverlay() {
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
     >
-      {layers.map((l, idx) => {
+      {layers.map((l) => {
         if (l.hidden) return null;
         const color = COLORS.find((c) => c.id === l.colorId) ?? COLORS[0];
         const font = FONTS.find((f) => f.id === l.fontId) ?? FONTS[0];
@@ -154,7 +154,7 @@ export function TextLayerOverlay() {
               whiteSpace: "pre",
               lineHeight: 1.05,
               opacity: isLightOn ? Math.min(1, 0.55 + brightness * 0.5) : 0.6,
-              zIndex: 30 + idx,
+              zIndex: 10 + zIndexFor(l.id),
             }}
             aria-label={l.text || "Metin katmanı"}
           >

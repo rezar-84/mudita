@@ -166,6 +166,12 @@ export interface NeonDesignConfig {
   decorations?: Decoration[];
   /** Text layers (canonical store for all text on the canvas). */
   textLayers?: TextLayer[];
+  /**
+   * Unified render order for all layers (decorations + text) as an array of
+   * layer ids, bottom → top. When absent, order defaults to
+   * `[...decorations, ...textLayers]` for backwards compat.
+   */
+  zOrder?: string[];
   // Visual preview-only options (do not affect price)
   brightness?: number;   // 40 – 120, default 100
   flicker?: boolean;     // default true

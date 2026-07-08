@@ -41,12 +41,13 @@ export const defaultConfig: NeonDesignConfig = {
       text: "MudiNeon",
       fontId: "pacifico",
       colorId: "pink",
-      sizePct: 22,
+      sizePct: 14,
       x: 0,
       y: 0,
       rotation: 0,
     },
   ],
+  zOrder: [BASE_TEXT_ID],
   brightness: 100,
   flicker: false,
   ledEffect: "none",
@@ -60,6 +61,33 @@ export const defaultConfig: NeonDesignConfig = {
   showSafeArea: false,
   showSizeBadge: true,
 };
+
+/**
+ * Return a bottom → top ordered array of layer ids for the given config.
+ * Uses `cfg.zOrder` when present (filtered to still-existing ids), then
+ * appends any layers missing from it (decorations first, then text) so a
+ * freshly loaded legacy config keeps a sensible stack.
+ */
+export function mergedOrder(cfg: NeonDesignConfig): string[] {
+  const decoIds = (cfg.decorations ?? []).map((d) => d.id);
+  const textIds = (cfg.textLayers ?? []).map((l) => l.id);
+  const known = new Set<string>([...decoIds, ...textIds]);
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const id of cfg.zOrder ?? []) {
+    if (known.has(id) && !seen.has(id)) {
+      out.push(id);
+      seen.add(id);
+    }
+  }
+  for (const id of [...decoIds, ...textIds]) {
+    if (!seen.has(id)) {
+      out.push(id);
+      seen.add(id);
+    }
+  }
+  return out;
+}
 
 type Action =
   | { type: "replace"; cfg: NeonDesignConfig };
@@ -75,7 +103,7 @@ function migrateConfig(cfg: NeonDesignConfig): NeonDesignConfig {
       text: cfg.text ?? "",
       fontId: cfg.fontId ?? defaultConfig.fontId,
       colorId: cfg.colorId ?? defaultConfig.colorId,
-      sizePct: 22,
+      sizePct: 14,
       x: cfg.positionX ?? 0,
       y: cfg.positionY ?? 0,
       rotation: cfg.rotationDeg ?? 0,
@@ -96,13 +124,16 @@ function migrateConfig(cfg: NeonDesignConfig): NeonDesignConfig {
       };
     }
   }
-  return {
+  const merged: NeonDesignConfig = {
     ...defaultConfig,
     ...cfg,
     text: "",
     decorations: cfg.decorations ?? [],
     textLayers: layers,
   };
+  // Rebuild zOrder using the shared helper so legacy configs get a sensible stack.
+  merged.zOrder = mergedOrder(merged);
+  return merged;
 }
 
 function reducer(_state: NeonDesignConfig, action: Action): NeonDesignConfig {
@@ -141,8 +172,17 @@ interface Ctx {
   addTextLayer: (layer: TextLayer) => void;
   updateTextLayer: (id: string, patch: Partial<TextLayer>) => void;
   removeTextLayer: (id: string) => void;
-  /** Reorder layers within their own array. delta: +1 forward, -1 back, +Inf to front, -Inf to back. */
+  /**
+   * Reorder layers across the unified decoration + text stack.
+   * delta: +1 forward, -1 back, +Infinity to front, -Infinity to back.
+   * `kind` is kept for API compatibility but ignored — the merged z-order is
+   * updated so a base text layer can also be sent behind a decoration.
+   */
   reorder: (kind: LayerKind, id: string, delta: number) => void;
+  /** Merged layer stack bottom → top (ids). */
+  layerOrder: string[];
+  /** Resolve the z-index for a layer id from the unified stack (higher = on top). */
+  zIndexFor: (id: string) => number;
   alignSelected: (dir: AlignDirection, reference?: AlignReference) => void;
   /** Delete currently selected layer(s), honoring the at-least-one-visible guard. */
   deleteSelection: () => void;
@@ -255,9 +295,11 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
 
   const addDecoration = useCallback(
     (decoration: Decoration) => {
+      const cur = configRef.current;
       const next: NeonDesignConfig = {
-        ...configRef.current,
-        decorations: [...(configRef.current.decorations ?? []), decoration],
+        ...cur,
+        decorations: [...(cur.decorations ?? []), decoration],
+        zOrder: [...mergedOrder(cur), decoration.id],
       };
       commit(next);
       setSelection({ kind: "decoration", id: decoration.id });
@@ -282,7 +324,11 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
     (id: string) => {
       const cur = configRef.current;
       const filtered = (cur.decorations ?? []).filter((d) => d.id !== id);
-      const nextCfg: NeonDesignConfig = { ...cur, decorations: filtered };
+      const nextCfg: NeonDesignConfig = {
+        ...cur,
+        decorations: filtered,
+        zOrder: mergedOrder(cur).filter((x) => x !== id),
+      };
       if (visibleLayerCount(nextCfg) === 0) {
         toast.error("Tasarımda en az bir görünür katman olmalı.");
         return;
@@ -295,9 +341,11 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
 
   const addTextLayer = useCallback(
     (layer: TextLayer) => {
+      const cur = configRef.current;
       commit({
-        ...configRef.current,
-        textLayers: [...(configRef.current.textLayers ?? []), layer],
+        ...cur,
+        textLayers: [...(cur.textLayers ?? []), layer],
+        zOrder: [...mergedOrder(cur), layer.id],
       });
       setSelection({ kind: "textLayer", id: layer.id });
     },
@@ -320,7 +368,11 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
     (id: string) => {
       const cur = configRef.current;
       const filtered = (cur.textLayers ?? []).filter((l) => l.id !== id);
-      const nextCfg: NeonDesignConfig = { ...cur, textLayers: filtered };
+      const nextCfg: NeonDesignConfig = {
+        ...cur,
+        textLayers: filtered,
+        zOrder: mergedOrder(cur).filter((x) => x !== id),
+      };
       if (visibleLayerCount(nextCfg) === 0) {
         toast.error("Tasarımda en az bir görünür katman olmalı.");
         return;
@@ -332,23 +384,31 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
   );
 
   const reorder = useCallback(
-    (kind: LayerKind, id: string, delta: number) => {
+    (_kind: LayerKind, id: string, delta: number) => {
       const cur = configRef.current;
-      const key: "decorations" | "textLayers" =
-        kind === "decoration" ? "decorations" : "textLayers";
-      const arr = [...((cur[key] ?? []) as Array<{ id: string }>)];
-      const idx = arr.findIndex((x) => x.id === id);
+      // Work on the unified merged stack so text and decorations share one z-order.
+      const order = mergedOrder(cur);
+      const idx = order.indexOf(id);
       if (idx < 0) return;
-      const [item] = arr.splice(idx, 1);
+      const arr = [...order];
+      arr.splice(idx, 1);
       let target: number;
       if (delta === Infinity) target = arr.length;
       else if (delta === -Infinity) target = 0;
       else target = Math.max(0, Math.min(arr.length, idx + delta));
-      arr.splice(target, 0, item);
-      commit({ ...cur, [key]: arr } as NeonDesignConfig);
+      arr.splice(target, 0, id);
+      commit({ ...cur, zOrder: arr });
     },
     [commit],
   );
+
+  const layerOrder = useMemo(() => mergedOrder(config), [config]);
+  const zIndexMap = useMemo(() => {
+    const m = new Map<string, number>();
+    layerOrder.forEach((id, i) => m.set(id, i));
+    return m;
+  }, [layerOrder]);
+  const zIndexFor = useCallback((id: string) => zIndexMap.get(id) ?? 0, [zIndexMap]);
 
   const alignSelected = useCallback(
     (dir: AlignDirection, reference: AlignReference = "page") => {
@@ -586,6 +646,8 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
       updateTextLayer,
       removeTextLayer,
       reorder,
+      layerOrder,
+      zIndexFor,
       alignSelected,
       deleteSelection,
       resetDesign,

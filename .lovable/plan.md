@@ -1,191 +1,70 @@
+## What's changing
 
-## Part A — Rebrand "Mudita" → "MudiNeon" (mudineon.com)
+Five focused fixes across the configurator, checkout, header, and auth.
 
-Sweep every user-facing "Mudita" / "Mudita Dekorasyon" string and replace with "MudiNeon". Domain references become `mudineon.com`.
+### 1. Smaller default text on new designs
 
-Files touched (all strings only, no logic change):
+`defaultConfig` seeds the base text layer at `sizePct: 22`, which renders very large in the preview.
 
-- `src/routes/__root.tsx` — root `head()` title/description, og tags, canonical URL → `https://mudineon.com`.
-- `src/routes/{index,tasarla,galeri,sepet,odeme,iletisim,hakkimizda,sss,yukle}.tsx` — per-route `head()` titles/descriptions/OG.
-- `src/components/SiteLayout.tsx` — header/footer brand text & logo alt.
-- `src/components/WhatsAppWidget.tsx` — greeting text.
-- `src/components/configurator/{NeonPreview,PriceSummary,ConfiguratorPanel,FontSelector,DesignerContext}.tsx` — placeholders, watermark, default text layer ("Mudita" → "MudiNeon"), font previews.
-- `src/components/designer/{EditorShell,EditorTopBar,ToolRail}.tsx` — labels/tooltips.
-- `src/lib/i18n.ts` — every TR/EN string containing "Mudita".
-- `src/lib/cart.ts` — any embedded brand copy.
-- `README.md` — project title, links.
+- Lower the seeded base layer to `sizePct: 14` in `src/components/configurator/DesignerContext.tsx`.
+- Also lower the default `sizePct` used when the user adds a new text layer (currently 22 in the text layer creator) to `14`, so newly added layers start at a friendly size.
+- No migration needed — existing saved designs and cart items keep their stored size.
 
-Default gallery share fallbacks and legacy `text` migration in `DesignerContext.migrateConfig` continue to work (only the visible default word changes).
+### 2. Proper billing/shipping fields at checkout and in the profile
 
-## Part B — Auth, User Panel, Admin Panel
+Right now checkout collects only name / email / phone / one free-text address line, and profile stores the address as `{ line }`. That's not enough for shipping a physical product.
 
-### B1. Enable Lovable Cloud
+- Extend the `contact` payload on `createOrder` (server fn) to accept structured fields:
+  - `name`, `email`, `phone`
+  - `address_line1`, `address_line2` (optional)
+  - `city`, `district`, `postal_code`, `country` (defaulted to `TR`)
+  - `tax_id` (optional, for corporate invoices)
+- Update the `/sepet` checkout aside to render those fields in a clean 2-column form, pre-filled from the user's profile when available.
+- Update `/hesap/profil` to save the same structured shape into `profiles.address` (jsonb) so future checkouts auto-fill.
+- Add a "Save this address to my profile" checkbox on checkout (default on) that upserts the profile address after a successful order.
+- Server-side validation via zod for all new fields.
 
-Turn on Cloud to get Postgres + Auth. Sign-in methods: Email/password + Google (defaults). Add a `/reset-password` route.
+No database migration is required — `profiles.address` and `orders.contact` are both `jsonb`, so the shape can evolve freely.
 
-### B2. Data model (single migration)
+### 3. De-cramp the header (nav, user menu, language switcher)
 
-```sql
--- roles
-create type public.app_role as enum ('admin','customer');
-create table public.user_roles (
-  id uuid primary key default gen_random_uuid(),
-  user_id uuid references auth.users(id) on delete cascade not null,
-  role app_role not null,
-  unique(user_id, role)
-);
--- + GRANTs, RLS, has_role() security-definer fn (per user-roles rules)
+The header packs logo, 7 nav links, language pills, CTA button, cart, user menu and a hamburger into one row, which overflows on mid-width screens.
 
--- profiles (display name, phone, address)
-create table public.profiles (
-  id uuid primary key references auth.users(id) on delete cascade,
-  display_name text, phone text, address jsonb,
-  created_at timestamptz default now()
-);
+- Bump the desktop breakpoint for the inline nav from `lg` to `xl` so the mobile drawer takes over sooner and mid-widths stop compressing.
+- Give the header more breathing room: increase gap, use `py-3.5`, and let the nav row wrap the CTA below on narrow desktop.
+- Move the language switcher into the user menu dropdown (with a compact `TR / EN` toggle inside it) AND into the mobile drawer. Keep a small `TR|EN` pill visible on `xl+` only, so the toolbar isn't crowded on smaller widths.
+- User menu: widen trigger to show avatar + name comfortably, add a header row with avatar + email, group items into "Hesabım / Tasarımlarım / Siparişlerim / Profil", separator, "Dil: TR / EN", separator, admin link (if admin), sign out.
+- Translate the user menu labels (currently hardcoded Turkish) via the i18n system, matching the existing pattern.
 
--- orders + items (customer sees own; admin sees all)
-create table public.orders (
-  id uuid primary key default gen_random_uuid(),
-  user_id uuid references auth.users(id) on delete set null,
-  status text not null default 'pending', -- pending|confirmed|producing|shipped|delivered|cancelled
-  subtotal_try int not null, shipping_try int not null, total_try int not null,
-  contact jsonb, notes text,
-  created_at timestamptz default now(), updated_at timestamptz default now()
-);
-create table public.order_items (
-  id uuid primary key default gen_random_uuid(),
-  order_id uuid references public.orders(id) on delete cascade,
-  config jsonb not null,          -- full NeonDesignConfig snapshot
-  price_try int not null,
-  breakdown jsonb not null        -- pricing line items snapshot
-);
+### 4. Unified layer z-order (decorations + text respect one stack)
 
--- saved designs (user "My Designs")
-create table public.saved_designs (
-  id uuid primary key default gen_random_uuid(),
-  user_id uuid references auth.users(id) on delete cascade not null,
-  name text, config jsonb not null, thumbnail_url text,
-  created_at timestamptz default now()
-);
+Today `NeonPreview` renders `<DecorationOverlay />` then `<TextLayerOverlay />`, so every text layer paints on top of every decoration regardless of the order in the Layers panel. Reordering the base text down has no visible effect.
 
--- gallery (admin-curated)
-create table public.gallery_items (
-  id uuid primary key default gen_random_uuid(),
-  slug text unique not null, title text not null,
-  text text, font_id text, color_id text,
-  config jsonb,                    -- optional full snapshot
-  image_url text, tags text[], published boolean default true,
-  sort int default 0, created_at timestamptz default now()
-);
+- Introduce a single merged render list built from `[...decorations, ...textLayers]` with a shared `z` derived from position in the combined array (as edited from the Layers panel).
+- Refactor `DecorationOverlay` and `TextLayerOverlay` so each item accepts an explicit `zIndex`; the parent picks the order.
+- Update `LayersPanel` to display one unified list (decorations + text together) with drag / up / down actions moving items across the combined stack. The `reorder` action in `DesignerContext` gets a new "unified" mode that swaps between the two arrays while preserving the total order via a `zOrder: string[]` field on the config (array of layer ids in bottom-to-top order). When absent, it defaults to `[...decorations, ...textLayers]` for backwards compatibility.
+- The base "MudiNeon" layer becomes an ordinary participant — send-to-back, bring-forward, etc. all work.
 
--- pricing config (single row, editable by admin)
-create table public.pricing_config (
-  id int primary key default 1 check (id = 1),
-  base_rate_per_cm2 numeric not null default 1.6,
-  outdoor_mult numeric not null default 1.25,
-  rgb_mult numeric not null default 1.35,
-  urgent_mult numeric not null default 1.20,
-  extra_line_fee int not null default 250,
-  shipping_tr int not null default 250,
-  adapter_prices jsonb not null default '{"tr":0,"eu":120}',
-  decoration_preset_base int not null default 120,
-  decoration_upload_base int not null default 250,
-  fonts jsonb,      -- per-font complexity overrides {id: multiplier}
-  colors jsonb,     -- per-color rgb flag overrides
-  sizes jsonb,      -- preset dimensions overrides
-  backboards jsonb, -- {id: {multiplier, flatAdd}}
-  mountings jsonb,  -- {id: price}
-  accessories jsonb,-- {dimmer: price, ...}
-  updated_at timestamptz default now(), updated_by uuid
-);
-insert into public.pricing_config(id) values (1) on conflict do nothing;
+### 5. Google OAuth showing the Lovable brand
 
--- analytics events (design activity)
-create table public.design_events (
-  id uuid primary key default gen_random_uuid(),
-  user_id uuid,        -- nullable (anon)
-  session_id text,
-  event text not null, -- 'design_started','font_selected','color_selected','decoration_added','added_to_cart','checkout_started','order_placed'
-  payload jsonb,
-  created_at timestamptz default now()
-);
-```
+By default, Lovable Cloud uses its managed Google OAuth client, so the Google consent screen shows "Lovable" as the requesting app. To show "MudiNeon" you have to bring your own Google OAuth client and configure it in the Cloud dashboard.
 
-RLS summary:
-- `profiles`, `saved_designs`, `orders`, `order_items`: owner-only for customers; admins full via `has_role(auth.uid(),'admin')`.
-- `gallery_items`: public SELECT where `published=true`; admin write.
-- `pricing_config`: public SELECT (read by pricing engine); admin update only.
-- `design_events`: insert-any (public), select admin-only.
-- All tables get correct `GRANT` statements per the public-schema-grants rule.
+I'll add a short in-chat note explaining the two options and, if you want the branded flow now, walk you through creating the Google Cloud OAuth client and pasting the client ID/secret into Cloud → Authentication → Google. No code changes on our side — the same `lovable.auth.signInWithOAuth("google", …)` call is used either way.
 
-### B3. Auth wiring
+## Technical notes
 
-- Add `src/routes/auth.tsx` (login/signup/reset) — public route; supports Google + email/password. Preserves `?next=` param.
-- Integration-managed `src/routes/_authenticated/route.tsx` gates the subtree.
-- Root `__root.tsx` adds `onAuthStateChange` (per tanstack-supabase-integration rules) and header user affordance (avatar menu when signed in, "Giriş" button when out).
-- `SiteLayout` header gains a user menu: **My Designs**, **My Orders**, **Profile**, **Sign out**. If admin role → **Admin Panel** link.
+- Files touched:
+  - `src/components/configurator/DesignerContext.tsx` — default sizePct, add `zOrder` field, unified `reorder`.
+  - `src/lib/types.ts` — add optional `zOrder?: string[]` to `NeonDesignConfig`.
+  - `src/components/configurator/NeonPreview.tsx` — merged render list.
+  - `src/components/designer/DecorationOverlay.tsx`, `src/components/designer/TextLayerOverlay.tsx` — accept `zIndex`.
+  - `src/components/designer/LayersPanel.tsx` — unified list + reorder across kinds.
+  - `src/components/SiteLayout.tsx` — header density, user-menu grouping, i18n labels, embedded language toggle.
+  - `src/lib/i18n.ts` — new keys for user menu, checkout billing fields.
+  - `src/routes/sepet.tsx` — structured billing form, autofill from profile, optional save-to-profile.
+  - `src/lib/orders.functions.ts` — extend zod `contact` schema.
+  - `src/routes/_authenticated/hesap.profil.tsx` — structured address form matching checkout.
 
-### B4. User panel routes (under `_authenticated/hesap`)
+- No SQL migration needed. `orders.contact` and `profiles.address` are `jsonb`; existing rows keep the old `{ line }` shape and continue to render (readers fall back to `address_line1 ?? line`).
 
-- `/hesap` — dashboard overview (recent orders + saved designs).
-- `/hesap/tasarimlar` — saved designs list; "Open in editor" loads config into `DesignerProvider`.
-- `/hesap/siparisler` — order list + detail (status, items, breakdown snapshot).
-- `/hesap/profil` — profile & address edit.
-
-Add "Save design" button in `/tasarla` (visible when signed in; prompts login otherwise) → writes to `saved_designs`. Checkout flow inserts an order row on submit.
-
-### B5. Admin panel routes (under `_authenticated/admin`, gated by `has_role='admin'`)
-
-Pathless layout with `beforeLoad` calling a `requireAdmin` server fn (using `requireSupabaseAuth` + `has_role` RPC); redirects non-admins.
-
-Sections:
-- `/admin` — KPIs: signed-up users, orders by status, revenue (sum of `total_try`), top fonts/colors/sizes from `design_events` and `order_items` (SQL aggregations).
-- `/admin/orders` — table with filter/status change (dropdown updates `orders.status`), detail view showing customer, contact, notes, per-item config + breakdown.
-- `/admin/users` — list users (`auth.admin.listUsers` via `supabaseAdmin` server fn), promote/demote admin role.
-- `/admin/gallery` — CRUD for `gallery_items` (title, slug, text/font/color, upload image or capture from designer snapshot, tags, publish toggle, sort).
-- `/admin/pricing` — form editing every field of `pricing_config`, including nested JSON editors:
-  - Sliders/inputs for `base_rate_per_cm2`, multipliers (outdoor/RGB/urgent), extra-line fee, shipping.
-  - **Per-font complexity** grid (row per font in `FONTS`).
-  - **Per-color** RGB flag.
-  - **Sizes** editor (S/M/L width×height).
-  - **Backboards** (multiplier + flatAdd per type).
-  - **Mountings** & **accessories** prices.
-  - **Adapter** prices (`tr`, `eu`).
-  - **Decoration** base prices (preset/upload).
-  - Save writes row 1 and cache-invalidates the pricing hook.
-- `/admin/analytics` — design analysis: most-used fonts/colors/sizes, decoration usage, avg cart total, drop-off funnel from `design_events`.
-
-### B6. Pricing engine refactor
-
-- Introduce `getPricingConfig()` server fn (`createServerFn`, no auth) reading `pricing_config` row 1; cached via TanStack Query with 5 min stale.
-- `src/lib/pricing.ts` `calculatePrice(cfg, pricing?)` takes optional `pricing` param; existing constants become defaults when `pricing` absent (preserves SSR/tests).
-- `PriceSummary` and `MobilePriceBar` fetch pricing via `useQuery(['pricing'])` and pass to `calculatePrice`.
-- Options (`src/data/options.ts`) are merged at runtime with overrides from `pricing_config` (fonts complexity, colors rgb, sizes dims, backboards, mountings, accessories) before display and pricing.
-
-### B7. Event tracking
-
-Add lightweight `trackEvent(event, payload)` (server fn insert into `design_events`) called from:
-- Designer mount (`design_started`).
-- Font/color/decoration change.
-- Add-to-cart, checkout, order submit.
-
-### B8. i18n
-
-Add TR/EN keys for all new UI (auth, user panel, admin panel labels, table headers, empty states, toasts).
-
-## Part C — Out of scope
-
-- Payment gateway integration (iyzico/Stripe) — still in `Milestone 2` roadmap; admin panel receives the manually placed orders.
-- Email notifications — later.
-- Multi-tenant/multi-outlet regional pricing — "different outlets" is interpreted here as per-configuration (size, mounting, backboard, adapter) pricing rows editable in admin.
-
-## Verification
-
-1. Global grep: no remaining "Mudita" strings; `mudineon.com` appears in canonical + OG URLs.
-2. Sign up → row appears in `auth.users`; profile auto-created via trigger.
-3. Assigning admin role → `/admin/*` becomes reachable; non-admin gets redirected.
-4. Change `base_rate_per_cm2` in admin → `/tasarla` price updates after query refetch.
-5. Place order (from `/sepet`) while signed in → row in `orders` + `order_items`; visible in `/hesap/siparisler` and `/admin/orders`.
-6. Add gallery item in admin → appears on `/galeri`; "Design similar" still applies text/font/color as base layer.
-7. Design events populate; `/admin/analytics` shows top fonts/colors.
-8. `bunx tsgo --noEmit` and build pass.
+- Google OAuth branding is a Cloud dashboard change, not code.
