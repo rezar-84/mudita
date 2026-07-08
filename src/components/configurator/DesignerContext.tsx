@@ -172,8 +172,17 @@ interface Ctx {
   addTextLayer: (layer: TextLayer) => void;
   updateTextLayer: (id: string, patch: Partial<TextLayer>) => void;
   removeTextLayer: (id: string) => void;
-  /** Reorder layers within their own array. delta: +1 forward, -1 back, +Inf to front, -Inf to back. */
+  /**
+   * Reorder layers across the unified decoration + text stack.
+   * delta: +1 forward, -1 back, +Infinity to front, -Infinity to back.
+   * `kind` is kept for API compatibility but ignored — the merged z-order is
+   * updated so a base text layer can also be sent behind a decoration.
+   */
   reorder: (kind: LayerKind, id: string, delta: number) => void;
+  /** Merged layer stack bottom → top (ids). */
+  layerOrder: string[];
+  /** Resolve the z-index for a layer id from the unified stack (higher = on top). */
+  zIndexFor: (id: string) => number;
   alignSelected: (dir: AlignDirection, reference?: AlignReference) => void;
   /** Delete currently selected layer(s), honoring the at-least-one-visible guard. */
   deleteSelection: () => void;
