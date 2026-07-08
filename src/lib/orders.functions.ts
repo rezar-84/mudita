@@ -96,13 +96,6 @@ async function assertAdmin(context: { supabase: import("@supabase/supabase-js").
   if (error) throw new Error(error.message);
   if (!data) throw new Error("Forbidden");
 }
-  const { data, error } = await context.supabase.rpc("has_role", {
-    _user_id: context.userId,
-    _role: "admin",
-  });
-  if (error) throw new Error(error.message);
-  if (!data) throw new Error("Forbidden");
-}
 
 export const adminListOrders = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
