@@ -26,23 +26,19 @@ const NAV = [
   { to: "/iletisim", key: "navContact" as const },
 ] as const;
 
-function LanguagePill({ className, orientation = "horizontal" }: { className?: string; orientation?: "horizontal" | "vertical" }) {
+function LanguagePill({ className }: { className?: string }) {
   const t = useT();
   const locale = useLocale();
-  const vertical = orientation === "vertical";
   return (
     <div
       role="group"
       aria-label={t("language")}
       className={cn(
-        "border border-border bg-card font-semibold",
-        vertical
-          ? "inline-flex flex-col items-stretch gap-0.5 rounded-md p-0.5 text-[10px] leading-none"
-          : "inline-flex items-center gap-0.5 rounded-full p-0.5 text-xs",
+        "inline-flex items-center gap-0.5 rounded-full border border-border bg-card p-0.5 text-xs font-semibold",
         className,
       )}
     >
-      {!vertical && <Globe className="ml-1.5 h-3.5 w-3.5 text-muted-foreground" aria-hidden />}
+      <Globe className="ml-1.5 h-3.5 w-3.5 text-muted-foreground" aria-hidden />
       {(["tr", "en"] as Locale[]).map((l) => (
         <button
           key={l}
@@ -50,8 +46,7 @@ function LanguagePill({ className, orientation = "horizontal" }: { className?: s
           onClick={() => setLocale(l)}
           aria-pressed={locale === l}
           className={cn(
-            "transition",
-            vertical ? "rounded px-1.5 py-0.5" : "min-w-[2rem] rounded-full px-2 py-1",
+            "min-w-[2rem] rounded-full px-2 py-1 transition",
             locale === l ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground",
           )}
         >
