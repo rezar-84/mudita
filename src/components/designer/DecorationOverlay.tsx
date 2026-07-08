@@ -10,7 +10,7 @@ function clamp(v: number, lo: number, hi: number) {
 }
 
 export function DecorationOverlay() {
-  const { config, selection, setSelection, updateDecoration, removeDecoration } =
+  const { config, selection, setSelection, updateDecoration, removeDecoration, zIndexFor } =
     useDesigner();
   const decorations = config.decorations ?? [];
   const containerRef = useRef<HTMLDivElement>(null);
@@ -95,7 +95,7 @@ export function DecorationOverlay() {
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
     >
-      {decorations.map((d, idx) => {
+      {decorations.map((d) => {
         if (d.hidden) return null;
         const color = COLORS.find((c) => c.id === d.colorId) ?? COLORS[0];
         const preset = d.source === "preset" ? DECORATIONS.find((p) => p.id === d.presetId) : null;
@@ -142,7 +142,7 @@ export function DecorationOverlay() {
               filter: glowFilter,
               opacity: isLightOn ? Math.min(1, 0.65 + brightness * 0.4) : 0.6,
               transition: dragRef.current?.id === d.id ? "none" : "filter 150ms ease",
-              zIndex: 10 + idx,
+              zIndex: 10 + zIndexFor(d.id),
             }}
             aria-label={d.label || "Süsleme"}
           >

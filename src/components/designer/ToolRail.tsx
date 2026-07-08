@@ -62,7 +62,7 @@ export function ToolRail({ onPickDecoration }: { onPickDecoration: () => void })
       text: t("toolNewTextDefault"),
       fontId: config.fontId,
       colorId: config.colorId,
-      sizePct: 18,
+      sizePct: 14,
       x: 0,
       y: Math.round(offset),
       rotation: 0,

@@ -194,7 +194,7 @@ export function ConfiguratorPanel() {
                 text: t("toolNewTextDefault"),
                 fontId: activeLayer?.fontId ?? config.fontId,
                 colorId: activeLayer?.colorId ?? config.colorId,
-                sizePct: 16,
+                sizePct: 14,
                 x: 0,
                 y: 12,
                 rotation: 0,
