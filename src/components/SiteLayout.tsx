@@ -98,6 +98,7 @@ function UserMenu() {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const locale = useLocale();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   const signOut = async () => {
     await qc.cancelQueries();
