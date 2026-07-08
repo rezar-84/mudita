@@ -22,6 +22,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedHesapRouteImport } from './routes/_authenticated/hesap'
+import { Route as AuthenticatedHesapIndexRouteImport } from './routes/_authenticated/hesap.index'
 
 const YukleRoute = YukleRouteImport.update({
   id: '/yukle',
@@ -87,6 +88,11 @@ const AuthenticatedHesapRoute = AuthenticatedHesapRouteImport.update({
   path: '/hesap',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedHesapIndexRoute = AuthenticatedHesapIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedHesapRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -100,7 +106,8 @@ export interface FileRoutesByFullPath {
   '/sss': typeof SssRoute
   '/tasarla': typeof TasarlaRoute
   '/yukle': typeof YukleRoute
-  '/hesap': typeof AuthenticatedHesapRoute
+  '/hesap': typeof AuthenticatedHesapRouteWithChildren
+  '/hesap/': typeof AuthenticatedHesapIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -114,7 +121,7 @@ export interface FileRoutesByTo {
   '/sss': typeof SssRoute
   '/tasarla': typeof TasarlaRoute
   '/yukle': typeof YukleRoute
-  '/hesap': typeof AuthenticatedHesapRoute
+  '/hesap': typeof AuthenticatedHesapIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -130,7 +137,8 @@ export interface FileRoutesById {
   '/sss': typeof SssRoute
   '/tasarla': typeof TasarlaRoute
   '/yukle': typeof YukleRoute
-  '/_authenticated/hesap': typeof AuthenticatedHesapRoute
+  '/_authenticated/hesap': typeof AuthenticatedHesapRouteWithChildren
+  '/_authenticated/hesap/': typeof AuthenticatedHesapIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -147,6 +155,7 @@ export interface FileRouteTypes {
     | '/tasarla'
     | '/yukle'
     | '/hesap'
+    | '/hesap/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -176,6 +185,7 @@ export interface FileRouteTypes {
     | '/tasarla'
     | '/yukle'
     | '/_authenticated/hesap'
+    | '/_authenticated/hesap/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -286,15 +296,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedHesapRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/hesap/': {
+      id: '/_authenticated/hesap/'
+      path: '/'
+      fullPath: '/hesap/'
+      preLoaderRoute: typeof AuthenticatedHesapIndexRouteImport
+      parentRoute: typeof AuthenticatedHesapRoute
+    }
   }
 }
 
+interface AuthenticatedHesapRouteChildren {
+  AuthenticatedHesapIndexRoute: typeof AuthenticatedHesapIndexRoute
+}
+
+const AuthenticatedHesapRouteChildren: AuthenticatedHesapRouteChildren = {
+  AuthenticatedHesapIndexRoute: AuthenticatedHesapIndexRoute,
+}
+
+const AuthenticatedHesapRouteWithChildren =
+  AuthenticatedHesapRoute._addFileChildren(AuthenticatedHesapRouteChildren)
+
 interface AuthenticatedRouteRouteChildren {
-  AuthenticatedHesapRoute: typeof AuthenticatedHesapRoute
+  AuthenticatedHesapRoute: typeof AuthenticatedHesapRouteWithChildren
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedHesapRoute: AuthenticatedHesapRoute,
+  AuthenticatedHesapRoute: AuthenticatedHesapRouteWithChildren,
 }
 
 const AuthenticatedRouteRouteWithChildren =
