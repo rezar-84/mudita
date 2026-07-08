@@ -66,7 +66,7 @@ function ProfilePage() {
       id: userData.user.id,
       display_name: displayName,
       phone,
-      address: addr as unknown as Record<string, unknown>,
+      address: addr as never,
     });
     setBusy(false);
     if (error) toast.error(error.message);
