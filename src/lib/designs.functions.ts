@@ -24,7 +24,7 @@ export const saveDesign = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { data: row, error } = await context.supabase
       .from("saved_designs")
-      .insert({ user_id: context.userId, name: data.name, config: data.config, thumbnail_url: data.thumbnail_url })
+      .insert({ user_id: context.userId, name: data.name, config: data.config as never, thumbnail_url: data.thumbnail_url })
       .select("id")
       .single();
     if (error) throw new Error(error.message);
