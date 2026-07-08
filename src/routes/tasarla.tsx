@@ -13,6 +13,7 @@ import { addToCart } from "@/lib/cart";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
 import { t } from "@/lib/i18n";
+import { usePricingOverrides } from "@/hooks/usePricing";
 
 export const Route = createFileRoute("/tasarla")({
   head: () => ({
