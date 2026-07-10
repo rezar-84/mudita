@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useBlocker } from "@tanstack/react-router";
 import {
   DesignerProvider,
   useDesigner,
@@ -29,6 +29,37 @@ export const Route = createFileRoute("/tasarla")({
 
 function DesignerPage() {
   const [fullscreen, setFullscreen] = useState(false);
+
+  // Block route navigation away from the designer page (except to checkout/sepet)
+  const blocker = useBlocker({
+    shouldBlock: ({ nextLocation }) => {
+      if (nextLocation.pathname === "/sepet") return false;
+      return true;
+    },
+  });
+
+  useEffect(() => {
+    if (blocker.state === "blocked") {
+      const confirmLeave = window.confirm(
+        "Tasarım sayfasından ayrılmak istediğinize emin misiniz? Kaydedilmemiş değişiklikleriniz kaybolabilir."
+      );
+      if (confirmLeave) {
+        blocker.proceed();
+      } else {
+        blocker.reset();
+      }
+    }
+  }, [blocker]);
+
+  // Alert on tab close or browser refresh
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "";
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, []);
 
   useEffect(() => {
     const handler = () => setFullscreen((v) => !v);
