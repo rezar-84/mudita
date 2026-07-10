@@ -121,6 +121,8 @@ export interface Decoration {
   locked?: boolean;
   /** Stroke width for custom drawings, 2..16. */
   strokeWidth?: number;
+  /** Rendering mode for hybrid vector/print layers. */
+  renderMode?: "hybrid" | "print-only" | "glow-only";
 }
 
 /** Additional text layer on the canvas (multi-text support). */

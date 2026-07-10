@@ -78,6 +78,34 @@ export function DecorationProperties() {
         </Button>
       </div>
 
+      {(d.svgMarkup || d.presetId?.startsWith("emblem-") || d.source === "upload") && (
+        <div>
+          <Label className="mb-2 block text-sm font-medium">Baskı & Neon Modu</Label>
+          <div className="grid grid-cols-3 gap-1 rounded-md bg-secondary/50 p-1">
+            {(["hybrid", "glow-only", "print-only"] as const).map((mode) => {
+              const currentMode = d.renderMode || (d.presetId?.startsWith("emblem-") ? "hybrid" : "glow-only");
+              return (
+                <button
+                  key={mode}
+                  type="button"
+                  onClick={() => updateDecoration(d.id, { renderMode: mode })}
+                  className={cn(
+                    "rounded px-1.5 py-1.5 text-[11px] font-medium transition",
+                    currentMode === mode
+                      ? "bg-background text-foreground shadow-sm"
+                      : "text-muted-foreground hover:bg-background/25 hover:text-foreground",
+                  )}
+                >
+                  {mode === "hybrid" && "Baskı + Neon"}
+                  {mode === "glow-only" && "Sadece Neon"}
+                  {mode === "print-only" && "Sadece Baskı"}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       <div>
         <Label className="mb-2 block text-sm font-medium">{t("color")}</Label>
         <div className="grid grid-cols-6 gap-2">

@@ -2,6 +2,7 @@ import { useRef } from "react";
 import { useDesigner } from "@/components/configurator/DesignerContext";
 import { COLORS } from "@/data/options";
 import { DECORATIONS } from "@/data/decorations";
+import { SPORT_EMBLEMS } from "@/data/sportEmblems";
 import { cn } from "@/lib/utils";
 import { SelectionHandles } from "./SelectionHandles";
 
@@ -98,7 +99,12 @@ export function DecorationOverlay() {
       {decorations.map((d) => {
         if (d.hidden) return null;
         const color = COLORS.find((c) => c.id === d.colorId) ?? COLORS[0];
-        const preset = d.source === "preset" ? DECORATIONS.find((p) => p.id === d.presetId) : null;
+        
+        // Import SPORT_EMBLEMS inside or use the static map
+        const preset = d.source === "preset"
+          ? (DECORATIONS.find((p) => p.id === d.presetId) || SPORT_EMBLEMS.find((p) => p.id === d.presetId))
+          : null;
+
         const isSelected = selection.kind === "decoration" && selection.id === d.id;
         const isMulti = selection.kind === "multi" && selection.ids.includes(d.id);
         const isLightOn = config.isLightOn ?? true;
@@ -123,6 +129,23 @@ export function DecorationOverlay() {
                     : ""
             : "";
 
+        const renderMode = d.renderMode || (preset?.category === "sports" ? "hybrid" : "glow-only");
+        const svgData = d.svgMarkup || preset?.svgMarkup;
+        const showPrint = svgData && (renderMode === "hybrid" || renderMode === "print-only");
+        const showGlow = renderMode === "hybrid" || renderMode === "glow-only";
+
+        const printStyle = {
+          opacity: isLightOn ? 0.85 : 0.25,
+          transition: "opacity 150ms ease",
+        };
+
+        const glowStyle = {
+          filter: glowFilter,
+          color: isLightOn ? color.hex : "rgba(255,255,255,0.18)",
+          opacity: isLightOn ? Math.min(1, 0.65 + brightness * 0.4) : 0.6,
+          transition: "filter 150ms ease",
+        };
+
         return (
           <div
             key={d.id}
@@ -138,37 +161,55 @@ export function DecorationOverlay() {
               width: `${d.sizePct}%`,
               aspectRatio: `${d.aspectRatio ?? 1}`,
               transform: `translate(-50%, -50%) rotate(${d.rotation}deg) scale(${d.flipX ? -1 : 1}, ${d.flipY ? -1 : 1})`,
-              color: isLightOn ? color.hex : "rgba(255,255,255,0.18)",
-              filter: glowFilter,
-              opacity: isLightOn ? Math.min(1, 0.65 + brightness * 0.4) : 0.6,
-              transition: dragRef.current?.id === d.id ? "none" : "filter 150ms ease",
               zIndex: 10 + zIndexFor(d.id),
             }}
             aria-label={d.label || "Süsleme"}
           >
-            {preset ? (
-              <svg
-                viewBox={preset.viewBox ?? "0 0 24 24"}
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={1.5}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="h-full w-full"
-                aria-hidden
-              >
-                <path d={preset.path} />
-              </svg>
-            ) : d.svgMarkup ? (
-              <div
-                className="h-full w-full [&_svg]:h-full [&_svg]:w-full"
-                dangerouslySetInnerHTML={{
-                  __html: d.strokeWidth
-                    ? d.svgMarkup.replace(/stroke-width="[^"]*"/g, `stroke-width="${d.strokeWidth}"`)
-                    : d.svgMarkup,
-                }}
-              />
-            ) : null}
+            <div className="relative h-full w-full">
+              {/* 1. Print layer (native colors, no glow, dim when light is off) */}
+              {showPrint && svgData && (
+                <div
+                  className="absolute inset-0 h-full w-full [&_svg]:h-full [&_svg]:w-full"
+                  style={printStyle}
+                  dangerouslySetInnerHTML={{ __html: svgData }}
+                />
+              )}
+
+              {/* 2. Glow layer (neon colors and glow filter) */}
+              {showGlow && (
+                <div
+                  style={glowStyle}
+                  className={cn(
+                    "absolute inset-0 h-full w-full [&_svg]:h-full [&_svg]:w-full",
+                    renderMode === "hybrid" && "[&_svg_path]:fill-none [&_svg_path]:stroke-[currentColor] [&_svg_path]:stroke-[1.6px] [&_svg_rect]:fill-none [&_svg_rect]:stroke-[currentColor] [&_svg_rect]:stroke-[1.6px] [&_svg_circle]:fill-none [&_svg_circle]:stroke-[currentColor] [&_svg_circle]:stroke-[1.6px] [&_svg_polygon]:fill-none [&_svg_polygon]:stroke-[currentColor] [&_svg_polygon]:stroke-[1.6px] [&_svg_g]:fill-none [&_svg_g]:stroke-[currentColor]"
+                  )}
+                >
+                  {preset && !preset.svgMarkup ? (
+                    <svg
+                      viewBox={preset.viewBox ?? "0 0 24 24"}
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={1.5}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="h-full w-full"
+                      aria-hidden
+                    >
+                      {preset.path && <path d={preset.path} />}
+                    </svg>
+                  ) : svgData ? (
+                    <div
+                      className="h-full w-full [&_svg]:h-full [&_svg]:w-full"
+                      dangerouslySetInnerHTML={{
+                        __html: d.strokeWidth
+                          ? svgData.replace(/stroke-width="[^"]*"/g, `stroke-width="${d.strokeWidth}"`)
+                          : svgData,
+                      }}
+                    />
+                  ) : null}
+                </div>
+              )}
+            </div>
 
             {isMulti && (
               <div
