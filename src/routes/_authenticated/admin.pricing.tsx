@@ -23,6 +23,8 @@ type Form = {
   decoration_upload_base: number;
   adapter_tr: number;
   adapter_eu: number;
+  decoration_hybrid_fee: number;
+  decoration_print_only_mult: number;
 };
 
 const FIELDS: { key: keyof Form; label: string; hint?: string; step?: number }[] = [
@@ -36,6 +38,8 @@ const FIELDS: { key: keyof Form; label: string; hint?: string; step?: number }[]
   { key: "decoration_upload_base", label: "SVG yükleme (süsleme) taban" },
   { key: "adapter_tr", label: "TR adaptör" },
   { key: "adapter_eu", label: "AB adaptör" },
+  { key: "decoration_hybrid_fee", label: "Süsleme Baskı + Neon Ek Ücreti (TRY)" },
+  { key: "decoration_print_only_mult", label: "Süsleme Sadece Baskı Katsayısı", hint: "0.40 → %40 maliyet", step: 0.05 },
 ];
 
 function AdminPricing() {
@@ -47,7 +51,12 @@ function AdminPricing() {
 
   useEffect(() => {
     if (!data) return;
-    const adapter = (data.adapter_prices ?? { tr: 0, eu: 120 }) as { tr?: number; eu?: number };
+    const adapter = (data.adapter_prices ?? { tr: 0, eu: 120 }) as {
+      tr?: number;
+      eu?: number;
+      decoration_hybrid_fee?: number;
+      decoration_print_only_mult?: number;
+    };
     setForm({
       base_rate_per_cm2: Number(data.base_rate_per_cm2),
       outdoor_mult: Number(data.outdoor_mult),
@@ -59,6 +68,8 @@ function AdminPricing() {
       decoration_upload_base: data.decoration_upload_base,
       adapter_tr: adapter.tr ?? 0,
       adapter_eu: adapter.eu ?? 120,
+      decoration_hybrid_fee: adapter.decoration_hybrid_fee ?? 150,
+      decoration_print_only_mult: adapter.decoration_print_only_mult ?? 0.4,
     });
   }, [data]);
 

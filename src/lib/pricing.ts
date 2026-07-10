@@ -10,7 +10,12 @@ export interface PricingOverrides {
   shipping_tr?: number | null;
   decoration_preset_base?: number | null;
   decoration_upload_base?: number | null;
-  adapter_prices?: { tr?: number; eu?: number } | null;
+  adapter_prices?: {
+    tr?: number;
+    eu?: number;
+    decoration_hybrid_fee?: number;
+    decoration_print_only_mult?: number;
+  } | null;
 }
 
 const DEFAULTS = {
@@ -130,13 +135,31 @@ export function calculatePrice(cfg: NeonDesignConfig, overrides?: PricingOverrid
       const ratio = Math.max(5, Math.min(40, d.sizePct)) / 100;
       const cm2 = area * ratio * ratio;
       const sizeAdd = cm2 * BASE_RATE_PER_CM2 * 0.6;
+      
+      const isSport = d.presetId?.startsWith("emblem-");
+      const renderMode = d.renderMode || (isSport ? "hybrid" : "glow-only");
+      
+      let baseCost = d.source === "preset" ? DECORATION_PRESET_BASE : DECORATION_UPLOAD_BASE;
+      let sizeCost = sizeAdd;
+
+      const hybridFee = o.adapter_prices?.decoration_hybrid_fee ?? 150;
+      const printOnlyMult = o.adapter_prices?.decoration_print_only_mult ?? 0.4;
+      
+      if (renderMode === "print-only") {
+        // No neon bending, print only
+        baseCost = baseCost * printOnlyMult;
+        sizeCost = sizeCost * (printOnlyMult * 0.75);
+      } else if (renderMode === "hybrid") {
+        // Both printing and neon bending
+        baseCost += hybridFee;
+      }
+
       if (d.source === "preset") {
         presetCount++;
-        total += DECORATION_PRESET_BASE + sizeAdd;
       } else {
         uploadCount++;
-        total += DECORATION_UPLOAD_BASE + sizeAdd;
       }
+      total += baseCost + sizeCost;
     }
     const label = presetCount && uploadCount
       ? `Süslemeler (${presetCount}+${uploadCount} SVG)`

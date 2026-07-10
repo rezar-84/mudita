@@ -2,15 +2,16 @@ export interface DecorationPreset {
   id: string;
   label: string;
   labelEn?: string;
-  category: "love" | "nature" | "food" | "music" | "weather" | "symbol" | "fun";
-  path: string;
+  category: "love" | "nature" | "food" | "music" | "weather" | "symbol" | "fun" | "sports";
+  path?: string;
   viewBox?: string;
+  svgMarkup?: string;
 }
 
 export const DECORATIONS: DecorationPreset[] = [
   { id: "heart", label: "Kalp", labelEn: "Heart", category: "love", path: "M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.5-9.5 9-9.5 9z" },
   { id: "star", label: "Yıldız", labelEn: "Star", category: "symbol", path: "M12 2 14.6 9 22 9.5l-5.7 4.6L18 22l-6-3.7L6 22l1.7-7.9L2 9.5 9.4 9z" },
-  { id: "sparkle", label: "Parıltı", labelEn: "Sparkle", category: "symbol", path: "M12 2 13 10 21 11 13 12 12 21 11 12 3 11 11 10z" },
+  { id: "sparkle", label: "Parıltı", labelEn: "Sparkle", category: "symbol", path: "M12 2 13 10 21 11 13 12 12 21 11 12 3 11 12 3 11 10z" },
   { id: "crown", label: "Taç", labelEn: "Crown", category: "symbol", path: "M3 18h18l-1.5-9-4 3-3.5-6-3.5 6-4-3z" },
   { id: "lightning", label: "Şimşek", labelEn: "Lightning", category: "weather", path: "M13 2 4 14h6l-1 8 9-12h-6z" },
   { id: "sun", label: "Güneş", labelEn: "Sun", category: "weather", path: "M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0-5v3m0 14v3M2 12h3m14 0h3M4.2 4.2l2.1 2.1m11.4 11.4 2.1 2.1M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1" },
@@ -42,6 +43,7 @@ export const DECORATION_CATEGORY_LABEL: Record<DecorationPreset["category"], str
   weather: "Hava",
   symbol: "Sembol",
   fun: "Eğlence",
+  sports: "Spor Kulüpleri",
 };
 
 export const DECORATION_CATEGORY_LABEL_EN: Record<DecorationPreset["category"], string> = {
@@ -52,4 +54,5 @@ export const DECORATION_CATEGORY_LABEL_EN: Record<DecorationPreset["category"], 
   weather: "Weather",
   symbol: "Symbol",
   fun: "Fun",
+  sports: "Sports Clubs",
 };

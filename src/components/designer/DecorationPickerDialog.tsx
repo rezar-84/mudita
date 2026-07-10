@@ -2,12 +2,14 @@ import { useMemo, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { DECORATIONS, DECORATION_CATEGORY_LABEL, type DecorationPreset } from "@/data/decorations";
+import { SPORT_EMBLEMS } from "@/data/sportEmblems";
 import { useDesigner } from "@/components/configurator/DesignerContext";
 import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { Search } from "lucide-react";
 
-const CATEGORIES = ["all", ...new Set(DECORATIONS.map((d) => d.category))] as const;
+const ALL_DECORATIONS = [...DECORATIONS, ...SPORT_EMBLEMS];
+const CATEGORIES = ["all", ...new Set(ALL_DECORATIONS.map((d) => d.category))] as const;
 type Cat = (typeof CATEGORIES)[number];
 
 export function DecorationPickerDialog({
@@ -24,7 +26,7 @@ export function DecorationPickerDialog({
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return DECORATIONS.filter((d) => {
+    return ALL_DECORATIONS.filter((d) => {
       if (cat !== "all" && d.category !== cat) return false;
       if (q && !d.label.toLowerCase().includes(q) && !d.id.includes(q)) return false;
       return true;
@@ -41,7 +43,9 @@ export function DecorationPickerDialog({
       x: 0,
       y: 0,
       rotation: 0,
-      sizePct: 18,
+      sizePct: preset.category === "sports" ? 28 : 18,
+      svgMarkup: preset.svgMarkup,
+      renderMode: preset.category === "sports" ? "hybrid" : undefined,
     });
     onOpenChange(false);
   }
@@ -92,21 +96,28 @@ export function DecorationPickerDialog({
                 className="group flex aspect-square flex-col items-center justify-center gap-1 rounded-xl border border-border bg-secondary/40 p-2 text-center transition hover:border-neon-cyan/60 hover:bg-secondary"
                 title={d.label}
               >
-                <svg
-                  viewBox={d.viewBox ?? "0 0 24 24"}
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={1.6}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="h-9 w-9 text-foreground transition group-hover:text-neon-cyan"
-                  style={{
-                    filter: "drop-shadow(0 0 6px rgba(0,255,255,0.0)) drop-shadow(0 0 0 transparent)",
-                  }}
-                  aria-hidden
-                >
-                  <path d={d.path} />
-                </svg>
+                {d.svgMarkup ? (
+                  <div
+                    className="h-9 w-9 text-foreground transition group-hover:text-neon-cyan [&_svg]:h-full [&_svg]:w-full [&_svg_path]:fill-current [&_svg_g]:fill-current"
+                    dangerouslySetInnerHTML={{ __html: d.svgMarkup }}
+                  />
+                ) : (
+                  <svg
+                    viewBox={d.viewBox ?? "0 0 24 24"}
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={1.6}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="h-9 w-9 text-foreground transition group-hover:text-neon-cyan"
+                    style={{
+                      filter: "drop-shadow(0 0 6px rgba(0,255,255,0.0)) drop-shadow(0 0 0 transparent)",
+                    }}
+                    aria-hidden
+                  >
+                    {d.path && <path d={d.path} />}
+                  </svg>
+                )}
                 <span className="line-clamp-1 text-[11px] text-muted-foreground">
                   {d.label}
                 </span>
