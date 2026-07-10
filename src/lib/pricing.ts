@@ -10,7 +10,12 @@ export interface PricingOverrides {
   shipping_tr?: number | null;
   decoration_preset_base?: number | null;
   decoration_upload_base?: number | null;
-  adapter_prices?: { tr?: number; eu?: number } | null;
+  adapter_prices?: {
+    tr?: number;
+    eu?: number;
+    decoration_hybrid_fee?: number;
+    decoration_print_only_mult?: number;
+  } | null;
 }
 
 const DEFAULTS = {
@@ -136,14 +141,17 @@ export function calculatePrice(cfg: NeonDesignConfig, overrides?: PricingOverrid
       
       let baseCost = d.source === "preset" ? DECORATION_PRESET_BASE : DECORATION_UPLOAD_BASE;
       let sizeCost = sizeAdd;
+
+      const hybridFee = o.adapter_prices?.decoration_hybrid_fee ?? 150;
+      const printOnlyMult = o.adapter_prices?.decoration_print_only_mult ?? 0.4;
       
       if (renderMode === "print-only") {
         // No neon bending, print only
-        baseCost = baseCost * 0.4;
-        sizeCost = sizeCost * 0.3;
+        baseCost = baseCost * printOnlyMult;
+        sizeCost = sizeCost * (printOnlyMult * 0.75);
       } else if (renderMode === "hybrid") {
         // Both printing and neon bending
-        baseCost += 150;
+        baseCost += hybridFee;
       }
 
       if (d.source === "preset") {
