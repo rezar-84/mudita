@@ -30,6 +30,8 @@ const pricingSchema = z.object({
   decoration_upload_base: z.coerce.number().int().min(0).max(10000),
   adapter_tr: z.coerce.number().int().min(0).max(10000),
   adapter_eu: z.coerce.number().int().min(0).max(10000),
+  decoration_hybrid_fee: z.coerce.number().int().min(0).max(10000).optional(),
+  decoration_print_only_mult: z.coerce.number().min(0.05).max(1).optional(),
 });
 
 export const updatePricingConfig = createServerFn({ method: "POST" })
@@ -52,7 +54,12 @@ export const updatePricingConfig = createServerFn({ method: "POST" })
         shipping_tr: data.shipping_tr,
         decoration_preset_base: data.decoration_preset_base,
         decoration_upload_base: data.decoration_upload_base,
-        adapter_prices: { tr: data.adapter_tr, eu: data.adapter_eu },
+        adapter_prices: {
+          tr: data.adapter_tr,
+          eu: data.adapter_eu,
+          decoration_hybrid_fee: data.decoration_hybrid_fee ?? 150,
+          decoration_print_only_mult: data.decoration_print_only_mult ?? 0.4,
+        },
         updated_by: context.userId,
       })
       .eq("id", 1);
