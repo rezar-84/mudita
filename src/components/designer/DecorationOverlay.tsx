@@ -181,7 +181,7 @@ export function DecorationOverlay() {
                   style={glowStyle}
                   className={cn(
                     "absolute inset-0 h-full w-full [&_svg]:h-full [&_svg]:w-full",
-                    renderMode === "hybrid" && "[&_svg_path]:fill-none [&_svg_path]:stroke-[currentColor] [&_svg_path]:stroke-[1.6px] [&_svg_rect]:fill-none [&_svg_rect]:stroke-[currentColor] [&_svg_rect]:stroke-[1.6px] [&_svg_circle]:fill-none [&_svg_circle]:stroke-[currentColor] [&_svg_circle]:stroke-[1.6px] [&_svg_polygon]:fill-none [&_svg_polygon]:stroke-[currentColor] [&_svg_polygon]:stroke-[1.6px] [&_svg_g]:fill-none [&_svg_g]:stroke-[currentColor]"
+                    renderMode === "hybrid" && "[&_svg_path]:!fill-none [&_svg_path]:!stroke-current [&_svg_path]:!stroke-[1.6px] [&_svg_rect]:!fill-none [&_svg_rect]:!stroke-current [&_svg_rect]:!stroke-[1.6px] [&_svg_circle]:!fill-none [&_svg_circle]:!stroke-current [&_svg_circle]:!stroke-[1.6px] [&_svg_polygon]:!fill-none [&_svg_polygon]:!stroke-current [&_svg_polygon]:!stroke-[1.6px] [&_svg_polyline]:!fill-none [&_svg_polyline]:!stroke-current [&_svg_polyline]:!stroke-[1.6px] [&_svg_line]:!fill-none [&_svg_line]:!stroke-current [&_svg_line]:!stroke-[1.6px] [&_svg_ellipse]:!fill-none [&_svg_ellipse]:!stroke-current [&_svg_ellipse]:!stroke-[1.6px]"
                   )}
                 >
                   {preset && !preset.svgMarkup ? (

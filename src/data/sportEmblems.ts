@@ -43,8 +43,13 @@ export const SPORT_EMBLEMS: DecorationPreset[] = Object.entries(modules).map(
       .replace(/\.football-logos\.cc\.svg$/, "")
       .replace(/\.svg$/, "");
 
-    const viewBoxMatch = rawMarkup.match(/viewBox="([^"]+)"/);
+    const viewBoxMatch = rawMarkup.match(/viewBox=["']([^"']+)["']/i);
     const viewBox = viewBoxMatch ? viewBoxMatch[1] : undefined;
+    const viewBoxParts = viewBox?.trim().split(/[\s,]+/).map(Number);
+    const aspectRatio =
+      viewBoxParts && viewBoxParts.length === 4 && viewBoxParts[2] > 0 && viewBoxParts[3] > 0
+        ? viewBoxParts[2] / viewBoxParts[3]
+        : undefined;
 
     return {
       id: `emblem-${cleanId}`,
@@ -53,6 +58,7 @@ export const SPORT_EMBLEMS: DecorationPreset[] = Object.entries(modules).map(
       category: "sports",
       svgMarkup: rawMarkup,
       viewBox,
+      aspectRatio,
     };
   }
 );

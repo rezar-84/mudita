@@ -4,14 +4,7 @@ import { COLORS, BACKGROUNDS } from "@/data/options";
 import { getDimensions } from "@/lib/pricing";
 import { cn } from "@/lib/utils";
 import { useT } from "@/lib/i18n";
-import {
-  Lightbulb,
-  LightbulbOff,
-  Crosshair,
-  ZoomIn,
-  ZoomOut,
-  Maximize2,
-} from "lucide-react";
+import { Lightbulb, LightbulbOff, Crosshair, ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
 import { MeasurementOverlay } from "./MeasurementOverlay";
 import { DecorationOverlay } from "@/components/designer/DecorationOverlay";
 import { TextLayerOverlay } from "@/components/designer/TextLayerOverlay";
@@ -27,7 +20,7 @@ const LIGHT_BACKGROUNDS = new Set(["light-wall", "white-wall"]);
 
 export function NeonPreview() {
   const t = useT();
-  const { config, update, setSelection } = useDesigner();
+  const { config, update, setSelection, selection, alignSelected } = useDesigner();
   const { width, height } = getDimensions(config);
 
   const brightness = (config.brightness ?? 100) / 100;
@@ -78,7 +71,9 @@ export function NeonPreview() {
       spots.push({ x: d.x, y: d.y, size: Math.max(10, d.sizePct ?? 18), glow: col.glow });
     }
     if (!spots.length) return null;
-    const alphaHex = Math.round(brightness * 38).toString(16).padStart(2, "0");
+    const alphaHex = Math.round(brightness * 38)
+      .toString(16)
+      .padStart(2, "0");
     return spots
       .map((s) => {
         // Spread ~ proportional to layer size so bigger layers glow wider.
@@ -149,7 +144,8 @@ export function NeonPreview() {
 
         {(config.showSizeBadge ?? true) && (
           <div className="pointer-events-none absolute bottom-3 left-3 rounded-md bg-black/60 px-2 py-1 text-xs font-medium text-white backdrop-blur">
-            ≈ {width} × {height} cm {realSize && <span className="ml-1 opacity-70">· {t("realSizeLabel")}</span>}
+            ≈ {width} × {height} cm{" "}
+            {realSize && <span className="ml-1 opacity-70">· {t("realSizeLabel")}</span>}
           </div>
         )}
         {config.outdoor && (
@@ -170,10 +166,16 @@ export function NeonPreview() {
             onClick={() => update({ isLightOn: !isLightOn })}
             className={cn(
               "inline-flex h-8 items-center gap-1.5 rounded-full px-2.5 text-xs font-medium transition",
-              isLightOn ? "bg-yellow-400/90 text-black hover:bg-yellow-300" : "bg-white/10 hover:bg-white/20",
+              isLightOn
+                ? "bg-yellow-400/90 text-black hover:bg-yellow-300"
+                : "bg-white/10 hover:bg-white/20",
             )}
           >
-            {isLightOn ? <Lightbulb className="h-3.5 w-3.5" /> : <LightbulbOff className="h-3.5 w-3.5" />}
+            {isLightOn ? (
+              <Lightbulb className="h-3.5 w-3.5" />
+            ) : (
+              <LightbulbOff className="h-3.5 w-3.5" />
+            )}
             <span className="hidden sm:inline">{isLightOn ? t("on") : t("off")}</span>
           </button>
           <div className="mx-0.5 h-5 w-px bg-white/15" aria-hidden />
@@ -181,7 +183,9 @@ export function NeonPreview() {
             type="button"
             aria-label={t("zoomOut")}
             title={t("zoomOut")}
-            onClick={() => update({ zoom: Math.max(0.6, Math.round(((config.zoom ?? 1) - 0.1) * 10) / 10) })}
+            onClick={() =>
+              update({ zoom: Math.max(0.6, Math.round(((config.zoom ?? 1) - 0.1) * 10) / 10) })
+            }
             className="inline-flex h-8 w-8 items-center justify-center rounded-full hover:bg-white/15"
           >
             <ZoomOut className="h-4 w-4" />
@@ -190,7 +194,9 @@ export function NeonPreview() {
             type="button"
             aria-label={t("zoomIn")}
             title={t("zoomIn")}
-            onClick={() => update({ zoom: Math.min(1.8, Math.round(((config.zoom ?? 1) + 0.1) * 10) / 10) })}
+            onClick={() =>
+              update({ zoom: Math.min(1.8, Math.round(((config.zoom ?? 1) + 0.1) * 10) / 10) })
+            }
             className="inline-flex h-8 w-8 items-center justify-center rounded-full hover:bg-white/15"
           >
             <ZoomIn className="h-4 w-4" />
@@ -198,8 +204,19 @@ export function NeonPreview() {
           <button
             type="button"
             aria-label={t("center")}
-            title={t("center")}
-            onClick={() => update({ zoom: 1 })}
+            title={
+              selection.kind === "canvas"
+                ? "Görünümü sıfırla"
+                : "Seçili katmanı tasarımın ortasına hizala"
+            }
+            onClick={() => {
+              if (selection.kind === "canvas") {
+                update({ zoom: 1 });
+                return;
+              }
+              alignSelected("centerH", "page");
+              alignSelected("centerV", "page");
+            }}
             className="inline-flex h-8 w-8 items-center justify-center rounded-full hover:bg-white/15"
           >
             <Crosshair className="h-4 w-4" />

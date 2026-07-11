@@ -4,7 +4,16 @@ import { addToCart, updateCartItem } from "@/lib/cart";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { Maximize2, Minimize2, PanelRight, PanelRightClose, ShoppingCart, Share2, Undo2, Redo2 } from "lucide-react";
+import {
+  Maximize2,
+  Minimize2,
+  PanelRight,
+  PanelRightClose,
+  ShoppingCart,
+  Share2,
+  Undo2,
+  Redo2,
+} from "lucide-react";
 import { encodeConfig } from "@/lib/share";
 import { useT } from "@/lib/i18n";
 
@@ -61,27 +70,55 @@ export function EditorTopBar({
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-semibold leading-tight">{t("editorTitle")}</p>
         <p className="hidden truncate text-[11px] text-muted-foreground sm:block">
-          {((config.textLayers ?? []).find((l) => !l.hidden && l.text.trim())?.text ?? config.text ?? "").trim() || t("editorUntitled")}
+          {(
+            (config.textLayers ?? []).find((l) => !l.hidden && l.text.trim())?.text ??
+            config.text ??
+            ""
+          ).trim() || t("editorUntitled")}
         </p>
       </div>
 
-      <div className="hidden items-center gap-0.5 rounded-md border border-border p-0.5 sm:flex">
-        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={undo} disabled={!canUndo} title={t("undoLabel")}>
+      <div className="flex items-center gap-0.5 rounded-md border border-border p-0.5">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-7 w-7"
+          onClick={undo}
+          disabled={!canUndo}
+          title={t("undoLabel")}
+        >
           <Undo2 className="h-3.5 w-3.5" />
         </Button>
-        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={redo} disabled={!canRedo} title={t("redoLabel")}>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-7 w-7"
+          onClick={redo}
+          disabled={!canRedo}
+          title={t("redoLabel")}
+        >
           <Redo2 className="h-3.5 w-3.5" />
         </Button>
       </div>
 
-      <div className="hidden items-baseline gap-1.5 px-2 sm:flex">
-        <span className="text-[10px] uppercase tracking-wider text-muted-foreground">{t("price")}</span>
-        <span className="text-base font-bold tabular-nums text-foreground">{formatTRY(breakdown.total)}</span>
+      <div className="hidden items-baseline gap-1.5 border-l border-border pl-3 sm:flex">
+        <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
+          {t("price")}
+        </span>
+        <span className="text-base font-bold tabular-nums text-foreground">
+          {formatTRY(breakdown.total)}
+        </span>
       </div>
 
-      <Button variant="ghost" size="sm" onClick={onShare} className="hidden sm:inline-flex">
-        <Share2 className="mr-1.5 h-3.5 w-3.5" />
-        {t("share")}
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={onShare}
+        title={t("share")}
+        className="h-8 w-8 sm:w-auto sm:px-3"
+      >
+        <Share2 className="h-3.5 w-3.5 sm:mr-1.5" />
+        <span className="hidden sm:inline">{t("share")}</span>
       </Button>
 
       <Button variant="outline" size="sm" onClick={onFullscreen} className="shrink-0">
@@ -102,10 +139,18 @@ export function EditorTopBar({
         title={rightPanelOpen ? t("panelHide") : t("panelShow")}
         className="hidden lg:inline-flex"
       >
-        {rightPanelOpen ? <PanelRightClose className="h-4 w-4" /> : <PanelRight className="h-4 w-4" />}
+        {rightPanelOpen ? (
+          <PanelRightClose className="h-4 w-4" />
+        ) : (
+          <PanelRight className="h-4 w-4" />
+        )}
       </Button>
 
-      <Button onClick={onAdd} className="shrink-0 bg-gradient-neon text-white shadow-glow hover:opacity-90" size="sm">
+      <Button
+        onClick={onAdd}
+        className="shrink-0 bg-gradient-neon text-white shadow-glow hover:opacity-90"
+        size="sm"
+      >
         <ShoppingCart className="mr-1.5 h-3.5 w-3.5" />
         <span className="hidden sm:inline">{t("ctaAddToCart")} · </span>
         <span className="tabular-nums">{formatTRY(breakdown.total)}</span>

@@ -5,6 +5,8 @@ export interface DecorationPreset {
   category: "love" | "nature" | "food" | "music" | "weather" | "symbol" | "fun" | "sports";
   path?: string;
   viewBox?: string;
+  /** Native SVG width / height, used to preserve the artwork's proportions. */
+  aspectRatio?: number;
   svgMarkup?: string;
 }
 

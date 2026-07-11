@@ -44,6 +44,7 @@ export function DecorationPickerDialog({
       y: 0,
       rotation: 0,
       sizePct: preset.category === "sports" ? 28 : 18,
+      aspectRatio: preset.aspectRatio,
       svgMarkup: preset.svgMarkup,
       renderMode: preset.category === "sports" ? "hybrid" : undefined,
     });

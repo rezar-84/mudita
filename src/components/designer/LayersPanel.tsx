@@ -1,6 +1,20 @@
 import { useDesigner } from "@/components/configurator/DesignerContext";
 import { Button } from "@/components/ui/button";
-import { ArrowUp, ArrowDown, ArrowUpToLine, ArrowDownToLine, Eye, EyeOff, Lock, Unlock, Trash2, Type, Sparkles } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { COLORS } from "@/data/options";
+import {
+  ArrowUp,
+  ArrowDown,
+  ArrowUpToLine,
+  ArrowDownToLine,
+  Eye,
+  EyeOff,
+  Lock,
+  Unlock,
+  Trash2,
+  Type,
+  Sparkles,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useT } from "@/lib/i18n";
 
@@ -21,7 +35,14 @@ export function LayersPanel() {
   const decos = config.decorations ?? [];
   const texts = config.textLayers ?? [];
 
-  type Item = { id: string; kind: "decoration" | "textLayer"; label: string; hidden?: boolean; locked?: boolean };
+  type Item = {
+    id: string;
+    kind: "decoration" | "textLayer";
+    label: string;
+    colorId: string;
+    hidden?: boolean;
+    locked?: boolean;
+  };
   const decoById = new Map(decos.map((d) => [d.id, d]));
   const textById = new Map(texts.map((l) => [l.id, l]));
 
@@ -30,9 +51,25 @@ export function LayersPanel() {
     .reverse()
     .map((id): Item | null => {
       const l = textById.get(id);
-      if (l) return { id, kind: "textLayer", label: l.text?.trim() || t("textLayerFallback"), hidden: l.hidden, locked: l.locked };
+      if (l)
+        return {
+          id,
+          kind: "textLayer",
+          label: l.text?.trim() || t("textLayerFallback"),
+          colorId: l.colorId,
+          hidden: l.hidden,
+          locked: l.locked,
+        };
       const d = decoById.get(id);
-      if (d) return { id, kind: "decoration", label: d.label || (d.source === "upload" ? t("decoSourceUpload") : t("decoration")), hidden: d.hidden, locked: d.locked };
+      if (d)
+        return {
+          id,
+          kind: "decoration",
+          label: d.label || (d.source === "upload" ? t("decoSourceUpload") : t("decoration")),
+          colorId: d.colorId,
+          hidden: d.hidden,
+          locked: d.locked,
+        };
       return null;
     })
     .filter((x): x is Item => x !== null);
@@ -93,33 +130,136 @@ export function LayersPanel() {
     if (it.kind === "decoration") removeDecoration(it.id);
     else removeTextLayer(it.id);
   }
+  function setColor(it: Item, colorId: string) {
+    if (it.kind === "decoration") updateDecoration(it.id, { colorId });
+    else updateTextLayer(it.id, { colorId });
+  }
 
   return (
     <div className="space-y-2">
-      <p className="text-xs uppercase tracking-wider text-muted-foreground">{t("layersTitle")} ({items.length})</p>
+      <p className="text-xs uppercase tracking-wider text-muted-foreground">
+        {t("layersTitle")} ({items.length})
+      </p>
       <ul className="space-y-1.5">
         {items.map((it) => {
           const sel = isSelected(it);
           const Icon = it.kind === "textLayer" ? Type : Sparkles;
           return (
-            <li key={`${it.kind}-${it.id}`} className={cn("group flex items-center gap-1 rounded-md border bg-card px-2 py-1.5 text-sm transition", sel ? "border-neon-cyan/60 ring-1 ring-neon-cyan/30" : "border-border")}>
-              <button type="button" onClick={(e) => pick(it, e)} className="flex min-w-0 flex-1 items-center gap-2 text-left">
+            <li
+              key={`${it.kind}-${it.id}`}
+              className={cn(
+                "group flex items-center gap-1 rounded-md border bg-card px-2 py-1.5 text-sm transition",
+                sel ? "border-neon-cyan/60 ring-1 ring-neon-cyan/30" : "border-border",
+              )}
+            >
+              <button
+                type="button"
+                onClick={(e) => pick(it, e)}
+                className="flex min-w-0 flex-1 items-center gap-2 text-left"
+              >
                 <Icon className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                 <span className="truncate">{it.label}</span>
               </button>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <button
+                    type="button"
+                    title={`${t("color")}: ${COLORS.find((c) => c.id === it.colorId)?.label ?? ""}`}
+                    className="h-6 w-6 shrink-0 rounded-full border-2 border-background ring-1 ring-border transition hover:scale-110 focus:outline-none focus:ring-2 focus:ring-neon-cyan"
+                    style={{
+                      background: COLORS.find((c) => c.id === it.colorId)?.rgb
+                        ? "conic-gradient(red, orange, yellow, lime, cyan, blue, magenta, red)"
+                        : COLORS.find((c) => c.id === it.colorId)?.hex,
+                    }}
+                  />
+                </PopoverTrigger>
+                <PopoverContent align="end" className="w-52 p-3">
+                  <p className="mb-2 text-xs font-medium">{t("color")}</p>
+                  <div className="grid grid-cols-5 gap-2">
+                    {COLORS.map((color) => (
+                      <button
+                        key={color.id}
+                        type="button"
+                        title={color.label}
+                        aria-label={color.label}
+                        onClick={() => setColor(it, color.id)}
+                        className={cn(
+                          "h-7 rounded-full border-2 transition hover:scale-110",
+                          it.colorId === color.id ? "border-foreground" : "border-transparent",
+                        )}
+                        style={{
+                          background: color.rgb
+                            ? "conic-gradient(red, orange, yellow, lime, cyan, blue, magenta, red)"
+                            : color.hex,
+                        }}
+                      />
+                    ))}
+                  </div>
+                </PopoverContent>
+              </Popover>
               <div className="flex shrink-0 items-center">
-                <Button variant="ghost" size="icon" className="h-7 w-7" title={t("layerMoveUp")} onClick={() => reorder(it.kind, it.id, Infinity)}><ArrowUpToLine className="h-3.5 w-3.5" /></Button>
-                <Button variant="ghost" size="icon" className="h-7 w-7" title={t("layerMoveForward")} onClick={() => reorder(it.kind, it.id, 1)}><ArrowUp className="h-3.5 w-3.5" /></Button>
-                <Button variant="ghost" size="icon" className="h-7 w-7" title={t("layerMoveBackward")} onClick={() => reorder(it.kind, it.id, -1)}><ArrowDown className="h-3.5 w-3.5" /></Button>
-                <Button variant="ghost" size="icon" className="h-7 w-7" title={t("layerMoveBottom")} onClick={() => reorder(it.kind, it.id, -Infinity)}><ArrowDownToLine className="h-3.5 w-3.5" /></Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7"
+                  title={t("layerMoveUp")}
+                  onClick={() => reorder(it.kind, it.id, Infinity)}
+                >
+                  <ArrowUpToLine className="h-3.5 w-3.5" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7"
+                  title={t("layerMoveForward")}
+                  onClick={() => reorder(it.kind, it.id, 1)}
+                >
+                  <ArrowUp className="h-3.5 w-3.5" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7"
+                  title={t("layerMoveBackward")}
+                  onClick={() => reorder(it.kind, it.id, -1)}
+                >
+                  <ArrowDown className="h-3.5 w-3.5" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7"
+                  title={t("layerMoveBottom")}
+                  onClick={() => reorder(it.kind, it.id, -Infinity)}
+                >
+                  <ArrowDownToLine className="h-3.5 w-3.5" />
+                </Button>
               </div>
-              <Button variant="ghost" size="icon" className="h-7 w-7" title={it.hidden ? t("show") : t("hide")} onClick={() => setVisible(it, !it.hidden)}>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7"
+                title={it.hidden ? t("show") : t("hide")}
+                onClick={() => setVisible(it, !it.hidden)}
+              >
                 {it.hidden ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
               </Button>
-              <Button variant="ghost" size="icon" className="h-7 w-7" title={it.locked ? t("unlock") : t("lock")} onClick={() => setLocked(it, !it.locked)}>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7"
+                title={it.locked ? t("unlock") : t("lock")}
+                onClick={() => setLocked(it, !it.locked)}
+              >
                 {it.locked ? <Lock className="h-3.5 w-3.5" /> : <Unlock className="h-3.5 w-3.5" />}
               </Button>
-              <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive" title={t("delete")} onClick={() => remove(it)}>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 text-destructive hover:text-destructive"
+                title={t("delete")}
+                onClick={() => remove(it)}
+              >
                 <Trash2 className="h-3.5 w-3.5" />
               </Button>
             </li>
