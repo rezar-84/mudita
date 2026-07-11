@@ -257,6 +257,44 @@ export const adminSetUserRole = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const adminUpdateUserProfile = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) =>
+    z
+      .object({
+        user_id: z.string().uuid(),
+        display_name: z.string().trim().max(120).optional(),
+        phone: z.string().trim().max(40).optional(),
+        address: z.record(z.string(), z.unknown()).optional(),
+      })
+      .parse(i),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
+      .from("profiles")
+      .update({
+        display_name: data.display_name,
+        phone: data.phone,
+        address: data.address as never,
+      })
+      .eq("id", data.user_id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const adminDeleteUser = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => z.object({ user_id: z.string().uuid() }).parse(i))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin.auth.admin.deleteUser(data.user_id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
 // -------------------- Gallery (admin) ------------------
 
 export const adminListGallery = createServerFn({ method: "GET" })
