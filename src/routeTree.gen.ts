@@ -33,6 +33,7 @@ import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminPricingRouteImport } from './routes/_authenticated/admin.pricing'
 import { Route as AuthenticatedAdminOrdersRouteImport } from './routes/_authenticated/admin.orders'
 import { Route as AuthenticatedAdminGalleryRouteImport } from './routes/_authenticated/admin.gallery'
+import { Route as AuthenticatedAdminCrmRouteImport } from './routes/_authenticated/admin.crm'
 import { Route as AuthenticatedAdminAnalyticsRouteImport } from './routes/_authenticated/admin.analytics'
 
 const YukleRoute = YukleRouteImport.update({
@@ -160,6 +161,11 @@ const AuthenticatedAdminGalleryRoute =
     path: '/gallery',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminCrmRoute = AuthenticatedAdminCrmRouteImport.update({
+  id: '/crm',
+  path: '/crm',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 const AuthenticatedAdminAnalyticsRoute =
   AuthenticatedAdminAnalyticsRouteImport.update({
     id: '/analytics',
@@ -183,6 +189,7 @@ export interface FileRoutesByFullPath {
   '/hesap': typeof AuthenticatedHesapRouteWithChildren
   '/auth/callback': typeof AuthCallbackRoute
   '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
+  '/admin/crm': typeof AuthenticatedAdminCrmRoute
   '/admin/gallery': typeof AuthenticatedAdminGalleryRoute
   '/admin/orders': typeof AuthenticatedAdminOrdersRoute
   '/admin/pricing': typeof AuthenticatedAdminPricingRoute
@@ -207,6 +214,7 @@ export interface FileRoutesByTo {
   '/yukle': typeof YukleRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
+  '/admin/crm': typeof AuthenticatedAdminCrmRoute
   '/admin/gallery': typeof AuthenticatedAdminGalleryRoute
   '/admin/orders': typeof AuthenticatedAdminOrdersRoute
   '/admin/pricing': typeof AuthenticatedAdminPricingRoute
@@ -235,6 +243,7 @@ export interface FileRoutesById {
   '/_authenticated/hesap': typeof AuthenticatedHesapRouteWithChildren
   '/auth/callback': typeof AuthCallbackRoute
   '/_authenticated/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
+  '/_authenticated/admin/crm': typeof AuthenticatedAdminCrmRoute
   '/_authenticated/admin/gallery': typeof AuthenticatedAdminGalleryRoute
   '/_authenticated/admin/orders': typeof AuthenticatedAdminOrdersRoute
   '/_authenticated/admin/pricing': typeof AuthenticatedAdminPricingRoute
@@ -263,6 +272,7 @@ export interface FileRouteTypes {
     | '/hesap'
     | '/auth/callback'
     | '/admin/analytics'
+    | '/admin/crm'
     | '/admin/gallery'
     | '/admin/orders'
     | '/admin/pricing'
@@ -287,6 +297,7 @@ export interface FileRouteTypes {
     | '/yukle'
     | '/auth/callback'
     | '/admin/analytics'
+    | '/admin/crm'
     | '/admin/gallery'
     | '/admin/orders'
     | '/admin/pricing'
@@ -314,6 +325,7 @@ export interface FileRouteTypes {
     | '/_authenticated/hesap'
     | '/auth/callback'
     | '/_authenticated/admin/analytics'
+    | '/_authenticated/admin/crm'
     | '/_authenticated/admin/gallery'
     | '/_authenticated/admin/orders'
     | '/_authenticated/admin/pricing'
@@ -510,6 +522,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminGalleryRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/crm': {
+      id: '/_authenticated/admin/crm'
+      path: '/crm'
+      fullPath: '/admin/crm'
+      preLoaderRoute: typeof AuthenticatedAdminCrmRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/analytics': {
       id: '/_authenticated/admin/analytics'
       path: '/analytics'
@@ -522,6 +541,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminAnalyticsRoute: typeof AuthenticatedAdminAnalyticsRoute
+  AuthenticatedAdminCrmRoute: typeof AuthenticatedAdminCrmRoute
   AuthenticatedAdminGalleryRoute: typeof AuthenticatedAdminGalleryRoute
   AuthenticatedAdminOrdersRoute: typeof AuthenticatedAdminOrdersRoute
   AuthenticatedAdminPricingRoute: typeof AuthenticatedAdminPricingRoute
@@ -531,6 +551,7 @@ interface AuthenticatedAdminRouteChildren {
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminAnalyticsRoute: AuthenticatedAdminAnalyticsRoute,
+  AuthenticatedAdminCrmRoute: AuthenticatedAdminCrmRoute,
   AuthenticatedAdminGalleryRoute: AuthenticatedAdminGalleryRoute,
   AuthenticatedAdminOrdersRoute: AuthenticatedAdminOrdersRoute,
   AuthenticatedAdminPricingRoute: AuthenticatedAdminPricingRoute,

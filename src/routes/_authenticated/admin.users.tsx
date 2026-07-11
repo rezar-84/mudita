@@ -27,7 +27,8 @@ function AdminUsers() {
         <table className="w-full text-sm">
           <thead className="border-b border-border text-left text-xs uppercase text-muted-foreground">
             <tr>
-              <th className="p-3">E-posta</th>
+              <th className="p-3">Müşteri</th>
+              <th className="p-3">İletişim</th>
               <th className="p-3">Kayıt</th>
               <th className="p-3">Son giriş</th>
               <th className="p-3">Roller</th>
@@ -39,13 +40,30 @@ function AdminUsers() {
               const isAdmin = u.roles.includes("admin");
               return (
                 <tr key={u.id} className="border-b border-border">
-                  <td className="p-3">{u.email}</td>
-                  <td className="p-3 text-xs text-muted-foreground">{u.created_at ? new Date(u.created_at).toLocaleDateString("tr-TR") : "—"}</td>
-                  <td className="p-3 text-xs text-muted-foreground">{u.last_sign_in_at ? new Date(u.last_sign_in_at).toLocaleDateString("tr-TR") : "—"}</td>
+                  <td className="p-3">
+                    <div className="font-medium">{u.profile?.display_name || "İsimsiz"}</div>
+                    <div className="text-xs text-muted-foreground">{u.email}</div>
+                  </td>
+                  <td className="p-3 text-xs">
+                    {u.profile?.phone || "—"}
+                    <div className="max-w-40 truncate text-muted-foreground">
+                      {(u.profile?.address as { city?: string } | null)?.city || ""}
+                    </div>
+                  </td>
+                  <td className="p-3 text-xs text-muted-foreground">
+                    {u.created_at ? new Date(u.created_at).toLocaleDateString("tr-TR") : "—"}
+                  </td>
+                  <td className="p-3 text-xs text-muted-foreground">
+                    {u.last_sign_in_at
+                      ? new Date(u.last_sign_in_at).toLocaleDateString("tr-TR")
+                      : "—"}
+                  </td>
                   <td className="p-3">
                     <div className="flex flex-wrap gap-1">
                       {u.roles.map((r) => (
-                        <span key={r} className="rounded-full bg-secondary px-2 py-0.5 text-xs">{r}</span>
+                        <span key={r} className="rounded-full bg-secondary px-2 py-0.5 text-xs">
+                          {r}
+                        </span>
                       ))}
                     </div>
                   </td>
@@ -54,14 +72,26 @@ function AdminUsers() {
                       onClick={() => toggle(u.id, isAdmin)}
                       className="inline-flex items-center gap-1 rounded-md border border-border px-2 py-1 text-xs hover:bg-accent"
                     >
-                      {isAdmin ? <><ShieldOff className="h-3 w-3" /> Admin kaldır</> : <><Shield className="h-3 w-3" /> Admin yap</>}
+                      {isAdmin ? (
+                        <>
+                          <ShieldOff className="h-3 w-3" /> Admin kaldır
+                        </>
+                      ) : (
+                        <>
+                          <Shield className="h-3 w-3" /> Admin yap
+                        </>
+                      )}
                     </button>
                   </td>
                 </tr>
               );
             })}
             {!data?.length && (
-              <tr><td colSpan={5} className="p-6 text-center text-sm text-muted-foreground">Kullanıcı yok.</td></tr>
+              <tr>
+                <td colSpan={6} className="p-6 text-center text-sm text-muted-foreground">
+                  Kullanıcı yok.
+                </td>
+              </tr>
             )}
           </tbody>
         </table>

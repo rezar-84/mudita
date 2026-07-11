@@ -1,6 +1,14 @@
 import { createFileRoute, Outlet, Link, useRouterState, redirect } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
-import { LayoutDashboard, Package, Users, Image as ImageIcon, DollarSign, BarChart3 } from "lucide-react";
+import {
+  LayoutDashboard,
+  Package,
+  Users,
+  Image as ImageIcon,
+  DollarSign,
+  BarChart3,
+  MessagesSquare,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -23,6 +31,7 @@ const LINKS: { to: string; label: string; icon: typeof LayoutDashboard }[] = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { to: "/admin/orders", label: "Siparişler", icon: Package },
   { to: "/admin/users", label: "Kullanıcılar", icon: Users },
+  { to: "/admin/crm", label: "CRM / Bekleyen Sepetler", icon: MessagesSquare },
   { to: "/admin/gallery", label: "Galeri", icon: ImageIcon },
   { to: "/admin/pricing", label: "Fiyatlandırma", icon: DollarSign },
   { to: "/admin/analytics", label: "Analitik", icon: BarChart3 },
@@ -43,7 +52,9 @@ function AdminLayout() {
                 to={l.to as "/admin"}
                 className={cn(
                   "flex items-center gap-2 rounded-md px-3 py-2 text-sm transition",
-                  active ? "bg-accent font-medium text-foreground" : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
+                  active
+                    ? "bg-accent font-medium text-foreground"
+                    : "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
                 )}
               >
                 <l.icon className="h-4 w-4" />
