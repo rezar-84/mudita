@@ -8,6 +8,8 @@ import { Upload, FileImage, Palette, Sparkles, ShieldCheck } from "lucide-react"
 import { z } from "zod";
 import { toast } from "sonner";
 import { useT } from "@/lib/i18n";
+import { useServerFn } from "@tanstack/react-start";
+import { createCrmLeadPublic } from "@/lib/orders.functions";
 
 export const Route = createFileRoute("/yukle")({
   head: () => ({
@@ -44,15 +46,57 @@ function UploadPage() {
     notes: z.string().trim().max(1000),
   });
 
+  const uploadLead = useServerFn(createCrmLeadPublic);
+  const [busy, setBusy] = useState(false);
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     const parsed = schema.safeParse(form);
     if (!parsed.success) return toast.error(parsed.error.issues[0].message);
     if (!file) return toast.error(t("uploadErrFile"));
     if (file.size > 10 * 1024 * 1024) return toast.error(t("uploadErrSize"));
-    toast.success(t("uploadSuccess"));
-    setForm({ name: "", email: "", phone: "", size: "", usage: "", deadline: "", notes: "" });
-    setFile(null);
+    
+    setBusy(true);
+    const toastId = toast.loading(t("placingOrder") || "Gönderiliyor...");
+
+    try {
+      // Read file as base64
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = async () => {
+        try {
+          const base64 = reader.result as string;
+          await uploadLead({
+            data: {
+              name: form.name,
+              email: form.email,
+              phone: form.phone,
+              size: form.size || undefined,
+              usage: form.usage || undefined,
+              deadline: form.deadline || undefined,
+              note: form.notes || undefined,
+              file_name: file.name,
+              file_size: file.size,
+              file_base64: base64,
+            }
+          });
+          toast.success(t("uploadSuccess"), { id: toastId });
+          setForm({ name: "", email: "", phone: "", size: "", usage: "", deadline: "", notes: "" });
+          setFile(null);
+        } catch (err: any) {
+          toast.error(err.message || "Talebiniz gönderilemedi", { id: toastId });
+        } finally {
+          setBusy(false);
+        }
+      };
+      reader.onerror = () => {
+        toast.error("Dosya okunurken bir hata oluştu", { id: toastId });
+        setBusy(false);
+      };
+    } catch (err: any) {
+      toast.error(err.message || "Bir hata oluştu", { id: toastId });
+      setBusy(false);
+    }
   };
 
   const badges = [
@@ -127,8 +171,8 @@ function UploadPage() {
           <Textarea id="u-notes" rows={4} value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
         </div>
 
-        <Button type="submit" className="w-full bg-gradient-neon text-white shadow-glow">
-          {t("uploadSubmit")}
+        <Button type="submit" disabled={busy} className="w-full bg-gradient-neon text-white shadow-glow">
+          {busy ? (t("placingOrder") || "Gönderiliyor...") : t("uploadSubmit")}
         </Button>
 
         <p className="flex items-start gap-2 rounded-lg border border-border bg-accent/30 p-3 text-xs text-muted-foreground">

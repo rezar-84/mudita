@@ -124,7 +124,7 @@ function CartPage() {
         country: (country.trim() || "TR").toUpperCase(),
         tax_id: taxId.trim() || undefined,
       };
-      await place({
+      const res = await place({
         data: {
           subtotal_try: subtotal,
           shipping_try: shipping,
@@ -152,7 +152,7 @@ function CartPage() {
       }
       clearCart();
       toast.success(t("orderPlaced"));
-      navigate({ to: "/hesap/siparisler" });
+      navigate({ to: "/odeme", search: { orderId: res.id } });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Sipariş oluşturulamadı");
     } finally {

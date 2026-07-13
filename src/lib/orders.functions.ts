@@ -49,15 +49,20 @@ export const createOrder = createServerFn({ method: "POST" })
       .select("id")
       .single();
     if (error) throw new Error(error.message);
-    const { error: itemsError } = await context.supabase.from("order_items").insert(
-      data.items.map((it) => ({
-        order_id: order.id,
-        config: it.config as never,
-        price_try: it.price_try,
-        breakdown: it.breakdown as never,
-      })),
-    );
-    if (itemsError) throw new Error(itemsError.message);
+    try {
+      const { error: itemsError } = await context.supabase.from("order_items").insert(
+        data.items.map((it) => ({
+          order_id: order.id,
+          config: it.config as never,
+          price_try: it.price_try,
+          breakdown: it.breakdown as never,
+        })),
+      );
+      if (itemsError) throw itemsError;
+    } catch (err: any) {
+      await context.supabase.from("orders").delete().eq("id", order.id);
+      throw new Error(err.message || "Order items insertion failed");
+    }
     return { id: order.id };
   });
 
@@ -399,3 +404,94 @@ export const isAdminCheck = createServerFn({ method: "GET" })
     });
     return { isAdmin: !!data };
   });
+
+export const createCrmLeadPublic = createServerFn({ method: "POST" })
+  .inputValidator((i: unknown) =>
+    z
+      .object({
+        name: z.string().trim().min(2),
+        email: z.string().trim().email(),
+        phone: z.string().trim().min(7),
+        size: z.string().trim().optional(),
+        usage: z.string().trim().optional(),
+        deadline: z.string().trim().optional(),
+        note: z.string().trim().optional(),
+        file_name: z.string().optional(),
+        file_size: z.number().optional(),
+        file_base64: z.string().optional(),
+      })
+      .parse(i),
+  )
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin.from("crm_leads").insert({
+      source: "waiting_cart",
+      status: "new",
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+      note: `Boyut: ${data.size || "Belirtilmemiş"}\nKullanım: ${data.usage || "Belirtilmemiş"}\nTermin: ${data.deadline || "Belirtilmemiş"}\n\nNotlar:\n${data.note || ""}`,
+      cart_snapshot: (data.file_base64 ? {
+        file_name: data.file_name,
+        file_size: data.file_size,
+        file_base64: data.file_base64,
+      } : null) as any,
+    });
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const confirmPaidOrder = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) => z.object({ token: z.string() }).parse(i))
+  .handler(async ({ data, context }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const Iyzipay = (await import("iyzipay")).default;
+
+    const apiKey = process.env.IYZICO_API_KEY || "sandbox-API_KEY";
+    const secretKey = process.env.IYZICO_SECRET_KEY || "sandbox-SECRET_KEY";
+    const baseUrl = process.env.IYZICO_BASE_URL || "https://sandbox-api.iyzipay.com";
+
+    const iyzipay = new Iyzipay({
+      apiKey,
+      secretKey,
+      uri: baseUrl,
+    });
+
+    const result: any = await new Promise((resolve, reject) => {
+      iyzipay.checkoutForm.retrieve({ token: data.token }, (err: any, result: any) => {
+        if (err) reject(new Error(err.message || "Iyzico connection error"));
+        else resolve(result);
+      });
+    });
+
+    if (result.status === "failure" || result.paymentStatus !== "SUCCESS") {
+      throw new Error(result.errorMessage || "Payment verification failed");
+    }
+
+    const orderId = result.basketId;
+
+    const { data: order, error: orderErr } = await supabaseAdmin
+      .from("orders")
+      .select("id, user_id, total_try")
+      .eq("id", orderId)
+      .eq("user_id", context.userId)
+      .single();
+
+    if (orderErr || !order) {
+      throw new Error("Order not found or unauthorized");
+    }
+
+    const { error: updateErr } = await supabaseAdmin
+      .from("orders")
+      .update({ status: "confirmed" })
+      .eq("id", orderId);
+
+    if (updateErr) {
+      throw new Error(updateErr.message);
+    }
+
+    return { ok: true, orderId };
+  });
+
+
