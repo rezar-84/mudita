@@ -22,6 +22,7 @@ export function PropertiesPanel({
   const { selection } = useDesigner();
   const isDecoration = selection.kind === "decoration";
   const isTextLayer = selection.kind === "textLayer";
+  const isMulti = selection.kind === "multi";
 
   if (!open) {
     return (
@@ -49,7 +50,13 @@ export function PropertiesPanel({
     >
       <div className="flex shrink-0 items-center justify-between border-b border-border px-3 py-2">
         <p className="truncate text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          {isDecoration ? t("decoration") : isTextLayer ? t("textLayerPanel") : t("tabScene")}
+          {isDecoration
+            ? t("decoration")
+            : isTextLayer
+              ? t("textLayerPanel")
+              : isMulti
+                ? "Çoklu Seçim"
+                : t("tabScene")}
         </p>
         <Button
           variant="ghost"
@@ -75,6 +82,20 @@ export function PropertiesPanel({
           <div className="space-y-4">
             <AlignmentControls />
             <TextLayerProperties />
+            <div id="layers-section">
+              <LayersPanel />
+            </div>
+          </div>
+        ) : isMulti ? (
+          <div className="space-y-4">
+            <div className="rounded-lg border border-border bg-accent/20 p-3 text-xs">
+              <p className="font-semibold text-foreground">Çoklu Hizalama & İşlemler</p>
+              <p className="mt-1 text-muted-foreground">
+                Seçili {selection.ids.length} katmanı birlikte hizalayabilir veya
+                düzenleyebilirsiniz.
+              </p>
+            </div>
+            <AlignmentControls />
             <div id="layers-section">
               <LayersPanel />
             </div>

@@ -329,10 +329,6 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
         decorations: filtered,
         zOrder: mergedOrder(cur).filter((x) => x !== id),
       };
-      if (visibleLayerCount(nextCfg) === 0) {
-        toast.error("Tasarımda en az bir görünür katman olmalı.");
-        return;
-      }
       commit(nextCfg);
       setSelection({ kind: "canvas" });
     },
@@ -373,10 +369,6 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
         textLayers: filtered,
         zOrder: mergedOrder(cur).filter((x) => x !== id),
       };
-      if (visibleLayerCount(nextCfg) === 0) {
-        toast.error("Tasarımda en az bir görünür katman olmalı.");
-        return;
-      }
       commit(nextCfg);
       setSelection({ kind: "canvas" });
     },
@@ -560,10 +552,6 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
       decorations: nextDecos,
       textLayers: nextTexts,
     };
-    if (visibleLayerCount(nextCfg) === 0) {
-      toast.error("Tasarımda en az bir görünür katman olmalı.");
-      return;
-    }
     commit(nextCfg);
     setSelection({ kind: "canvas" });
   }, [selection, commit, setSelection]);
