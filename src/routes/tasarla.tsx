@@ -35,7 +35,13 @@ function NavigationGuard() {
 
   useBlocker({
     shouldBlockFn: ({ next }: any) => {
-      return isDirty && next.pathname !== "/sepet";
+      if (isDirty && next.pathname !== "/sepet") {
+        const proceed = window.confirm(
+          "Değişiklikleriniz kaydedilmedi. Sayfadan ayrılmak istediğinizden emin misiniz?",
+        );
+        return !proceed;
+      }
+      return false;
     },
   });
 
