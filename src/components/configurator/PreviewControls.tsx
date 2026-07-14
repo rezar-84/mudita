@@ -5,7 +5,13 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Lightbulb, LightbulbOff, RotateCcw } from "lucide-react";
 import { useT } from "@/lib/i18n";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export function PreviewControls() {
   const t = useT();
@@ -20,7 +26,11 @@ export function PreviewControls() {
     <div className="space-y-4 rounded-2xl border border-border bg-card p-4">
       <div className="flex items-center justify-between rounded-lg border border-border bg-secondary/30 p-3">
         <div className="flex items-center gap-2">
-          {isLightOn ? <Lightbulb className="h-4 w-4 text-yellow-500" /> : <LightbulbOff className="h-4 w-4 text-muted-foreground" />}
+          {isLightOn ? (
+            <Lightbulb className="h-4 w-4 text-yellow-500" />
+          ) : (
+            <LightbulbOff className="h-4 w-4 text-muted-foreground" />
+          )}
           <div>
             <p className="text-sm font-medium">{t("lightOn")}</p>
             <p className="text-[11px] text-muted-foreground">{isLightOn ? t("on") : t("off")}</p>
@@ -34,7 +44,13 @@ export function PreviewControls() {
           <span className="font-medium">{t("brightness")}</span>
           <span className="text-muted-foreground">{brightness}%</span>
         </Label>
-        <Slider min={40} max={120} step={5} value={[brightness]} onValueChange={([v]) => update({ brightness: v })} />
+        <Slider
+          min={40}
+          max={120}
+          step={5}
+          value={[brightness]}
+          onValueChange={([v]) => update({ brightness: v })}
+        />
       </div>
 
       <div>
@@ -42,11 +58,19 @@ export function PreviewControls() {
           <span className="font-medium">{t("zoom")}</span>
           <span className="text-muted-foreground">{Math.round(zoom * 100)}%</span>
         </Label>
-        <Slider min={60} max={140} step={5} value={[Math.round(zoom * 100)]} onValueChange={([v]) => update({ zoom: v / 100 })} />
+        <Slider
+          min={60}
+          max={140}
+          step={5}
+          value={[Math.round(zoom * 100)]}
+          onValueChange={([v]) => update({ zoom: v / 100 })}
+        />
       </div>
 
       <div className="space-y-1.5">
-        <Label className="text-xs font-medium text-foreground">LED Işık Efekti (Tüm Katmanlar)</Label>
+        <Label className="text-xs font-medium text-foreground">
+          LED Işık Efekti (Tüm Katmanlar)
+        </Label>
         <Select
           value={config.ledEffect ?? "none"}
           onValueChange={(val) =>
@@ -75,28 +99,47 @@ export function PreviewControls() {
       </div>
 
       <div className="space-y-2 rounded-lg border border-dashed border-border p-3">
-        <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{t("measureGuides")}</p>
+        <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+          {t("measureGuides")}
+        </p>
         <div className="flex items-center justify-between">
           <Label className="text-xs">{t("showMeasurements")}</Label>
-          <Switch checked={config.showMeasurements ?? false} onCheckedChange={(v) => update({ showMeasurements: v })} />
+          <Switch
+            checked={config.showMeasurements ?? false}
+            onCheckedChange={(v) => update({ showMeasurements: v })}
+          />
         </div>
         <div className="flex items-center justify-between">
           <Label className="text-xs">{t("showBackboardBounds")}</Label>
-          <Switch checked={config.showBackboardBounds ?? false} onCheckedChange={(v) => update({ showBackboardBounds: v })} />
+          <Switch
+            checked={config.showBackboardBounds ?? false}
+            onCheckedChange={(v) => update({ showBackboardBounds: v })}
+          />
         </div>
         <div className="flex items-center justify-between">
           <Label className="text-xs">{t("showSafeArea")}</Label>
-          <Switch checked={config.showSafeArea ?? false} onCheckedChange={(v) => update({ showSafeArea: v })} />
+          <Switch
+            checked={config.showSafeArea ?? false}
+            onCheckedChange={(v) => update({ showSafeArea: v })}
+          />
         </div>
         <div className="flex items-center justify-between">
           <Label className="text-xs">{t("showSizeBadge")}</Label>
-          <Switch checked={config.showSizeBadge ?? true} onCheckedChange={(v) => update({ showSizeBadge: v })} />
+          <Switch
+            checked={config.showSizeBadge ?? true}
+            onCheckedChange={(v) => update({ showSizeBadge: v })}
+          />
         </div>
         <p className="text-[10px] text-muted-foreground">{t("measureNote")}</p>
       </div>
 
       <div className="flex flex-wrap gap-2 pt-1">
-        <Button type="button" variant="outline" size="sm" onClick={() => update({ zoom: 1, brightness: 100 })}>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => update({ zoom: 1, brightness: 100 })}
+        >
           <RotateCcw className="mr-1.5 h-3.5 w-3.5" /> {t("resetView")}
         </Button>
       </div>

@@ -5,12 +5,24 @@
  * via dangerouslySetInnerHTML, or null if the input doesn't look like SVG.
  */
 const ALLOWED_TAGS = new Set([
-  "svg", "g", "path", "circle", "rect", "polygon", "polyline", "line",
-  "ellipse", "defs", "title", "desc",
+  "svg",
+  "g",
+  "path",
+  "circle",
+  "rect",
+  "polygon",
+  "polyline",
+  "line",
+  "ellipse",
+  "defs",
+  "title",
+  "desc",
 ]);
 
 const DISALLOWED_ATTR_PREFIXES = ["on"];
-const DISALLOWED_ATTRS = new Set(["xlink:href", "href"]);
+const DISALLOWED_ATTRS = new Set(["xlink:href", "href", "style"]);
+
+import type { NeonDesignConfig, Decoration } from "./types";
 
 export interface SanitisedSvg {
   markup: string;
@@ -32,9 +44,17 @@ export function sanitiseSvg(input: string, maxBytes = 50_000): SanitisedSvg | nu
   if (!svg || svg.tagName.toLowerCase() !== "svg") return null;
 
   function walk(node: Element) {
-    // Drop disallowed tags
     const tag = node.tagName.toLowerCase();
-    if (!ALLOWED_TAGS.has(tag)) {
+    // Drop disallowed tags, animate*, use, foreignobject, style, script, image tags
+    if (
+      !ALLOWED_TAGS.has(tag) ||
+      tag.startsWith("animate") ||
+      tag === "style" ||
+      tag === "script" ||
+      tag === "use" ||
+      tag === "foreignobject" ||
+      tag === "image"
+    ) {
       node.remove();
       return;
     }
@@ -51,6 +71,10 @@ export function sanitiseSvg(input: string, maxBytes = 50_000): SanitisedSvg | nu
         continue;
       }
       if (/javascript:/i.test(value)) {
+        node.removeAttribute(attr.name);
+        continue;
+      }
+      if (/url\s*\(/i.test(value) || /expression\s*\(/i.test(value)) {
         node.removeAttribute(attr.name);
         continue;
       }
@@ -76,4 +100,29 @@ export function sanitiseSvg(input: string, maxBytes = 50_000): SanitisedSvg | nu
   const bytes = new Blob([out]).size;
   if (bytes > maxBytes) return null;
   return { markup: out, bytes };
+}
+
+export function sanitiseConfigDecorations(cfg: NeonDesignConfig): NeonDesignConfig {
+  if (typeof window === "undefined" || !cfg || !cfg.decorations) return cfg;
+
+  const sanitisedDecorations = cfg.decorations
+    .map((d) => {
+      if (d.source === "upload" && d.svgMarkup) {
+        const sanitised = sanitiseSvg(d.svgMarkup);
+        if (!sanitised) {
+          return null;
+        }
+        return {
+          ...d,
+          svgMarkup: sanitised.markup,
+        };
+      }
+      return d;
+    })
+    .filter((d): d is Decoration => d !== null);
+
+  return {
+    ...cfg,
+    decorations: sanitisedDecorations,
+  };
 }

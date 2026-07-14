@@ -75,9 +75,7 @@ export function BackgroundToggle() {
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <p className="text-xs font-medium text-muted-foreground">
-          {t("previewBackground")}
-        </p>
+        <p className="text-xs font-medium text-muted-foreground">{t("previewBackground")}</p>
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
@@ -90,13 +88,7 @@ export function BackgroundToggle() {
           <Upload className="h-3 w-3" />
           {loading ? t("uploading") : t("uploadImage")}
         </button>
-        <input
-          ref={inputRef}
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={onFile}
-        />
+        <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={onFile} />
       </div>
 
       {hasCustom && (

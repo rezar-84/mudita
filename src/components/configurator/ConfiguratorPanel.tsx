@@ -5,13 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Slider } from "@/components/ui/slider";
-import {
-  FONTS,
-  COLORS,
-  SIZES,
-  BACKBOARDS,
-  MOUNTINGS,
-} from "@/data/options";
+import { FONTS, COLORS, SIZES, BACKBOARDS, MOUNTINGS } from "@/data/options";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { AlertTriangle, RotateCcw, RotateCw, FlipHorizontal2, FlipVertical2 } from "lucide-react";
@@ -32,9 +26,7 @@ export function ConfiguratorPanel() {
   // when nothing is selected we show an empty state asking the user to pick one.
   const layers = config.textLayers ?? [];
   const activeLayer =
-    selection.kind === "textLayer"
-      ? layers.find((l) => l.id === selection.id) ?? null
-      : null;
+    selection.kind === "textLayer" ? (layers.find((l) => l.id === selection.id) ?? null) : null;
 
   const [tab, setTab] = useState<string>("text");
   useEffect(() => {
@@ -52,7 +44,6 @@ export function ConfiguratorPanel() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selection]);
 
-
   // Warnings derived from the visible text layers (no global text anymore).
   const visibleLayers = (config.textLayers ?? []).filter((l) => !l.hidden && l.text.trim().length);
   const isEmpty = visibleLayers.length === 0;
@@ -60,15 +51,20 @@ export function ConfiguratorPanel() {
     1,
     ...visibleLayers.flatMap((l) => l.text.split("\n").map((line) => line.length)),
   );
-  const dims = config.sizeId === "custom" ? { width: customW, height: customH }
-    : SIZES.find((s) => s.id === config.sizeId)!;
+  const dims =
+    config.sizeId === "custom"
+      ? { width: customW, height: customH }
+      : SIZES.find((s) => s.id === config.sizeId)!;
   const approxLetterCm = dims.width / Math.max(longestLine, 1);
   const totalChars = visibleLayers.reduce((s, l) => s + l.text.length, 0);
   const tooSmall = !isEmpty && approxLetterCm < 4;
   const tooLong = totalChars > 60;
   const primaryFontId = visibleLayers[0]?.fontId ?? config.fontId;
   const currentFont = FONTS.find((f) => f.id === primaryFontId);
-  const complexFont = !!currentFont && (currentFont.complexity >= 1.2 || ["script", "handwritten", "retro", "elegant"].includes(currentFont.category));
+  const complexFont =
+    !!currentFont &&
+    (currentFont.complexity >= 1.2 ||
+      ["script", "handwritten", "retro", "elegant"].includes(currentFont.category));
   const fragile = config.outdoor && complexFont;
   const complexNote = !config.outdoor && complexFont;
 
@@ -89,11 +85,12 @@ export function ConfiguratorPanel() {
         <div className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
           <ul className="space-y-1">
-            {warnings.map((w, i) => <li key={i}>{w}</li>)}
+            {warnings.map((w, i) => (
+              <li key={i}>{w}</li>
+            ))}
           </ul>
         </div>
       )}
-
 
       <Tabs value={tab} onValueChange={setTab} className="w-full">
         <TabsList className="grid w-full grid-cols-5 gap-1">
@@ -142,7 +139,8 @@ export function ConfiguratorPanel() {
 
               <div>
                 <Label className="mb-2 flex items-center justify-between text-sm">
-                  {t("layerSize")} <span className="text-muted-foreground">{activeLayer.sizePct}%</span>
+                  {t("layerSize")}{" "}
+                  <span className="text-muted-foreground">{activeLayer.sizePct}%</span>
                 </Label>
                 <Slider
                   min={6}
@@ -155,7 +153,8 @@ export function ConfiguratorPanel() {
 
               <div>
                 <Label className="mb-2 flex items-center justify-between text-sm">
-                  {t("rotation")} <span className="text-muted-foreground">{activeLayer.rotation}°</span>
+                  {t("rotation")}{" "}
+                  <span className="text-muted-foreground">{activeLayer.rotation}°</span>
                 </Label>
                 <Slider
                   min={-180}
@@ -165,19 +164,47 @@ export function ConfiguratorPanel() {
                   onValueChange={([v]) => updateTextLayer(activeLayer.id, { rotation: v })}
                 />
                 <div className="mt-2 flex flex-wrap gap-2">
-                  <Button variant="outline" size="sm" onClick={() => updateTextLayer(activeLayer.id, { rotation: ((activeLayer.rotation - 90 + 540) % 360) - 180 })}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      updateTextLayer(activeLayer.id, {
+                        rotation: ((activeLayer.rotation - 90 + 540) % 360) - 180,
+                      })
+                    }
+                  >
                     <RotateCcw className="mr-1 h-3.5 w-3.5" /> -90°
                   </Button>
-                  <Button variant="outline" size="sm" onClick={() => updateTextLayer(activeLayer.id, { rotation: ((activeLayer.rotation + 90 + 540) % 360) - 180 })}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      updateTextLayer(activeLayer.id, {
+                        rotation: ((activeLayer.rotation + 90 + 540) % 360) - 180,
+                      })
+                    }
+                  >
                     <RotateCw className="mr-1 h-3.5 w-3.5" /> +90°
                   </Button>
-                  <Button variant="outline" size="sm" onClick={() => updateTextLayer(activeLayer.id, { rotation: 0 })}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => updateTextLayer(activeLayer.id, { rotation: 0 })}
+                  >
                     0°
                   </Button>
-                  <Button variant={activeLayer.flipX ? "default" : "outline"} size="sm" onClick={() => updateTextLayer(activeLayer.id, { flipX: !activeLayer.flipX })}>
+                  <Button
+                    variant={activeLayer.flipX ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => updateTextLayer(activeLayer.id, { flipX: !activeLayer.flipX })}
+                  >
                     <FlipHorizontal2 className="mr-1 h-3.5 w-3.5" /> {t("horizontal")}
                   </Button>
-                  <Button variant={activeLayer.flipY ? "default" : "outline"} size="sm" onClick={() => updateTextLayer(activeLayer.id, { flipY: !activeLayer.flipY })}>
+                  <Button
+                    variant={activeLayer.flipY ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => updateTextLayer(activeLayer.id, { flipY: !activeLayer.flipY })}
+                  >
                     <FlipVertical2 className="mr-1 h-3.5 w-3.5" /> {t("vertical")}
                   </Button>
                 </div>
@@ -261,16 +288,12 @@ export function ConfiguratorPanel() {
                   })}
                 </div>
                 <p className="mt-2 text-xs text-muted-foreground">
-                  {t("selectedColor")}:{" "}
-                  {COLORS.find((c) => c.id === activeLayer.colorId)?.label}
+                  {t("selectedColor")}: {COLORS.find((c) => c.id === activeLayer.colorId)?.label}
                 </p>
               </div>
             </>
           )}
         </TabsContent>
-
-
-
 
         {/* SIZE */}
         <TabsContent value="size" className="space-y-5 pt-4">
@@ -303,7 +326,9 @@ export function ConfiguratorPanel() {
                   {t("width")} <span className="text-muted-foreground">{customW} cm</span>
                 </Label>
                 <Slider
-                  min={20} max={200} step={5}
+                  min={20}
+                  max={200}
+                  step={5}
                   value={[customW]}
                   onValueChange={([v]) => update({ customWidth: v })}
                 />
@@ -313,7 +338,9 @@ export function ConfiguratorPanel() {
                   {t("height")} <span className="text-muted-foreground">{customH} cm</span>
                 </Label>
                 <Slider
-                  min={10} max={120} step={5}
+                  min={10}
+                  max={120}
+                  step={5}
                   value={[customH]}
                   onValueChange={([v]) => update({ customHeight: v })}
                 />
@@ -385,18 +412,14 @@ export function ConfiguratorPanel() {
             <div className="flex items-center justify-between">
               <div className="min-w-0">
                 <p className="text-sm">{t("dimmer")}</p>
-                <p className="text-[11px] text-muted-foreground">
-                  {t("dimmerDesc")}
-                </p>
+                <p className="text-[11px] text-muted-foreground">{t("dimmerDesc")}</p>
               </div>
               <Switch checked={config.dimmer} onCheckedChange={(v) => update({ dimmer: v })} />
             </div>
 
             {config.dimmer && (
               <div className="space-y-3 rounded-md border border-dashed border-foreground/20 bg-secondary/30 p-3">
-                <p className="text-[11px] text-muted-foreground">
-                  {t("dimmerSimNote")}
-                </p>
+                <p className="text-[11px] text-muted-foreground">{t("dimmerSimNote")}</p>
                 <div>
                   <Label className="mb-2 flex items-center justify-between text-xs">
                     <span className="font-medium">{t("brightness")}</span>
@@ -434,24 +457,32 @@ export function ConfiguratorPanel() {
                 onValueChange={(v) => update({ adapter: v as typeof config.adapter })}
                 className="grid grid-cols-2 gap-2"
               >
-                <label className={cn(
-                  "flex cursor-pointer items-center justify-between rounded-lg border p-2 text-sm",
-                  config.adapter === "tr" ? "border-foreground bg-accent/40" : "border-border",
-                )}>
-                  <span>{t("adapterTR")}</span><RadioGroupItem value="tr" />
+                <label
+                  className={cn(
+                    "flex cursor-pointer items-center justify-between rounded-lg border p-2 text-sm",
+                    config.adapter === "tr" ? "border-foreground bg-accent/40" : "border-border",
+                  )}
+                >
+                  <span>{t("adapterTR")}</span>
+                  <RadioGroupItem value="tr" />
                 </label>
-                <label className={cn(
-                  "flex cursor-pointer items-center justify-between rounded-lg border p-2 text-sm",
-                  config.adapter === "eu" ? "border-foreground bg-accent/40" : "border-border",
-                )}>
-                  <span>{t("adapterEU")}</span><RadioGroupItem value="eu" />
+                <label
+                  className={cn(
+                    "flex cursor-pointer items-center justify-between rounded-lg border p-2 text-sm",
+                    config.adapter === "eu" ? "border-foreground bg-accent/40" : "border-border",
+                  )}
+                >
+                  <span>{t("adapterEU")}</span>
+                  <RadioGroupItem value="eu" />
                 </label>
               </RadioGroup>
             </div>
           </div>
 
           <div>
-            <Label htmlFor="notes" className="mb-2 block text-sm font-medium">{t("notes")}</Label>
+            <Label htmlFor="notes" className="mb-2 block text-sm font-medium">
+              {t("notes")}
+            </Label>
             <Textarea
               id="notes"
               rows={3}

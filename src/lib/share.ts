@@ -1,4 +1,5 @@
 import type { NeonDesignConfig } from "./types";
+import { sanitiseConfigDecorations } from "./svgSanitize";
 
 /**
  * Encode a design config to a URL-safe base64 string.
@@ -27,7 +28,8 @@ export function decodeConfig(s: string): NeonDesignConfig | null {
       typeof window === "undefined"
         ? Buffer.from(s, "base64").toString("utf-8")
         : decodeURIComponent(escape(atob(s)));
-    return JSON.parse(json) as NeonDesignConfig;
+    const parsed = JSON.parse(json) as NeonDesignConfig;
+    return sanitiseConfigDecorations(parsed);
   } catch {
     return null;
   }

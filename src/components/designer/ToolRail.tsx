@@ -242,7 +242,8 @@ export function ToolRail({ onPickDecoration }: { onPickDecoration: () => void })
           className={cn(
             "inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-muted-foreground transition hover:bg-accent hover:text-foreground",
             tool.active && "bg-accent text-foreground ring-1 ring-inset ring-neon-cyan/40",
-            tool.disabled && "cursor-not-allowed opacity-40 hover:bg-transparent hover:text-muted-foreground",
+            tool.disabled &&
+              "cursor-not-allowed opacity-40 hover:bg-transparent hover:text-muted-foreground",
             tool.danger && "text-destructive hover:bg-destructive/10 hover:text-destructive",
           )}
         >

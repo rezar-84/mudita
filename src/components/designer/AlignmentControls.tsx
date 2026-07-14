@@ -1,8 +1,5 @@
 import { useState } from "react";
-import {
-  useDesigner,
-  type AlignReference,
-} from "@/components/configurator/DesignerContext";
+import { useDesigner, type AlignReference } from "@/components/configurator/DesignerContext";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useT } from "@/lib/i18n";
@@ -31,10 +28,14 @@ export function AlignmentControls() {
 
   function refLabel(r: AlignReference): string {
     switch (r) {
-      case "page": return t("alignRefPage");
-      case "first": return t("alignRefFirst");
-      case "last": return t("alignRefLast");
-      case "biggest": return t("alignRefBiggest");
+      case "page":
+        return t("alignRefPage");
+      case "first":
+        return t("alignRefFirst");
+      case "last":
+        return t("alignRefLast");
+      case "biggest":
+        return t("alignRefBiggest");
     }
   }
 

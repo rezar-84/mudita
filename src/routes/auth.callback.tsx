@@ -11,10 +11,7 @@ const searchSchema = z.object({ next: z.string().optional() });
 export const Route = createFileRoute("/auth/callback")({
   validateSearch: searchSchema,
   head: () => ({
-    meta: [
-      { title: "Giriş yapılıyor…" },
-      { name: "robots", content: "noindex" },
-    ],
+    meta: [{ title: "Giriş yapılıyor…" }, { name: "robots", content: "noindex" }],
   }),
   component: AuthCallback,
 });
@@ -44,7 +41,10 @@ function AuthCallback() {
     });
 
     const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session && (event === "SIGNED_IN" || event === "INITIAL_SESSION" || event === "TOKEN_REFRESHED")) {
+      if (
+        session &&
+        (event === "SIGNED_IN" || event === "INITIAL_SESSION" || event === "TOKEN_REFRESHED")
+      ) {
         go();
       }
     });

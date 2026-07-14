@@ -6,7 +6,11 @@ export const Route = createFileRoute("/hakkimizda")({
   head: () => ({
     meta: [
       { title: "Hakkımızda · MudiNeon" },
-      { name: "description", content: "İki kız kardeşin 2021'de evinde başlayan, dünyaya açılan el emeği dekorasyon hikayesi." },
+      {
+        name: "description",
+        content:
+          "İki kız kardeşin 2021'de evinde başlayan, dünyaya açılan el emeği dekorasyon hikayesi.",
+      },
       { property: "og:title", content: "MudiNeon Hikayesi" },
       { property: "og:description", content: "El emeği, samimiyet ve tasarım sevgisiyle." },
     ],
@@ -25,8 +29,7 @@ function AboutPage() {
         <p>{t("aboutP2")}</p>
         <p>{t("aboutP3")}</p>
         <p>
-          {t("aboutP4")}{" "}
-          <span className="text-gradient-neon font-semibold">✨</span>
+          {t("aboutP4")} <span className="text-gradient-neon font-semibold">✨</span>
         </p>
       </div>
     </div>

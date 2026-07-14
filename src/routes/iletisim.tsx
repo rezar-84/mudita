@@ -8,12 +8,17 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { Mail, Phone, MessageCircle } from "lucide-react";
 import { useT } from "@/lib/i18n";
+import { CONTACT } from "@/lib/contact";
 
 export const Route = createFileRoute("/iletisim")({
   head: () => ({
     meta: [
       { title: "İletişim · MudiNeon" },
-      { name: "description", content: "Sorularınız ve teklif talepleriniz için bize ulaşın. WhatsApp, e-posta ve form ile destek." },
+      {
+        name: "description",
+        content:
+          "Sorularınız ve teklif talepleriniz için bize ulaşın. WhatsApp, e-posta ve form ile destek.",
+      },
       { property: "og:title", content: "İletişim · MudiNeon" },
       { property: "og:description", content: "Bize ulaşın, sorularınızı cevaplayalım." },
     ],
@@ -46,47 +51,76 @@ function ContactPage() {
 
       <div className="mt-10 grid gap-8 lg:grid-cols-[1fr_1.4fr]">
         <div className="space-y-4">
-          <a href="https://wa.me/" target="_blank" rel="noreferrer" className="flex items-center gap-3 rounded-2xl border border-border bg-card p-4 hover:bg-accent">
+          <a
+            href={`${CONTACT.waMeBase}/${CONTACT.whatsappNumber}`}
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-3 rounded-2xl border border-border bg-card p-4 hover:bg-accent"
+          >
             <MessageCircle className="h-5 w-5 text-neon-pink" />
             <div>
               <div className="font-medium">{t("contactWhatsApp")}</div>
               <div className="text-sm text-muted-foreground">{t("contactWhatsAppDesc")}</div>
             </div>
           </a>
-          <a href="mailto:info@mudineon.com" className="flex items-center gap-3 rounded-2xl border border-border bg-card p-4 hover:bg-accent">
+          <a
+            href={`mailto:${CONTACT.email}`}
+            className="flex items-center gap-3 rounded-2xl border border-border bg-card p-4 hover:bg-accent"
+          >
             <Mail className="h-5 w-5 text-neon-cyan" />
             <div>
               <div className="font-medium">{t("contactEmail")}</div>
-              <div className="text-sm text-muted-foreground">info@mudineon.com</div>
+              <div className="text-sm text-muted-foreground">{CONTACT.email}</div>
             </div>
           </a>
           <div className="flex items-center gap-3 rounded-2xl border border-border bg-card p-4">
             <Phone className="h-5 w-5 text-terracotta" />
             <div>
-              <div className="font-medium">{t("contactPhone")}</div>
+              <div className="font-medium">{CONTACT.phoneDisplay}</div>
               <div className="text-sm text-muted-foreground">{t("contactPhoneHours")}</div>
             </div>
           </div>
         </div>
 
-        <form onSubmit={submit} className="space-y-4 rounded-2xl border border-border bg-card p-6 shadow-soft">
+        <form
+          onSubmit={submit}
+          className="space-y-4 rounded-2xl border border-border bg-card p-6 shadow-soft"
+        >
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <Label htmlFor="c-name">{t("contactNameLabel")}</Label>
-              <Input id="c-name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+              <Input
+                id="c-name"
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+              />
             </div>
             <div>
               <Label htmlFor="c-phone">{t("contactPhoneLabel")}</Label>
-              <Input id="c-phone" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+              <Input
+                id="c-phone"
+                value={form.phone}
+                onChange={(e) => setForm({ ...form, phone: e.target.value })}
+              />
             </div>
           </div>
           <div>
             <Label htmlFor="c-email">{t("contactEmailLabel")}</Label>
-            <Input id="c-email" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+            <Input
+              id="c-email"
+              type="email"
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+            />
           </div>
           <div>
             <Label htmlFor="c-msg">{t("contactMessageLabel")}</Label>
-            <Textarea id="c-msg" rows={5} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} />
+            <Textarea
+              id="c-msg"
+              rows={5}
+              value={form.message}
+              onChange={(e) => setForm({ ...form, message: e.target.value })}
+            />
           </div>
           <Button type="submit" className="w-full bg-gradient-neon text-white shadow-glow">
             {t("contactSendBtn")}
@@ -96,4 +130,3 @@ function ContactPage() {
     </div>
   );
 }
-

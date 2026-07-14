@@ -20,10 +20,8 @@ export function AlignmentGuides() {
   const cyPct = 50 + ref.cy;
 
   const isHorizontal = dir === "left" || dir === "centerH" || dir === "right";
-  const lineXPct =
-    dir === "left" ? left : dir === "right" ? right : cxPct;
-  const lineYPct =
-    dir === "top" ? top : dir === "bottom" ? bottom : cyPct;
+  const lineXPct = dir === "left" ? left : dir === "right" ? right : cxPct;
+  const lineYPct = dir === "top" ? top : dir === "bottom" ? bottom : cyPct;
 
   const guideColor = "rgb(34 211 238)"; // neon cyan
   const labelText =

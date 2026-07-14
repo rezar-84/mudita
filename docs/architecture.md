@@ -80,4 +80,3 @@ These are intentionally non-functional stubs. Replace them with server-side impl
 - Real payment provider calls must run server-side.
 - Do not expose private API keys through Vite client environment variables.
 - Customer quote files and order data need a real storage and retention policy before production use.
-

@@ -70,4 +70,3 @@ Email sending should run server-side. Include enough structured data for staff t
 ## Persistence
 
 Cart storage is local only. Production order and quote persistence should use a backend database or managed service. Avoid treating `localStorage` as a source of truth for payment, order, or fulfillment data.
-

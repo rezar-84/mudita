@@ -112,27 +112,51 @@ function ProfilePage() {
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="sm:col-span-2">
               <Label htmlFor="addr1">{t("billAddressLine1")}</Label>
-              <Input id="addr1" value={addr.line1 ?? ""} onChange={(e) => set({ line1: e.target.value })} />
+              <Input
+                id="addr1"
+                value={addr.line1 ?? ""}
+                onChange={(e) => set({ line1: e.target.value })}
+              />
             </div>
             <div className="sm:col-span-2">
               <Label htmlFor="addr2">{t("billAddressLine2")}</Label>
-              <Input id="addr2" value={addr.line2 ?? ""} onChange={(e) => set({ line2: e.target.value })} />
+              <Input
+                id="addr2"
+                value={addr.line2 ?? ""}
+                onChange={(e) => set({ line2: e.target.value })}
+              />
             </div>
             <div>
               <Label htmlFor="city">{t("billCity")}</Label>
-              <Input id="city" value={addr.city ?? ""} onChange={(e) => set({ city: e.target.value })} />
+              <Input
+                id="city"
+                value={addr.city ?? ""}
+                onChange={(e) => set({ city: e.target.value })}
+              />
             </div>
             <div>
               <Label htmlFor="district">{t("billDistrict")}</Label>
-              <Input id="district" value={addr.district ?? ""} onChange={(e) => set({ district: e.target.value })} />
+              <Input
+                id="district"
+                value={addr.district ?? ""}
+                onChange={(e) => set({ district: e.target.value })}
+              />
             </div>
             <div>
               <Label htmlFor="postal">{t("billPostalCode")}</Label>
-              <Input id="postal" value={addr.postal_code ?? ""} onChange={(e) => set({ postal_code: e.target.value })} />
+              <Input
+                id="postal"
+                value={addr.postal_code ?? ""}
+                onChange={(e) => set({ postal_code: e.target.value })}
+              />
             </div>
             <div>
               <Label htmlFor="country">{t("billCountry")}</Label>
-              <Input id="country" value={addr.country ?? "TR"} onChange={(e) => set({ country: e.target.value })} />
+              <Input
+                id="country"
+                value={addr.country ?? "TR"}
+                onChange={(e) => set({ country: e.target.value })}
+              />
             </div>
           </div>
         </section>
@@ -143,7 +167,11 @@ function ProfilePage() {
           </h3>
           <div>
             <Label htmlFor="tax">{t("billTaxId")}</Label>
-            <Input id="tax" value={addr.tax_id ?? ""} onChange={(e) => set({ tax_id: e.target.value })} />
+            <Input
+              id="tax"
+              value={addr.tax_id ?? ""}
+              onChange={(e) => set({ tax_id: e.target.value })}
+            />
           </div>
         </section>
 
@@ -151,7 +179,11 @@ function ProfilePage() {
           <Button type="submit" disabled={busy} className="bg-gradient-neon text-white">
             {busy ? "…" : t("profileSave")}
           </Button>
-          <button type="button" onClick={signOut} className="text-sm text-muted-foreground hover:text-destructive">
+          <button
+            type="button"
+            onClick={signOut}
+            className="text-sm text-muted-foreground hover:text-destructive"
+          >
             {t("userMenuSignOut")}
           </button>
         </div>

@@ -96,4 +96,3 @@ The sanitizer is intentionally conservative:
 - Caps output size.
 
 The `/yukle` quote request form validates basic customer fields and file size client-side, then shows a success toast. It does not upload files to a backend yet.
-

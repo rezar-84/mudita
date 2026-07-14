@@ -102,9 +102,8 @@ The repo includes `wrangler.jsonc` for Cloudflare Workers with the TanStack Star
   "name": "tanstack-start-app",
   "compatibility_date": "2025-09-24",
   "compatibility_flags": ["nodejs_compat"],
-  "main": "@tanstack/react-start/server-entry"
+  "main": "@tanstack/react-start/server-entry",
 }
 ```
 
 See [Deployment Guide](docs/deployment.md) before wiring production environment variables or real provider credentials.
-

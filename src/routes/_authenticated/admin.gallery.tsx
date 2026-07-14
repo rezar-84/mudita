@@ -70,24 +70,41 @@ function AdminGallery() {
     <div>
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold">Galeri Yönetimi</h2>
-        <Button onClick={() => setEditing({ published: true, sort: 0 })} className="bg-gradient-neon text-white">
+        <Button
+          onClick={() => setEditing({ published: true, sort: 0 })}
+          className="bg-gradient-neon text-white"
+        >
           <Plus className="mr-1 h-4 w-4" /> Yeni
         </Button>
       </div>
 
       {editing && (
-        <form onSubmit={save} className="mt-4 grid gap-3 rounded-2xl border border-border bg-card p-4 sm:grid-cols-2">
+        <form
+          onSubmit={save}
+          className="mt-4 grid gap-3 rounded-2xl border border-border bg-card p-4 sm:grid-cols-2"
+        >
           <div>
             <Label>Başlık</Label>
-            <Input value={editing.title ?? ""} onChange={(e) => setEditing({ ...editing, title: e.target.value })} required />
+            <Input
+              value={editing.title ?? ""}
+              onChange={(e) => setEditing({ ...editing, title: e.target.value })}
+              required
+            />
           </div>
           <div>
             <Label>Slug</Label>
-            <Input value={editing.slug ?? ""} onChange={(e) => setEditing({ ...editing, slug: e.target.value })} required />
+            <Input
+              value={editing.slug ?? ""}
+              onChange={(e) => setEditing({ ...editing, slug: e.target.value })}
+              required
+            />
           </div>
           <div>
             <Label>Yazı</Label>
-            <Input value={editing.text ?? ""} onChange={(e) => setEditing({ ...editing, text: e.target.value })} />
+            <Input
+              value={editing.text ?? ""}
+              onChange={(e) => setEditing({ ...editing, text: e.target.value })}
+            />
           </div>
           <div>
             <Label>Font</Label>
@@ -97,7 +114,11 @@ function AdminGallery() {
               className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
             >
               <option value="">—</option>
-              {FONTS.map((f) => <option key={f.id} value={f.id}>{f.label}</option>)}
+              {FONTS.map((f) => (
+                <option key={f.id} value={f.id}>
+                  {f.label}
+                </option>
+              ))}
             </select>
           </div>
           <div>
@@ -108,24 +129,44 @@ function AdminGallery() {
               className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
             >
               <option value="">—</option>
-              {COLORS.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
+              {COLORS.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.label}
+                </option>
+              ))}
             </select>
           </div>
           <div>
             <Label>Sıralama</Label>
-            <Input type="number" value={editing.sort ?? 0} onChange={(e) => setEditing({ ...editing, sort: Number(e.target.value) })} />
+            <Input
+              type="number"
+              value={editing.sort ?? 0}
+              onChange={(e) => setEditing({ ...editing, sort: Number(e.target.value) })}
+            />
           </div>
           <div className="sm:col-span-2">
             <Label>Görsel URL (opsiyonel)</Label>
-            <Input value={editing.image_url ?? ""} onChange={(e) => setEditing({ ...editing, image_url: e.target.value })} placeholder="https://…" />
+            <Input
+              value={editing.image_url ?? ""}
+              onChange={(e) => setEditing({ ...editing, image_url: e.target.value })}
+              placeholder="https://…"
+            />
           </div>
           <label className="flex items-center gap-2 text-sm">
-            <input type="checkbox" checked={editing.published ?? true} onChange={(e) => setEditing({ ...editing, published: e.target.checked })} />
+            <input
+              type="checkbox"
+              checked={editing.published ?? true}
+              onChange={(e) => setEditing({ ...editing, published: e.target.checked })}
+            />
             Yayında
           </label>
           <div className="sm:col-span-2 flex gap-2">
-            <Button type="submit" className="bg-gradient-neon text-white">Kaydet</Button>
-            <Button type="button" variant="outline" onClick={() => setEditing(null)}>İptal</Button>
+            <Button type="submit" className="bg-gradient-neon text-white">
+              Kaydet
+            </Button>
+            <Button type="button" variant="outline" onClick={() => setEditing(null)}>
+              İptal
+            </Button>
           </div>
         </form>
       )}
@@ -152,14 +193,28 @@ function AdminGallery() {
                 <td className="p-3">{g.sort}</td>
                 <td className="p-3">
                   <div className="flex gap-2">
-                    <button onClick={() => setEditing(g)} className="text-muted-foreground hover:text-foreground"><Pencil className="h-4 w-4" /></button>
-                    <button onClick={() => remove(g.id)} className="text-muted-foreground hover:text-destructive"><Trash2 className="h-4 w-4" /></button>
+                    <button
+                      onClick={() => setEditing(g)}
+                      className="text-muted-foreground hover:text-foreground"
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => remove(g.id)}
+                      className="text-muted-foreground hover:text-destructive"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
                   </div>
                 </td>
               </tr>
             ))}
             {!data?.length && (
-              <tr><td colSpan={6} className="p-6 text-center text-sm text-muted-foreground">Öğe yok.</td></tr>
+              <tr>
+                <td colSpan={6} className="p-6 text-center text-sm text-muted-foreground">
+                  Öğe yok.
+                </td>
+              </tr>
             )}
           </tbody>
         </table>

@@ -424,18 +424,20 @@ export const createCrmLeadPublic = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin.from("crm_leads").insert({
+    const { error } = await (supabaseAdmin as any).from("crm_leads").insert({
       source: "waiting_cart",
       status: "new",
       name: data.name,
       email: data.email,
       phone: data.phone,
       note: `Boyut: ${data.size || "Belirtilmemiş"}\nKullanım: ${data.usage || "Belirtilmemiş"}\nTermin: ${data.deadline || "Belirtilmemiş"}\n\nNotlar:\n${data.note || ""}`,
-      cart_snapshot: (data.file_base64 ? {
-        file_name: data.file_name,
-        file_size: data.file_size,
-        file_base64: data.file_base64,
-      } : null) as any,
+      cart_snapshot: (data.file_base64
+        ? {
+            file_name: data.file_name,
+            file_size: data.file_size,
+            file_base64: data.file_base64,
+          }
+        : null) as any,
     });
     if (error) throw new Error(error.message);
     return { ok: true };
@@ -493,5 +495,3 @@ export const confirmPaidOrder = createServerFn({ method: "POST" })
 
     return { ok: true, orderId };
   });
-
-

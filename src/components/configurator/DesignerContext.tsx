@@ -9,12 +9,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import type {
-  Decoration,
-  EditorSelection,
-  NeonDesignConfig,
-  TextLayer,
-} from "@/lib/types";
+import type { Decoration, EditorSelection, NeonDesignConfig, TextLayer } from "@/lib/types";
 import { decodeConfig } from "@/lib/share";
 import { getCart } from "@/lib/cart";
 import { toast } from "sonner";
@@ -89,8 +84,7 @@ export function mergedOrder(cfg: NeonDesignConfig): string[] {
   return out;
 }
 
-type Action =
-  | { type: "replace"; cfg: NeonDesignConfig };
+type Action = { type: "replace"; cfg: NeonDesignConfig };
 
 /** Migrate legacy share-URL or saved configs (which had a global `text`) into the layer model. */
 function migrateConfig(cfg: NeonDesignConfig): NeonDesignConfig {
@@ -145,13 +139,7 @@ function reducer(_state: NeonDesignConfig, action: Action): NeonDesignConfig {
 
 export type LayerKind = "decoration" | "textLayer";
 
-export type AlignDirection =
-  | "left"
-  | "centerH"
-  | "right"
-  | "top"
-  | "centerV"
-  | "bottom";
+export type AlignDirection = "left" | "centerH" | "right" | "top" | "centerV" | "bottom";
 
 export type AlignReference = "page" | "first" | "last" | "biggest";
 
@@ -199,6 +187,7 @@ interface Ctx {
   setActiveTool: (tool: "select" | "draw" | "pen") => void;
   editCartId: string | null;
   setEditCartId: (id: string | null) => void;
+  isDirty: boolean;
 }
 
 const DesignerCtx = createContext<Ctx | null>(null);
@@ -219,7 +208,7 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
     const same =
       last &&
       last.kind === sel.kind &&
-      (("id" in last ? last.id : undefined) === ("id" in sel ? sel.id : undefined));
+      ("id" in last ? last.id : undefined) === ("id" in sel ? sel.id : undefined);
     if (!same) {
       selHistoryRef.current.push(sel);
       if (selHistoryRef.current.length > 12) selHistoryRef.current.shift();
@@ -234,17 +223,24 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
     if (alignGuideTimerRef.current) clearTimeout(alignGuideTimerRef.current);
     alignGuideTimerRef.current = setTimeout(() => setAlignmentGuide(null), 900);
   }, []);
-  useEffect(() => () => {
-    if (alignGuideTimerRef.current) clearTimeout(alignGuideTimerRef.current);
-  }, []);
-
-
+  useEffect(
+    () => () => {
+      if (alignGuideTimerRef.current) clearTimeout(alignGuideTimerRef.current);
+    },
+    [],
+  );
 
   // history of snapshots
   const pastRef = useRef<NeonDesignConfig[]>([]);
   const futureRef = useRef<NeonDesignConfig[]>([]);
   const configRef = useRef(config);
   const [historyTick, setHistoryTick] = useState(0);
+
+  const initialConfigRef = useRef<NeonDesignConfig>(config);
+
+  const isDirty = useMemo(() => {
+    return JSON.stringify(config) !== JSON.stringify(initialConfigRef.current);
+  }, [config]);
 
   useEffect(() => {
     configRef.current = config;
@@ -262,7 +258,7 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (typeof window === "undefined") return;
     const params = new URLSearchParams(window.location.search);
-    
+
     // 1. Check if editing a cart item
     const cartId = params.get("editCartId");
     if (cartId) {
@@ -271,6 +267,7 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
       if (item) {
         setEditCartId(cartId);
         dispatch({ type: "replace", cfg: item.config });
+        initialConfigRef.current = item.config;
         return;
       }
     }
@@ -279,7 +276,10 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
     const d = params.get("d");
     if (!d) return;
     const decoded = decodeConfig(d);
-    if (decoded) dispatch({ type: "replace", cfg: decoded });
+    if (decoded) {
+      dispatch({ type: "replace", cfg: decoded });
+      initialConfigRef.current = decoded;
+    }
   }, []);
 
   const update = useCallback(
@@ -437,10 +437,7 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
       // Expand multi-selection into a list of single-target selections.
       const targets: EditorSelection[] =
         sel.kind === "multi"
-          ? sel.ids.map(
-              (id, i) =>
-                ({ kind: sel.kinds[i], id } as EditorSelection),
-            )
+          ? sel.ids.map((id, i) => ({ kind: sel.kinds[i], id }) as EditorSelection)
           : [sel];
 
       // Resolve reference bounds once (shared across all targets).
@@ -470,9 +467,7 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
         return target ? boundsOf(target) : null;
       };
 
-      const excludeIds = new Set<string>(
-        targets.flatMap((t) => ("id" in t ? [t.id] : [])),
-      );
+      const excludeIds = new Set<string>(targets.flatMap((t) => ("id" in t ? [t.id] : [])));
       let refBounds = resolveRef(excludeIds) ?? { cx: 0, cy: 0, half: PAGE_HALF };
       // For multi-select with single-layer references, also fall back to page
       // if reference resolution produced no usable bounds.
@@ -573,7 +568,6 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
     setSelection({ kind: "canvas" });
   }, [selection, commit, setSelection]);
 
-
   const resetDesign = useCallback(() => {
     commit({ ...defaultConfig });
     setSelection({ kind: "textLayer", id: BASE_TEXT_ID });
@@ -601,9 +595,7 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
       const target = e.target as HTMLElement | null;
       if (
         target &&
-        (target.tagName === "INPUT" ||
-          target.tagName === "TEXTAREA" ||
-          target.isContentEditable)
+        (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable)
       )
         return;
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "z") {
@@ -617,11 +609,7 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
         // Only act when a layer is selected; ignore on canvas/none to avoid
         // hijacking browser back navigation on Backspace.
         const sel = selection;
-        if (
-          sel.kind === "decoration" ||
-          sel.kind === "textLayer" ||
-          sel.kind === "multi"
-        ) {
+        if (sel.kind === "decoration" || sel.kind === "textLayer" || sel.kind === "multi") {
           e.preventDefault();
           deleteSelection();
         }
@@ -662,6 +650,7 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
       setActiveTool,
       editCartId,
       setEditCartId,
+      isDirty,
     }),
     // historyTick included so canUndo/canRedo refresh
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -685,6 +674,7 @@ export function DesignerProvider({ children }: { children: ReactNode }) {
       alignmentGuide,
       activeTool,
       editCartId,
+      isDirty,
       historyTick,
     ],
   );

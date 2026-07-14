@@ -112,16 +112,15 @@ export function DecorationPickerDialog({
                     strokeLinejoin="round"
                     className="h-9 w-9 text-foreground transition group-hover:text-neon-cyan"
                     style={{
-                      filter: "drop-shadow(0 0 6px rgba(0,255,255,0.0)) drop-shadow(0 0 0 transparent)",
+                      filter:
+                        "drop-shadow(0 0 6px rgba(0,255,255,0.0)) drop-shadow(0 0 0 transparent)",
                     }}
                     aria-hidden
                   >
                     {d.path && <path d={d.path} />}
                   </svg>
                 )}
-                <span className="line-clamp-1 text-[11px] text-muted-foreground">
-                  {d.label}
-                </span>
+                <span className="line-clamp-1 text-[11px] text-muted-foreground">{d.label}</span>
               </button>
             ))}
             {filtered.length === 0 && (
@@ -133,7 +132,9 @@ export function DecorationPickerDialog({
         </div>
 
         <div className="border-t border-border bg-card/80 px-4 py-3 text-xs text-muted-foreground">
-          {t("decoPickerFooterA")}<strong className="text-foreground">{t("toolSvgUpload")}</strong>{t("decoPickerFooterB")}
+          {t("decoPickerFooterA")}
+          <strong className="text-foreground">{t("toolSvgUpload")}</strong>
+          {t("decoPickerFooterB")}
         </div>
       </DialogContent>
     </Dialog>

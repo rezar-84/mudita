@@ -72,7 +72,8 @@ const tr: Dict = {
   adapterEU: "AB Tipi (+₺120)",
   notesPlaceholder: "Özel istekleriniz...",
   dimmerDesc: "Parlaklığı ve titreşim modunu uzaktan kumandayla ayarla.",
-  dimmerSimNote: "✨ Dimmer simülasyonu: aşağıdaki ayarlar uzaktan kumandayla gerçek hayatta da yapılabilir.",
+  dimmerSimNote:
+    "✨ Dimmer simülasyonu: aşağıdaki ayarlar uzaktan kumandayla gerçek hayatta da yapılabilir.",
   flickerDesc: "Hafif neon titreşim efekti",
   realSizeLabel: "gerçek boyut",
   outdoorBadge: "Dış Mekan · IP65",
@@ -106,7 +107,8 @@ const tr: Dict = {
   shippingTip: "Türkiye geneli güvenli kargo",
   productAddedToCart: "Ürün sepete eklendi",
   layerLastWarning: "Tasarımda en az bir görünür katman olmalı.",
-  textTabHelper: "Tüm metinler birer katmandır. Mevcut metni düzenlemek için tuvaldeki yazıya tıkla; yeni metin eklemek için aşağıdaki butonu kullan.",
+  textTabHelper:
+    "Tüm metinler birer katmandır. Mevcut metni düzenlemek için tuvaldeki yazıya tıkla; yeni metin eklemek için aşağıdaki butonu kullan.",
   textTabAdd: "Yeni Metin Katmanı Ekle",
   defaultStyleHint: "Bu seçim, yeni eklenen metin ve süslemelerin başlangıç stili olur.",
   editingLayer: "Düzenleniyor",
@@ -123,7 +125,8 @@ const tr: Dict = {
 
   // Warnings
   warningSmall: "Yazı çok küçük olabilir, üretim zorlaşır. Daha büyük ölçü öneririz.",
-  warningOutdoorScript: "İnce/script yazı tipi dış mekanda dayanıksız olabilir, kalın bir font öneririz.",
+  warningOutdoorScript:
+    "İnce/script yazı tipi dış mekanda dayanıksız olabilir, kalın bir font öneririz.",
   warningLongText: "Yazı uzun — okunaklık için ölçüyü büyütmeyi düşünebilirsin.",
   warningComplexFont: "Bu yazı tipi karmaşık; üretim biraz daha uzun sürebilir.",
   warningEmptyText: "Tasarımına başlamak için yukarıdaki kutuya yazını gir.",
@@ -133,7 +136,8 @@ const tr: Dict = {
   heroTitleA: "Hayalindeki",
   heroTitleHighlight: "neon tabelayı",
   heroTitleB: "kendin tasarla.",
-  heroSubtitle: "Yazını yaz, fontunu ve rengini seç, ölçüyü ayarla — anında canlı önizleme ve TRY fiyat. Üretime başlamadan önce tasarım onayını alıyoruz.",
+  heroSubtitle:
+    "Yazını yaz, fontunu ve rengini seç, ölçüyü ayarla — anında canlı önizleme ve TRY fiyat. Üretime başlamadan önce tasarım onayını alıyoruz.",
   heroTrustApproval: "Tasarım onayı",
   heroTrustShipping: "Türkiye geneli kargo",
   heroTrustHandmade: "%100 el emeği",
@@ -143,7 +147,8 @@ const tr: Dict = {
 
   // Gallery
   galleryTitle: "İlham Galerisi",
-  gallerySubtitle: "Daha önce ürettiğimiz tasarıtiplerden ilham al. Beğendiğin tarzın benzerini birkaç tıkla kendi yazınla tasarla.",
+  gallerySubtitle:
+    "Daha önce ürettiğimiz tasarıtiplerden ilham al. Beğendiğin tarzın benzerini birkaç tıkla kendi yazınla tasarla.",
   categoryAll: "Tümü",
   categoryHome: "Ev",
   categoryOffice: "Ofis",
@@ -183,43 +188,60 @@ const tr: Dict = {
 
   // FAQ
   faqTitle: "Sıkça Sorulan Sorular",
-  faqSubtitleA: "Aklınıza takılan sorular için hızlı cevaplar. Cevabını bulamadığınız bir konu varsa",
+  faqSubtitleA:
+    "Aklınıza takılan sorular için hızlı cevaplar. Cevabını bulamadığınız bir konu varsa",
   faqSubtitleLink: "bize yazın",
   faqStillUnsureTitle: "Hâlâ kararsız mısın?",
-  faqStillUnsureSub: "Tasarımını birlikte oluşturalım. Birkaç dakikada ücretsiz teklif alabilirsin.",
+  faqStillUnsureSub:
+    "Tasarımını birlikte oluşturalım. Birkaç dakikada ücretsiz teklif alabilirsin.",
   faqQ1: "Fiyat nasıl belirleniyor?",
-  faqA1: "Fiyat; yazı uzunluğu, ölçü, yazı tipi karmaşıklığı, renk, arka panel ve montaj seçeneklerine göre belirlenir. /tasarla sayfasındaki konfigüratörden anında tahmini fiyatı görebilirsiniz.",
+  faqA1:
+    "Fiyat; yazı uzunluğu, ölçü, yazı tipi karmaşıklığı, renk, arka panel ve montaj seçeneklerine göre belirlenir. /tasarla sayfasındaki konfigüratörden anında tahmini fiyatı görebilirsiniz.",
   faqQ2: "Üretim ne kadar sürer?",
-  faqA2: "Standart üretim süresi 7-10 iş günüdür. Acil üretim seçeneği ile 3-5 iş günü içinde gönderim yapabiliyoruz. Üretim, tasarım onayınız alındıktan sonra başlar.",
+  faqA2:
+    "Standart üretim süresi 7-10 iş günüdür. Acil üretim seçeneği ile 3-5 iş günü içinde gönderim yapabiliyoruz. Üretim, tasarım onayınız alındıktan sonra başlar.",
   faqQ3: "Dış mekanda kullanabilir miyim?",
-  faqA3: "Evet. IP65 dış mekan seçeneğini aktifleştirerek su ve toz korumalı üretim yapıyoruz. Çok ince/script fontlar dış mekan için önerilmez; kalın fontlar daha dayanıklıdır.",
+  faqA3:
+    "Evet. IP65 dış mekan seçeneğini aktifleştirerek su ve toz korumalı üretim yapıyoruz. Çok ince/script fontlar dış mekan için önerilmez; kalın fontlar daha dayanıklıdır.",
   faqQ4: "Kurulum nasıl yapılıyor?",
-  faqA4: "Duvar montaj kiti, asma kiti veya stand seçeneklerinden birini seçebilirsiniz. Tabelalar fişe takılır takılmaz çalışır; özel elektrik tesisatına gerek yoktur.",
+  faqA4:
+    "Duvar montaj kiti, asma kiti veya stand seçeneklerinden birini seçebilirsiniz. Tabelalar fişe takılır takılmaz çalışır; özel elektrik tesisatına gerek yoktur.",
   faqQ5: "Garanti veriyor musunuz?",
-  faqA5: "Tüm ürünlerimiz 2 yıl üretim hatalarına karşı garantilidir. Kullandığımız LED neon şeritlerin ömrü 50.000 saatin üzerindedir.",
+  faqA5:
+    "Tüm ürünlerimiz 2 yıl üretim hatalarına karşı garantilidir. Kullandığımız LED neon şeritlerin ömrü 50.000 saatin üzerindedir.",
   faqQ6: "Kargo nereye gönderilir?",
-  faqA6: "Türkiye geneli 81 ile özel köpük ambalajla gönderim yapıyoruz. Yurt dışı için lütfen iletişime geçin.",
+  faqA6:
+    "Türkiye geneli 81 ile özel köpük ambalajla gönderim yapıyoruz. Yurt dışı için lütfen iletişime geçin.",
   faqQ7: "Tasarım onayı nasıl işliyor?",
-  faqA7: "Sipariş veya teklif sonrası, üretime başlamadan önce dijital ön görseli WhatsApp veya e-posta ile size gönderiyoruz. Renk, ölçü veya font değişiklikleri olursa birlikte revize ediyoruz. Onayınız olmadan üretime başlamıyoruz.",
+  faqA7:
+    "Sipariş veya teklif sonrası, üretime başlamadan önce dijital ön görseli WhatsApp veya e-posta ile size gönderiyoruz. Renk, ölçü veya font değişiklikleri olursa birlikte revize ediyoruz. Onayınız olmadan üretime başlamıyoruz.",
   faqQ8: "Logo veya özel tasarım yaptırabilir miyim?",
-  faqA8: "Tabii! 'Logonu Yükle' sayfasından logo, çizim, referans fotoğraf veya marka tasarımınızı paylaşın, size özel teklif hazırlayalım.",
+  faqA8:
+    "Tabii! 'Logonu Yükle' sayfasından logo, çizim, referans fotoğraf veya marka tasarımınızı paylaşın, size özel teklif hazırlayalım.",
   faqQ9: "Hangi adaptör ile geliyor?",
   faqA9: "Türkiye tipi (220V) adaptör standart olarak gönderilir. AB tipi adaptör opsiyoneldir.",
   faqQ10: "Renkler farklı görünüyor mu?",
-  faqA10: "Ekran ile gerçek neon ışığı arasında küçük farklar olabilir; canlı önizleme mümkün olduğunca yakındır. Tasarım onayında gerçek renk tonunu da paylaşıyoruz.",
+  faqA10:
+    "Ekran ile gerçek neon ışığı arasında küçük farklar olabilir; canlı önizleme mümkün olduğunca yakındır. Tasarım onayında gerçek renk tonunu da paylaşıyoruz.",
   faqQ11: "İade ve değişim mümkün mü?",
-  faqA11: "Tüm ürünler kişiye özel üretildiği için iade kapsamı dışındadır. Üretim hatası, kargo hasarı veya onayladığınız tasarımdan farklı bir ürün gelmesi durumunda ücretsiz değişim sağlıyoruz.",
+  faqA11:
+    "Tüm ürünler kişiye özel üretildiği için iade kapsamı dışındadır. Üretim hatası, kargo hasarı veya onayladığınız tasarımdan farklı bir ürün gelmesi durumunda ücretsiz değişim sağlıyoruz.",
 
   // About
   aboutTitle: "MudiNeon Kimdir?",
-  aboutP1: "Merhaba! Biz iki kız kardeş olarak 2021 yılında evimizin bir köşesinde başladık bu yolculuğa. Amacımız basitti: el emeğimizi, tasarım sevgimizi ve kalbimizi koyduğumuz ürünlerle hem evimize ek gelir sağlamak hem de insanların yaşam alanlarına küçük mutluluklar katmak.",
-  aboutP2: "Tamamen el yapımı ürünlerden oluşan koleksiyonumuz, zamanla sadece yakın çevremizin değil, dünyanın dört bir yanındaki dekorasyon severlerin ilgisini çekti. Derken ne oldu? Bir sabah baktık ki küçük işletmemiz büyümüş, tescilli bir markaya dönüşmüşüz ve artık dünya çapında gönderim yapan kocaman bir aileyiz.",
-  aboutP3: "Müşteri memnuniyetini her şeyin önünde tuttuk, çünkü bizce bir ürünü güzel yapan sadece görüntüsü değil, arkasındaki samimiyet ve hizmettir. Her koleksiyonumuzda günün trendlerini takip ederek, modern ve özgün tasarımlar sunmaya çalışıyoruz. Ev dekorasyonunda modaya ayak uydururken, kendi tarzımızı da unutmadan!",
-  aboutP4: "Her paketimizin içinde biraz sevgi, biraz emek, bolca da biz varız. Bu yüzden ürünlerimiz sadece bir dekorasyon objesi değil, aynı zamanda size bizden gelen küçük bir selam",
+  aboutP1:
+    "Merhaba! Biz iki kız kardeş olarak 2021 yılında evimizin bir köşesinde başladık bu yolculuğa. Amacımız basitti: el emeğimizi, tasarım sevgimizi ve kalbimizi koyduğumuz ürünlerle hem evimize ek gelir sağlamak hem de insanların yaşam alanlarına küçük mutluluklar katmak.",
+  aboutP2:
+    "Tamamen el yapımı ürünlerden oluşan koleksiyonumuz, zamanla sadece yakın çevremizin değil, dünyanın dört bir yanındaki dekorasyon severlerin ilgisini çekti. Derken ne oldu? Bir sabah baktık ki küçük işletmemiz büyümüş, tescilli bir markaya dönüşmüşüz ve artık dünya çapında gönderim yapan kocaman bir aileyiz.",
+  aboutP3:
+    "Müşteri memnuniyetini her şeyin önünde tuttuk, çünkü bizce bir ürünü güzel yapan sadece görüntüsü değil, arkasındaki samimiyet ve hizmettir. Her koleksiyonumuzda günün trendlerini takip ederek, modern ve özgün tasarımlar sunmaya çalışıyoruz. Ev dekorasyonunda modaya ayak uydururken, kendi tarzımızı da unutmadan!",
+  aboutP4:
+    "Her paketimizin içinde biraz sevgi, biraz emek, bolca da biz varız. Bu yüzden ürünlerimiz sadece bir dekorasyon objesi değil, aynı zamanda size bizden gelen küçük bir selam",
 
   // Upload
   uploadTitle: "Logonu Yükle, Teklif Al",
-  uploadSubtitle: "Logo, el çizimi, referans fotoğraf veya marka tasarımı — ne paylaşırsan paylaş, sana özel LED neon tabela teklifi hazırlayalım. Üretime başlamadan önce dijital tasarım onayını alıyoruz.",
+  uploadSubtitle:
+    "Logo, el çizimi, referans fotoğraf veya marka tasarımı — ne paylaşırsan paylaş, sana özel LED neon tabela teklifi hazırlayalım. Üretime başlamadan önce dijital tasarım onayını alıyoruz.",
   uploadBadgeLogo: "Logo veya çizim",
   uploadBadgePhoto: "Referans fotoğraf",
   uploadBadgeBrand: "Marka tasarımı",
@@ -237,7 +259,8 @@ const tr: Dict = {
   uploadFieldDeadlinePh: "örn. 2 hafta içinde",
   uploadFieldNotes: "Notlar (renk tercihi, arka panel, montaj vs.)",
   uploadSubmit: "Ücretsiz Teklif Al",
-  uploadApprovalNote: "Üretime başlamadan önce dijital tasarım onayınızı alıyoruz. Görseliniz yalnızca teklif amacıyla kullanılır.",
+  uploadApprovalNote:
+    "Üretime başlamadan önce dijital tasarım onayınızı alıyoruz. Görseliniz yalnızca teklif amacıyla kullanılır.",
   uploadErrName: "Adınızı girin",
   uploadErrEmail: "Geçerli bir e-posta girin",
   uploadErrPhone: "Telefon numaranızı girin",
@@ -247,7 +270,8 @@ const tr: Dict = {
 
   // Checkout
   checkoutTitle: "Ödeme",
-  checkoutSubtitle: "Online ödeme entegrasyonu yakında aktif olacak. Şimdilik WhatsApp ile manuel sipariş verebilir veya teklif talep edebilirsiniz.",
+  checkoutSubtitle:
+    "Online ödeme entegrasyonu yakında aktif olacak. Şimdilik WhatsApp ile manuel sipariş verebilir veya teklif talep edebilirsiniz.",
   checkoutSoon: "Yakında",
   checkoutOpen: "Aç",
   checkoutFooter: "Online ödeme aktif olana kadar siparişinizi",
@@ -282,7 +306,8 @@ const tr: Dict = {
   decoPickerSearchPlaceholder: "Ara: kalp, yıldız, kahve...",
   decoPickerAll: "Hepsi",
   noResults: "Sonuç bulunamadı.",
-  decoPickerFooterA: "🎨 İkonlar renk, boyut ve döndürmeyle özelleştirilebilir. Kendi SVG'ni yüklemek için sol araç çubuğundan ",
+  decoPickerFooterA:
+    "🎨 İkonlar renk, boyut ve döndürmeyle özelleştirilebilir. Kendi SVG'ni yüklemek için sol araç çubuğundan ",
   decoPickerFooterB: "'yi kullan.",
   decoNotFound: "Seçili süsleme silinmiş görünüyor.",
   decoration: "Süsleme",
@@ -304,7 +329,8 @@ const tr: Dict = {
   transform: "Dönüşüm",
   horizontal: "Yatay",
   vertical: "Dikey",
-  decoPositionHint: "💡 Süslemeyi canlı önizlemede tutup sürükleyerek de konumlandırabilirsin. Renk ve boyut anlık olarak fiyat hesabına yansır.",
+  decoPositionHint:
+    "💡 Süslemeyi canlı önizlemede tutup sürükleyerek de konumlandırabilirsin. Renk ve boyut anlık olarak fiyat hesabına yansır.",
   decoShowLabel: "Süslemeyi Göster",
   layerExcludeDesc: "Üretimde dahil etmek istemiyorsan kapat.",
   editorTitle: "Tasarım Editörü",
@@ -320,7 +346,8 @@ const tr: Dict = {
   panelOpen: "Paneli Aç",
   designLinkCopied: "Tasarım linki panoya kopyalandı",
   textLayerFallback: "Metin katmanı",
-  layersEmpty: "Henüz ek katman yok. Sol araçlardan yeni metin katmanı veya süsleme ekleyebilirsin.",
+  layersEmpty:
+    "Henüz ek katman yok. Sol araçlardan yeni metin katmanı veya süsleme ekleyebilirsin.",
   layersTitle: "Katmanlar",
   layerMoveUp: "Üste taşı",
   layerMoveForward: "Bir öne",
@@ -358,9 +385,11 @@ const tr: Dict = {
   toolNewTextDefault: "Yeni Yazı",
   aiTitle: "AI ile Fikir Üret",
   comingSoon: "Yakında",
-  aiDesc: "Hayalindeki tabelayı anlat, sana stil önerileri sunalım. (Şimdilik örnek öneriler gösterilir.)",
+  aiDesc:
+    "Hayalindeki tabelayı anlat, sana stil önerileri sunalım. (Şimdilik örnek öneriler gösterilir.)",
   aiPromptLabel: "Nasıl bir tabela hayal ediyorsun?",
-  aiPromptPlaceholder: "Örn: Kafem için sıcak beyaz, minimal ve okunaklı bir neon tabela istiyorum.",
+  aiPromptPlaceholder:
+    "Örn: Kafem için sıcak beyaz, minimal ve okunaklı bir neon tabela istiyorum.",
   aiUseCase: "Kullanım alanı",
   aiStyle: "Stil",
   aiVibe: "Renk havası",
@@ -440,7 +469,6 @@ const tr: Dict = {
   profileSubtitle: "Bir sonraki siparişte otomatik doldurulur.",
   profileSave: "Kaydet",
   profileSaved: "Profil kaydedildi",
-
 };
 
 const en: Dict = {
@@ -509,7 +537,8 @@ const en: Dict = {
   adapterEU: "EU Plug (+₺120)",
   notesPlaceholder: "Your special requests...",
   dimmerDesc: "Adjust brightness and flicker mode with a remote.",
-  dimmerSimNote: "✨ Dimmer simulation: these settings can be replicated in real life with the remote.",
+  dimmerSimNote:
+    "✨ Dimmer simulation: these settings can be replicated in real life with the remote.",
   flickerDesc: "Subtle neon flicker effect",
   realSizeLabel: "real size",
   outdoorBadge: "Outdoor · IP65",
@@ -541,9 +570,11 @@ const en: Dict = {
   shippingTip: "Safe shipping across Türkiye",
   productAddedToCart: "Added to cart",
   layerLastWarning: "Your design must keep at least one visible layer.",
-  textTabHelper: "All text on the canvas lives as a layer. Click a text in the canvas to edit it, or add a new layer below.",
+  textTabHelper:
+    "All text on the canvas lives as a layer. Click a text in the canvas to edit it, or add a new layer below.",
   textTabAdd: "Add new text layer",
-  defaultStyleHint: "This style is used as the starting point for newly added text and decorations.",
+  defaultStyleHint:
+    "This style is used as the starting point for newly added text and decorations.",
   editingLayer: "Editing",
   editingLayerHint: "Click a different layer on the canvas to edit it.",
   noLayerSelectedTitle: "Select a text to edit",
@@ -565,7 +596,8 @@ const en: Dict = {
   heroTitleA: "Design your",
   heroTitleHighlight: "dream neon sign",
   heroTitleB: "yourself.",
-  heroSubtitle: "Type your text, pick a font and color, set the size — instant live preview and pricing. We always get your design approval before production.",
+  heroSubtitle:
+    "Type your text, pick a font and color, set the size — instant live preview and pricing. We always get your design approval before production.",
   heroTrustApproval: "Design approval",
   heroTrustShipping: "Türkiye-wide shipping",
   heroTrustHandmade: "100% handmade",
@@ -574,7 +606,8 @@ const en: Dict = {
 
   // Gallery
   galleryTitle: "Inspiration Gallery",
-  gallerySubtitle: "Get inspired by designs we've produced before. Customize similar designs with your own text in just a few clicks.",
+  gallerySubtitle:
+    "Get inspired by designs we've produced before. Customize similar designs with your own text in just a few clicks.",
   categoryAll: "All",
   categoryHome: "Home",
   categoryOffice: "Office",
@@ -619,38 +652,53 @@ const en: Dict = {
   faqStillUnsureTitle: "Still undecided?",
   faqStillUnsureSub: "Let's design it together. Get a free quote in just a few minutes.",
   faqQ1: "How is the price calculated?",
-  faqA1: "Price depends on text length, size, font complexity, color, backboard, and mounting options. You can see the live estimate on the /tasarla configurator.",
+  faqA1:
+    "Price depends on text length, size, font complexity, color, backboard, and mounting options. You can see the live estimate on the /tasarla configurator.",
   faqQ2: "How long does production take?",
-  faqA2: "Standard production is 7-10 business days. Rush production ships in 3-5 business days. Production starts after your design approval.",
+  faqA2:
+    "Standard production is 7-10 business days. Rush production ships in 3-5 business days. Production starts after your design approval.",
   faqQ3: "Can I use it outdoors?",
-  faqA3: "Yes. Enable the IP65 outdoor option for water and dust-resistant build. Thin/script fonts aren't recommended outdoors; thick fonts hold up better.",
+  faqA3:
+    "Yes. Enable the IP65 outdoor option for water and dust-resistant build. Thin/script fonts aren't recommended outdoors; thick fonts hold up better.",
   faqQ4: "How is it installed?",
-  faqA4: "Choose between wall-mount kit, hanging kit, or stand. Signs work as soon as plugged in — no special wiring needed.",
+  faqA4:
+    "Choose between wall-mount kit, hanging kit, or stand. Signs work as soon as plugged in — no special wiring needed.",
   faqQ5: "Do you offer a warranty?",
-  faqA5: "All products carry a 2-year warranty against manufacturing defects. Our LED neon strips last 50,000+ hours.",
+  faqA5:
+    "All products carry a 2-year warranty against manufacturing defects. Our LED neon strips last 50,000+ hours.",
   faqQ6: "Where do you ship?",
-  faqA6: "We ship across Türkiye (all 81 provinces) in protective foam packaging. Please contact us for international shipping.",
+  faqA6:
+    "We ship across Türkiye (all 81 provinces) in protective foam packaging. Please contact us for international shipping.",
   faqQ7: "How does design approval work?",
-  faqA7: "After your order or quote, we send a digital proof via WhatsApp or email before production. We revise color, size, or font changes together. No production without your approval.",
+  faqA7:
+    "After your order or quote, we send a digital proof via WhatsApp or email before production. We revise color, size, or font changes together. No production without your approval.",
   faqQ8: "Can I order a logo or custom design?",
-  faqA8: "Of course! Use the 'Upload Logo' page to share a logo, sketch, reference photo, or brand design and we'll prepare a custom quote.",
+  faqA8:
+    "Of course! Use the 'Upload Logo' page to share a logo, sketch, reference photo, or brand design and we'll prepare a custom quote.",
   faqQ9: "Which adapter does it ship with?",
   faqA9: "A Türkiye-type (220V) adapter is included by default. EU-type adapter is optional.",
   faqQ10: "Will colors look different?",
-  faqA10: "There may be slight differences between screen and actual neon light; the live preview is as close as possible. We share the real color tone at the design approval stage.",
+  faqA10:
+    "There may be slight differences between screen and actual neon light; the live preview is as close as possible. We share the real color tone at the design approval stage.",
   faqQ11: "Are returns and exchanges possible?",
-  faqA11: "All products are custom-made, so they're not eligible for return. We offer free replacement for production defects, shipping damage, or items different from the approved design.",
+  faqA11:
+    "All products are custom-made, so they're not eligible for return. We offer free replacement for production defects, shipping damage, or items different from the approved design.",
 
   // About
   aboutTitle: "Who is MudiNeon?",
-  aboutP1: "Hi! We're two sisters who started this journey in 2021 in a corner of our home. The goal was simple: combine handcraft, design love, and heart into products that add a bit of income for our family and small joys to people's living spaces.",
-  aboutP2: "Our entirely handmade collection has grown beyond our immediate circle to attract decor lovers worldwide. One morning we woke up to find our little workshop had grown into a registered brand shipping globally.",
-  aboutP3: "We've always put customer satisfaction first — because what makes a product beautiful isn't only how it looks, but the sincerity and service behind it. Every collection follows current trends with modern, original designs, while keeping our own style.",
-  aboutP4: "Every package contains a little love, a lot of work, and plenty of us. So our products aren't just decor objects — they're a small hello from us to you",
+  aboutP1:
+    "Hi! We're two sisters who started this journey in 2021 in a corner of our home. The goal was simple: combine handcraft, design love, and heart into products that add a bit of income for our family and small joys to people's living spaces.",
+  aboutP2:
+    "Our entirely handmade collection has grown beyond our immediate circle to attract decor lovers worldwide. One morning we woke up to find our little workshop had grown into a registered brand shipping globally.",
+  aboutP3:
+    "We've always put customer satisfaction first — because what makes a product beautiful isn't only how it looks, but the sincerity and service behind it. Every collection follows current trends with modern, original designs, while keeping our own style.",
+  aboutP4:
+    "Every package contains a little love, a lot of work, and plenty of us. So our products aren't just decor objects — they're a small hello from us to you",
 
   // Upload
   uploadTitle: "Upload Your Logo, Get a Quote",
-  uploadSubtitle: "Logo, sketch, reference photo, or brand design — share anything and we'll prepare a custom LED neon sign quote. We always get your digital design approval before production.",
+  uploadSubtitle:
+    "Logo, sketch, reference photo, or brand design — share anything and we'll prepare a custom LED neon sign quote. We always get your digital design approval before production.",
   uploadBadgeLogo: "Logo or sketch",
   uploadBadgePhoto: "Reference photo",
   uploadBadgeBrand: "Brand design",
@@ -668,17 +716,20 @@ const en: Dict = {
   uploadFieldDeadlinePh: "e.g. within 2 weeks",
   uploadFieldNotes: "Notes (color preference, backboard, mounting, etc.)",
   uploadSubmit: "Get a Free Quote",
-  uploadApprovalNote: "We get your digital design approval before production. Your image is used only for quoting purposes.",
+  uploadApprovalNote:
+    "We get your digital design approval before production. Your image is used only for quoting purposes.",
   uploadErrName: "Please enter your name",
   uploadErrEmail: "Enter a valid e-mail",
   uploadErrPhone: "Please enter your phone number",
   uploadErrFile: "Please attach an image / logo file",
   uploadErrSize: "File must not exceed 10MB",
-  uploadSuccess: "Request received! We'll review your image and get back to you within 1 business day.",
+  uploadSuccess:
+    "Request received! We'll review your image and get back to you within 1 business day.",
 
   // Checkout
   checkoutTitle: "Checkout",
-  checkoutSubtitle: "Online payment integration is coming soon. For now, you can order manually via WhatsApp or request a quote.",
+  checkoutSubtitle:
+    "Online payment integration is coming soon. For now, you can order manually via WhatsApp or request a quote.",
   checkoutSoon: "Soon",
   checkoutOpen: "Open",
   checkoutFooter: "Until online payment goes live, you can complete your order via the",
@@ -713,7 +764,8 @@ const en: Dict = {
   decoPickerSearchPlaceholder: "Search: heart, star, coffee...",
   decoPickerAll: "All",
   noResults: "No results found.",
-  decoPickerFooterA: "🎨 Icons can be customized with color, size, and rotation. To upload your own SVG, use ",
+  decoPickerFooterA:
+    "🎨 Icons can be customized with color, size, and rotation. To upload your own SVG, use ",
   decoPickerFooterB: " from the left toolbar.",
   decoNotFound: "The selected decoration appears to have been deleted.",
   decoration: "Decoration",
@@ -735,7 +787,8 @@ const en: Dict = {
   transform: "Transform",
   horizontal: "Horizontal",
   vertical: "Vertical",
-  decoPositionHint: "💡 You can also position the decoration by dragging it in the live preview. Color and size are reflected in the price instantly.",
+  decoPositionHint:
+    "💡 You can also position the decoration by dragging it in the live preview. Color and size are reflected in the price instantly.",
   decoShowLabel: "Show Decoration",
   layerExcludeDesc: "Turn off to exclude from production.",
   editorTitle: "Design Editor",
@@ -785,11 +838,13 @@ const en: Dict = {
   toolResetConfirm: "Reset the entire design? (You can undo this)",
   toolTextLayerAdded: "Text layer added",
   toolDesignReset: "Design reset",
-  toolAiMockupToast: "AI Mockup coming soon! You will be able to preview your design in a real environment.",
+  toolAiMockupToast:
+    "AI Mockup coming soon! You will be able to preview your design in a real environment.",
   toolNewTextDefault: "New Text",
   aiTitle: "Generate Ideas with AI",
   comingSoon: "Coming Soon",
-  aiDesc: "Describe your dream sign and we will suggest styles. (Sample suggestions shown for now.)",
+  aiDesc:
+    "Describe your dream sign and we will suggest styles. (Sample suggestions shown for now.)",
   aiPromptLabel: "What kind of sign are you dreaming of?",
   aiPromptPlaceholder: "E.g. I want a warm white, minimal, readable neon sign for my café.",
   aiUseCase: "Use case",
@@ -828,7 +883,8 @@ const en: Dict = {
   quoteErrName: "Name must be at least 2 characters",
   quoteErrEmail: "Please enter a valid email",
   quoteErrPhone: "Please enter a valid phone number",
-  quoteSuccess: "Your quote request has been received! We will get back to you as soon as possible.",
+  quoteSuccess:
+    "Your quote request has been received! We will get back to you as soon as possible.",
   submitting: "Submitting...",
   quoteSubmit: "Request Quote",
 
@@ -871,7 +927,6 @@ const en: Dict = {
   profileSubtitle: "Auto-filled at your next checkout.",
   profileSave: "Save",
   profileSaved: "Profile saved",
-
 };
 
 export const dict = { tr, en };

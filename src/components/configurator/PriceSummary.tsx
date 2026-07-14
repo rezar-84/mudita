@@ -11,6 +11,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { FONTS, COLORS, BACKBOARDS } from "@/data/options";
 import { useT } from "@/lib/i18n";
 import { usePricingOverrides } from "@/hooks/usePricing";
+import { CONTACT } from "@/lib/contact";
 
 export function PriceSummary() {
   const t = useT();
@@ -58,7 +59,7 @@ export function PriceSummary() {
       "",
       `🔗 Canlı tasarım: ${buildShareUrl()}`,
     ];
-    const url = `https://wa.me/?text=${encodeURIComponent(lines.join("\n"))}`;
+    const url = `${CONTACT.waMeBase}/${CONTACT.whatsappNumber}?text=${encodeURIComponent(lines.join("\n"))}`;
     window.open(url, "_blank");
   };
 
@@ -104,7 +105,10 @@ export function PriceSummary() {
       </div>
 
       <div className="space-y-2">
-        <Button onClick={onAddCart} className="w-full bg-gradient-neon text-white shadow-glow hover:opacity-90">
+        <Button
+          onClick={onAddCart}
+          className="w-full bg-gradient-neon text-white shadow-glow hover:opacity-90"
+        >
           <ShoppingCart className="mr-2 h-4 w-4" /> {t("ctaAddToCart")}
         </Button>
         <Button onClick={() => setQuoteOpen(true)} variant="outline" className="w-full">
@@ -119,7 +123,9 @@ export function PriceSummary() {
       </div>
 
       <p className="mt-4 rounded-lg border border-border bg-accent/30 p-3 text-xs leading-relaxed text-muted-foreground">
-        ✅ {t("approvalNoteA")} <span className="font-medium text-foreground">{t("approvalNoteHighlight")}</span>{t("approvalNoteC")}
+        ✅ {t("approvalNoteA")}{" "}
+        <span className="font-medium text-foreground">{t("approvalNoteHighlight")}</span>
+        {t("approvalNoteC")}
       </p>
 
       <QuoteDialog open={quoteOpen} onOpenChange={setQuoteOpen} price={breakdown.total} />

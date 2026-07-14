@@ -33,11 +33,15 @@ function OrdersPage() {
             <li key={o.id} className="flex items-center justify-between p-4">
               <div>
                 <div className="font-medium">#{o.id.slice(0, 8)}</div>
-                <div className="text-xs text-muted-foreground">{new Date(o.created_at).toLocaleString("tr-TR")}</div>
+                <div className="text-xs text-muted-foreground">
+                  {new Date(o.created_at).toLocaleString("tr-TR")}
+                </div>
               </div>
               <div className="text-right">
                 <div className="font-semibold">{formatTRY(o.total_try)}</div>
-                <div className="text-xs uppercase text-muted-foreground">{STATUS_LABEL[o.status] ?? o.status}</div>
+                <div className="text-xs uppercase text-muted-foreground">
+                  {STATUS_LABEL[o.status] ?? o.status}
+                </div>
               </div>
             </li>
           ))}

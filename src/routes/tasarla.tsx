@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useBlocker } from "@tanstack/react-router";
 import { DesignerProvider, useDesigner } from "@/components/configurator/DesignerContext";
 import { EditorShell } from "@/components/designer/EditorShell";
 import { FullscreenDesigner } from "@/components/configurator/FullscreenDesigner";
@@ -30,6 +30,28 @@ export const Route = createFileRoute("/tasarla")({
   component: DesignerPage,
 });
 
+function NavigationGuard() {
+  const { isDirty } = useDesigner();
+
+  useBlocker({
+    shouldBlockFn: ({ next }: any) => {
+      return isDirty && next.pathname !== "/sepet";
+    },
+  });
+
+  useEffect(() => {
+    if (!isDirty) return;
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "";
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [isDirty]);
+
+  return null;
+}
+
 function DesignerPage() {
   const [fullscreen, setFullscreen] = useState(false);
 
@@ -41,6 +63,7 @@ function DesignerPage() {
 
   return (
     <DesignerProvider>
+      <NavigationGuard />
       <div className="mx-auto w-full max-w-[1400px] overflow-x-clip px-3 py-4 pb-28 sm:px-4 md:py-6 lg:pb-6">
         <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
           <div className="min-w-0">

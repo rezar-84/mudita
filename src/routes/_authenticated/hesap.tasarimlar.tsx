@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { listMyDesigns, deleteDesign } from "@/lib/designs.functions";
 import { encodeConfig } from "@/lib/share";
+import { sanitiseConfigDecorations } from "@/lib/svgSanitize";
 import { Trash2, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 
@@ -27,13 +28,17 @@ function DesignsPage() {
       <h2 className="text-lg font-semibold">Kayıtlı Tasarımlarım</h2>
       {!data?.length ? (
         <p className="mt-6 rounded-2xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-          Henüz kayıtlı tasarımın yok. <Link to="/tasarla" className="text-neon-pink hover:underline">Tasarım oluştur</Link>.
+          Henüz kayıtlı tasarımın yok.{" "}
+          <Link to="/tasarla" className="text-neon-pink hover:underline">
+            Tasarım oluştur
+          </Link>
+          .
         </p>
       ) : (
         <ul className="mt-4 grid gap-3 sm:grid-cols-2">
           {data.map((d) => {
-            const cfg = d.config as Record<string, unknown>;
-            const share = "/tasarla?d=" + encodeConfig(cfg as never);
+            const cfg = sanitiseConfigDecorations(d.config as any);
+            const share = "/tasarla?d=" + encodeConfig(cfg);
             return (
               <li key={d.id} className="rounded-2xl border border-border bg-card p-4">
                 <div className="flex items-start justify-between gap-3">
@@ -43,7 +48,11 @@ function DesignsPage() {
                       {new Date(d.updated_at).toLocaleString("tr-TR")}
                     </div>
                   </div>
-                  <button onClick={() => remove(d.id)} className="text-muted-foreground hover:text-destructive" aria-label="Sil">
+                  <button
+                    onClick={() => remove(d.id)}
+                    className="text-muted-foreground hover:text-destructive"
+                    aria-label="Sil"
+                  >
                     <Trash2 className="h-4 w-4" />
                   </button>
                 </div>

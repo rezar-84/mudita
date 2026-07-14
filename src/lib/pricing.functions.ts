@@ -5,16 +5,18 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 
 function publicClient() {
-  return createClient<Database>(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_PUBLISHABLE_KEY!,
-    { auth: { storage: undefined, persistSession: false, autoRefreshToken: false } }
-  );
+  return createClient<Database>(process.env.SUPABASE_URL!, process.env.SUPABASE_PUBLISHABLE_KEY!, {
+    auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
+  });
 }
 
 export const getPricingConfig = createServerFn({ method: "GET" }).handler(async () => {
   const supabase = publicClient();
-  const { data, error } = await supabase.from("pricing_config").select("*").eq("id", 1).maybeSingle();
+  const { data, error } = await supabase
+    .from("pricing_config")
+    .select("*")
+    .eq("id", 1)
+    .maybeSingle();
   if (error) throw new Error(error.message);
   return data;
 });

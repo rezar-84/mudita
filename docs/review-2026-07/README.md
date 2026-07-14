@@ -6,9 +6,9 @@ agent (or developer) can pick up any item and fix it without re-deriving context
 ## Documents
 
 - **[findings.md](./findings.md)** — every issue, with severity, evidence (file:line),
-  why it matters, and the fix direction. Read this to understand *what* is wrong.
+  why it matters, and the fix direction. Read this to understand _what_ is wrong.
 - **[remediation-plan.md](./remediation-plan.md)** — ordered, agent-ready tasks with
-  concrete steps and acceptance criteria. Read this to *do* the work.
+  concrete steps and acceptance criteria. Read this to _do_ the work.
 
 ## How to use this with an agent
 
@@ -20,12 +20,12 @@ agent (or developer) can pick up any item and fix it without re-deriving context
 
 ## Severity legend
 
-| Level | Meaning |
-|-------|---------|
+| Level       | Meaning                                                            |
+| ----------- | ------------------------------------------------------------------ |
 | 🔴 Critical | Security hole or a broken core funnel. Fix before any real launch. |
-| 🟠 High | Real user/business impact; fix soon. |
-| 🟡 Medium | Quality/robustness; schedule it. |
-| 🟢 Low | Polish / nice-to-have. |
+| 🟠 High     | Real user/business impact; fix soon.                               |
+| 🟡 Medium   | Quality/robustness; schedule it.                                   |
+| 🟢 Low      | Polish / nice-to-have.                                             |
 
 ## Snapshot of the biggest risks
 

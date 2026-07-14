@@ -11,7 +11,7 @@ Current Wrangler settings:
   "name": "tanstack-start-app",
   "compatibility_date": "2025-09-24",
   "compatibility_flags": ["nodejs_compat"],
-  "main": "@tanstack/react-start/server-entry"
+  "main": "@tanstack/react-start/server-entry",
 }
 ```
 
@@ -54,4 +54,3 @@ When providers are implemented, keep this split:
 - Test share links with normal text designs and with uploaded decoration designs.
 - Verify uploaded SVGs are sanitized and oversized files are rejected.
 - Verify payment buttons cannot create real orders until server integrations are ready.
-

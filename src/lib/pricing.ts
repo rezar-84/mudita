@@ -41,7 +41,10 @@ export function getDimensions(cfg: NeonDesignConfig) {
   return { width: s.width, height: s.height };
 }
 
-export function calculatePrice(cfg: NeonDesignConfig, overrides?: PricingOverrides | null): PriceBreakdown {
+export function calculatePrice(
+  cfg: NeonDesignConfig,
+  overrides?: PricingOverrides | null,
+): PriceBreakdown {
   const o = overrides ?? {};
   const BASE_RATE_PER_CM2 = o.base_rate_per_cm2 ?? DEFAULTS.BASE_RATE_PER_CM2;
   const OUTDOOR_MULT = o.outdoor_mult ?? DEFAULTS.OUTDOOR_MULT;
@@ -121,9 +124,14 @@ export function calculatePrice(cfg: NeonDesignConfig, overrides?: PricingOverrid
     amount: mounting.price,
   });
 
-  if (cfg.dimmer) items.push({ label: "Uzaktan kumandalı dimmer", labelEn: "Remote dimmer", amount: 300 });
+  if (cfg.dimmer)
+    items.push({ label: "Uzaktan kumandalı dimmer", labelEn: "Remote dimmer", amount: 300 });
   if (ADAPTER_PRICE[cfg.adapter] > 0)
-    items.push({ label: "AB tipi adaptör", labelEn: "EU plug adapter", amount: ADAPTER_PRICE[cfg.adapter] });
+    items.push({
+      label: "AB tipi adaptör",
+      labelEn: "EU plug adapter",
+      amount: ADAPTER_PRICE[cfg.adapter],
+    });
 
   // Decoration layers
   const decorations = cfg.decorations ?? [];
@@ -135,16 +143,16 @@ export function calculatePrice(cfg: NeonDesignConfig, overrides?: PricingOverrid
       const ratio = Math.max(5, Math.min(40, d.sizePct)) / 100;
       const cm2 = area * ratio * ratio;
       const sizeAdd = cm2 * BASE_RATE_PER_CM2 * 0.6;
-      
+
       const isSport = d.presetId?.startsWith("emblem-");
       const renderMode = d.renderMode || (isSport ? "hybrid" : "glow-only");
-      
+
       let baseCost = d.source === "preset" ? DECORATION_PRESET_BASE : DECORATION_UPLOAD_BASE;
       let sizeCost = sizeAdd;
 
       const hybridFee = o.adapter_prices?.decoration_hybrid_fee ?? 150;
       const printOnlyMult = o.adapter_prices?.decoration_print_only_mult ?? 0.4;
-      
+
       if (renderMode === "print-only") {
         // No neon bending, print only
         baseCost = baseCost * printOnlyMult;
@@ -161,16 +169,18 @@ export function calculatePrice(cfg: NeonDesignConfig, overrides?: PricingOverrid
       }
       total += baseCost + sizeCost;
     }
-    const label = presetCount && uploadCount
-      ? `Süslemeler (${presetCount}+${uploadCount} SVG)`
-      : presetCount
-        ? `Süslemeler (${presetCount} adet)`
-        : `SVG süsleme (${uploadCount} adet)`;
-    const labelEn = presetCount && uploadCount
-      ? `Decorations (${presetCount}+${uploadCount} SVG)`
-      : presetCount
-        ? `Decorations (${presetCount})`
-        : `SVG decoration (${uploadCount})`;
+    const label =
+      presetCount && uploadCount
+        ? `Süslemeler (${presetCount}+${uploadCount} SVG)`
+        : presetCount
+          ? `Süslemeler (${presetCount} adet)`
+          : `SVG süsleme (${uploadCount} adet)`;
+    const labelEn =
+      presetCount && uploadCount
+        ? `Decorations (${presetCount}+${uploadCount} SVG)`
+        : presetCount
+          ? `Decorations (${presetCount})`
+          : `SVG decoration (${uploadCount})`;
     items.push({ label, labelEn, amount: Math.round(total) });
   }
 

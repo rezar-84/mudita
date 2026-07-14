@@ -84,7 +84,7 @@ function CartPage() {
       setCity((v) => v || (a.city ?? ""));
       setDistrict((v) => v || (a.district ?? ""));
       setPostal((v) => v || (a.postal_code ?? ""));
-      setCountry((v) => v && v !== "TR" ? v : (a.country ?? "TR"));
+      setCountry((v) => (v && v !== "TR" ? v : (a.country ?? "TR")));
       setTaxId((v) => v || (a.tax_id ?? ""));
     })();
   }, [user]);
@@ -184,10 +184,15 @@ function CartPage() {
           {items.map((it) => {
             const primary = (it.config.textLayers ?? []).find((l) => !l.hidden && l.text.trim());
             const primaryText = primary?.text ?? it.config.text ?? "";
-            const font = FONTS.find((f) => f.id === (primary?.fontId ?? it.config.fontId))!;
-            const color = COLORS.find((c) => c.id === (primary?.colorId ?? it.config.colorId))!;
+            const font =
+              FONTS.find((f) => f.id === (primary?.fontId ?? it.config.fontId)) ?? FONTS[0];
+            const color =
+              COLORS.find((c) => c.id === (primary?.colorId ?? it.config.colorId)) ?? COLORS[0];
             return (
-              <li key={it.id} className="flex items-center gap-4 rounded-2xl border border-border bg-card p-4">
+              <li
+                key={it.id}
+                className="flex items-center gap-4 rounded-2xl border border-border bg-card p-4"
+              >
                 <div className="flex h-20 w-20 items-center justify-center rounded-lg bg-preset-dark">
                   <span
                     className="neon-text text-lg"
@@ -256,16 +261,32 @@ function CartPage() {
                 </h4>
                 <div className="space-y-2">
                   <Label htmlFor="oname">{t("billFullName")} *</Label>
-                  <Input id="oname" value={name} onChange={(e) => setName(e.target.value)} required />
+                  <Input
+                    id="oname"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                  />
                 </div>
                 <div className="grid gap-2 sm:grid-cols-2">
                   <div className="space-y-2">
                     <Label htmlFor="oemail">{t("billEmail")} *</Label>
-                    <Input id="oemail" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                    <Input
+                      id="oemail"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="ophone">{t("billPhone")} *</Label>
-                    <Input id="ophone" value={phone} onChange={(e) => setPhone(e.target.value)} required />
+                    <Input
+                      id="ophone"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      required
+                    />
                   </div>
                 </div>
               </section>
@@ -276,7 +297,12 @@ function CartPage() {
                 </h4>
                 <div className="space-y-2">
                   <Label htmlFor="oaddr1">{t("billAddressLine1")} *</Label>
-                  <Input id="oaddr1" value={addr1} onChange={(e) => setAddr1(e.target.value)} required />
+                  <Input
+                    id="oaddr1"
+                    value={addr1}
+                    onChange={(e) => setAddr1(e.target.value)}
+                    required
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="oaddr2">{t("billAddressLine2")}</Label>
@@ -285,19 +311,36 @@ function CartPage() {
                 <div className="grid gap-2 sm:grid-cols-2">
                   <div className="space-y-2">
                     <Label htmlFor="ocity">{t("billCity")} *</Label>
-                    <Input id="ocity" value={city} onChange={(e) => setCity(e.target.value)} required />
+                    <Input
+                      id="ocity"
+                      value={city}
+                      onChange={(e) => setCity(e.target.value)}
+                      required
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="odist">{t("billDistrict")}</Label>
-                    <Input id="odist" value={district} onChange={(e) => setDistrict(e.target.value)} />
+                    <Input
+                      id="odist"
+                      value={district}
+                      onChange={(e) => setDistrict(e.target.value)}
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="opostal">{t("billPostalCode")}</Label>
-                    <Input id="opostal" value={postal} onChange={(e) => setPostal(e.target.value)} />
+                    <Input
+                      id="opostal"
+                      value={postal}
+                      onChange={(e) => setPostal(e.target.value)}
+                    />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="ocountry">{t("billCountry")}</Label>
-                    <Input id="ocountry" value={country} onChange={(e) => setCountry(e.target.value)} />
+                    <Input
+                      id="ocountry"
+                      value={country}
+                      onChange={(e) => setCountry(e.target.value)}
+                    />
                   </div>
                 </div>
               </section>

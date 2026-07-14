@@ -32,7 +32,7 @@ function simplifyPath(points: Pt[], tolerance: number): Pt[] {
 function getSquareSegmentDistance(
   p: { x: number; y: number },
   p1: { x: number; y: number },
-  p2: { x: number; y: number }
+  p2: { x: number; y: number },
 ) {
   let x = p1.x;
   let y = p1.y;
@@ -75,7 +75,7 @@ function getSvgPathFromPoints(points: Array<{ x: number; y: number }>, smoothing
     current: { x: number; y: number },
     previous: { x: number; y: number },
     next: { x: number; y: number },
-    reverse = false
+    reverse = false,
   ) => {
     const p = previous || current;
     const n = next || current;
@@ -131,7 +131,7 @@ export function DrawingCanvas() {
 
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    
+
     // Add point only if it moved slightly to avoid duplicate points
     const last = points[points.length - 1];
     if (!last || Math.hypot(x - last.x, y - last.y) > 2) {
@@ -265,9 +265,7 @@ export function DrawingCanvas() {
 
       {/* Floating hints & controls */}
       <div className="absolute top-14 left-1/2 z-50 flex -translate-x-1/2 items-center gap-3 rounded-full border border-white/10 bg-black/85 px-4 py-2 text-xs text-white backdrop-blur shadow-lg">
-        <span className="font-medium">
-          Serbest Çizim Modu
-        </span>
+        <span className="font-medium">Serbest Çizim Modu</span>
         <div className="h-4 w-px bg-white/20" />
         <div className="flex items-center gap-2">
           <span>Çizgi Kalınlığı:</span>
@@ -276,11 +274,21 @@ export function DrawingCanvas() {
             onChange={(e) => update({ drawStrokeWidth: parseInt(e.target.value) })}
             className="rounded bg-white/10 px-1 py-0.5 text-xs text-white border border-white/10 outline-none cursor-pointer"
           >
-            <option value="2" className="bg-black text-white">2px (Çok İnce)</option>
-            <option value="4" className="bg-black text-white">4px (İnce)</option>
-            <option value="6" className="bg-black text-white">6px (Orta)</option>
-            <option value="10" className="bg-black text-white">10px (Kalın)</option>
-            <option value="14" className="bg-black text-white">14px (Çok Kalın)</option>
+            <option value="2" className="bg-black text-white">
+              2px (Çok İnce)
+            </option>
+            <option value="4" className="bg-black text-white">
+              4px (İnce)
+            </option>
+            <option value="6" className="bg-black text-white">
+              6px (Orta)
+            </option>
+            <option value="10" className="bg-black text-white">
+              10px (Kalın)
+            </option>
+            <option value="14" className="bg-black text-white">
+              14px (Çok Kalın)
+            </option>
           </select>
         </div>
         <div className="h-4 w-px bg-white/20" />

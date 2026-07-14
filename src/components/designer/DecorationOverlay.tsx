@@ -99,11 +99,13 @@ export function DecorationOverlay() {
       {decorations.map((d) => {
         if (d.hidden) return null;
         const color = COLORS.find((c) => c.id === d.colorId) ?? COLORS[0];
-        
+
         // Import SPORT_EMBLEMS inside or use the static map
-        const preset = d.source === "preset"
-          ? (DECORATIONS.find((p) => p.id === d.presetId) || SPORT_EMBLEMS.find((p) => p.id === d.presetId))
-          : null;
+        const preset =
+          d.source === "preset"
+            ? DECORATIONS.find((p) => p.id === d.presetId) ||
+              SPORT_EMBLEMS.find((p) => p.id === d.presetId)
+            : null;
 
         const isSelected = selection.kind === "decoration" && selection.id === d.id;
         const isMulti = selection.kind === "multi" && selection.ids.includes(d.id);
@@ -181,7 +183,8 @@ export function DecorationOverlay() {
                   style={glowStyle}
                   className={cn(
                     "absolute inset-0 h-full w-full [&_svg]:h-full [&_svg]:w-full",
-                    renderMode === "hybrid" && "[&_svg_path]:!fill-none [&_svg_path]:!stroke-current [&_svg_path]:!stroke-[1.6px] [&_svg_rect]:!fill-none [&_svg_rect]:!stroke-current [&_svg_rect]:!stroke-[1.6px] [&_svg_circle]:!fill-none [&_svg_circle]:!stroke-current [&_svg_circle]:!stroke-[1.6px] [&_svg_polygon]:!fill-none [&_svg_polygon]:!stroke-current [&_svg_polygon]:!stroke-[1.6px] [&_svg_polyline]:!fill-none [&_svg_polyline]:!stroke-current [&_svg_polyline]:!stroke-[1.6px] [&_svg_line]:!fill-none [&_svg_line]:!stroke-current [&_svg_line]:!stroke-[1.6px] [&_svg_ellipse]:!fill-none [&_svg_ellipse]:!stroke-current [&_svg_ellipse]:!stroke-[1.6px]"
+                    renderMode === "hybrid" &&
+                      "[&_svg_path]:!fill-none [&_svg_path]:!stroke-current [&_svg_path]:!stroke-[1.6px] [&_svg_rect]:!fill-none [&_svg_rect]:!stroke-current [&_svg_rect]:!stroke-[1.6px] [&_svg_circle]:!fill-none [&_svg_circle]:!stroke-current [&_svg_circle]:!stroke-[1.6px] [&_svg_polygon]:!fill-none [&_svg_polygon]:!stroke-current [&_svg_polygon]:!stroke-[1.6px] [&_svg_polyline]:!fill-none [&_svg_polyline]:!stroke-current [&_svg_polyline]:!stroke-[1.6px] [&_svg_line]:!fill-none [&_svg_line]:!stroke-current [&_svg_line]:!stroke-[1.6px] [&_svg_ellipse]:!fill-none [&_svg_ellipse]:!stroke-current [&_svg_ellipse]:!stroke-[1.6px]",
                   )}
                 >
                   {preset && !preset.svgMarkup ? (
@@ -202,7 +205,10 @@ export function DecorationOverlay() {
                       className="h-full w-full [&_svg]:h-full [&_svg]:w-full"
                       dangerouslySetInnerHTML={{
                         __html: d.strokeWidth
-                          ? svgData.replace(/stroke-width="[^"]*"/g, `stroke-width="${d.strokeWidth}"`)
+                          ? svgData.replace(
+                              /stroke-width="[^"]*"/g,
+                              `stroke-width="${d.strokeWidth}"`,
+                            )
                           : svgData,
                       }}
                     />

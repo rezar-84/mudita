@@ -9,24 +9,28 @@ import { formatTRY } from "@/lib/pricing";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { z } from "zod";
+import { CONTACT } from "@/lib/contact";
 
 export const Route = createFileRoute("/odeme")({
-  validateSearch: (search: Record<string, unknown>) => {
+  validateSearch: (search: Record<string, unknown>): { orderId?: string; token?: string } => {
     return {
       orderId: (search.orderId as string) || undefined,
       token: (search.token as string) || undefined,
     };
   },
   head: () => ({
-    meta: [
-      { title: "Ödeme · MudiNeon" },
-      { name: "description", content: "Ödeme sayfanız." },
-    ],
+    meta: [{ title: "Ödeme · MudiNeon" }, { name: "description", content: "Ödeme sayfanız." }],
   }),
   component: CheckoutPage,
 });
 
-type Method = { name: string; descKey: TKey; icon: typeof CreditCard; soon: boolean; nameKey?: TKey };
+type Method = {
+  name: string;
+  descKey: TKey;
+  icon: typeof CreditCard;
+  soon: boolean;
+  nameKey?: TKey;
+};
 
 const METHODS: Method[] = [
   { name: "iyzico", descKey: "payIyzicoDesc", icon: CreditCard, soon: false },
@@ -34,7 +38,13 @@ const METHODS: Method[] = [
   { name: "Param", descKey: "payParamDesc", icon: CreditCard, soon: true },
   { name: "Stripe", descKey: "payStripeDesc", icon: CreditCard, soon: true },
   { name: "", nameKey: "payBankName", descKey: "payBankDesc", icon: Building2, soon: true },
-  { name: "", nameKey: "payWhatsappName", descKey: "payWhatsappDesc", icon: MessageCircle, soon: false },
+  {
+    name: "",
+    nameKey: "payWhatsappName",
+    descKey: "payWhatsappDesc",
+    icon: MessageCircle,
+    soon: false,
+  },
 ];
 
 function CheckoutPage() {
@@ -113,7 +123,7 @@ function CheckoutPage() {
     setBusy(true);
     const contact = orderInfo.order.contact || {};
     try {
-      const res = await initIyzico({
+      const res = (await initIyzico({
         data: {
           orderId: orderInfo.order.id,
           totalPrice: orderInfo.order.total_try,
@@ -136,7 +146,7 @@ function CheckoutPage() {
             price: it.price_try,
           })),
         },
-      });
+      })) as any;
       setIyzicoFormContent(res.checkoutFormContent);
     } catch (err: any) {
       toast.error(err.message || "iyzico ödeme formu başlatılamadı.");
@@ -150,7 +160,9 @@ function CheckoutPage() {
       <div className="mx-auto max-w-md px-4 py-24 text-center">
         <Loader2 className="mx-auto h-10 w-10 animate-spin text-neon-pink" />
         <h1 className="mt-4 text-xl font-bold">Ödemeniz Doğrulanıyor</h1>
-        <p className="mt-2 text-sm text-muted-foreground">Lütfen pencereyi kapatmayın, işleminiz tamamlanıyor...</p>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Lütfen pencereyi kapatmayın, işleminiz tamamlanıyor...
+        </p>
       </div>
     );
   }
@@ -168,7 +180,10 @@ function CheckoutPage() {
       <div className="mx-auto max-w-md px-4 py-20 text-center">
         <h1 className="text-2xl font-bold">Sipariş Bulunamadı</h1>
         <p className="mt-2 text-muted-foreground">Lütfen sepet sayfasından tekrar deneyin.</p>
-        <Link to="/sepet" className="mt-6 inline-block rounded-full bg-gradient-neon px-5 py-2.5 text-xs font-semibold text-white">
+        <Link
+          to="/sepet"
+          className="mt-6 inline-block rounded-full bg-gradient-neon px-5 py-2.5 text-xs font-semibold text-white"
+        >
           Sepete Dön
         </Link>
       </div>
@@ -189,7 +204,9 @@ function CheckoutPage() {
         </div>
         <div className="mt-1.5 flex justify-between text-xs text-muted-foreground">
           <span>Toplam Tutar</span>
-          <span className="font-bold text-foreground text-sm">{formatTRY(orderInfo.order.total_try)}</span>
+          <span className="font-bold text-foreground text-sm">
+            {formatTRY(orderInfo.order.total_try)}
+          </span>
         </div>
       </div>
 
@@ -203,7 +220,9 @@ function CheckoutPage() {
             <li
               key={m.nameKey ?? m.name}
               className={`flex items-center gap-4 rounded-2xl border p-4 ${
-                m.soon ? "border-border bg-card opacity-60" : "border-border bg-card hover:bg-accent"
+                m.soon
+                  ? "border-border bg-card opacity-60"
+                  : "border-border bg-card hover:bg-accent"
               }`}
             >
               <m.icon className="h-5 w-5 text-neon-pink" />
@@ -212,7 +231,9 @@ function CheckoutPage() {
                 <div className="text-sm text-muted-foreground">{t(m.descKey)}</div>
               </div>
               {m.soon ? (
-                <span className="rounded-full bg-secondary px-3 py-1 text-xs">{t("checkoutSoon")}</span>
+                <span className="rounded-full bg-secondary px-3 py-1 text-xs">
+                  {t("checkoutSoon")}
+                </span>
               ) : m.name === "iyzico" ? (
                 <Button
                   onClick={handleIyzicoCheckout}
@@ -223,7 +244,7 @@ function CheckoutPage() {
                 </Button>
               ) : (
                 <a
-                  href={`https://wa.me/?text=Merhaba%2C+siparis+numaram%3A+${orderInfo.order.id}`}
+                  href={`${CONTACT.waMeBase}/${CONTACT.whatsappNumber}?text=Merhaba%2C+siparis+numaram%3A+${orderInfo.order.id}`}
                   target="_blank"
                   rel="noreferrer"
                   className="rounded-full bg-gradient-neon px-4 py-2 text-xs font-semibold text-white"
@@ -238,7 +259,9 @@ function CheckoutPage() {
 
       <div className="mt-10 rounded-2xl border border-border bg-secondary/40 p-5 text-sm text-muted-foreground">
         {t("checkoutFooter")}{" "}
-        <Link to="/iletisim" className="font-medium text-foreground underline">{t("checkoutFooterLink")}</Link>{" "}
+        <Link to="/iletisim" className="font-medium text-foreground underline">
+          {t("checkoutFooterLink")}
+        </Link>{" "}
         {t("checkoutFooterOr")}
       </div>
     </div>

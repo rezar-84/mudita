@@ -14,7 +14,13 @@ const SAMPLE_SUGGESTIONS = [
 
 const USE_CASES = ["Ev / Salon", "Bebek Odası", "Düğün & Nişan", "Kafe", "Mağaza", "Ofis"];
 const STYLES = ["Minimal", "Retro", "El Yazısı", "Bold / Blok", "Zarif"];
-const VIBES = ["Sıcak Beyaz", "Pembe / Romantik", "Mavi / Serin", "Çok Renkli (RGB)", "Sarı / Enerjik"];
+const VIBES = [
+  "Sıcak Beyaz",
+  "Pembe / Romantik",
+  "Mavi / Serin",
+  "Çok Renkli (RGB)",
+  "Sarı / Enerjik",
+];
 
 export function AiIdeaPanel() {
   const t = useT();
@@ -50,7 +56,12 @@ export function AiIdeaPanel() {
       </div>
 
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
-        <SelectChips label={t("aiUseCase")} options={USE_CASES} value={useCase} onChange={setUseCase} />
+        <SelectChips
+          label={t("aiUseCase")}
+          options={USE_CASES}
+          value={useCase}
+          onChange={setUseCase}
+        />
         <SelectChips label={t("aiStyle")} options={STYLES} value={style} onChange={setStyle} />
         <SelectChips label={t("aiVibe")} options={VIBES} value={vibe} onChange={setVibe} />
       </div>
@@ -98,7 +109,9 @@ function SelectChips({
         className="w-full rounded-md border border-border bg-background px-2 py-1.5 text-xs"
       >
         {options.map((o) => (
-          <option key={o} value={o}>{o}</option>
+          <option key={o} value={o}>
+            {o}
+          </option>
         ))}
       </select>
     </div>

@@ -22,8 +22,12 @@ export function SelectionHandles({
   onRotate: (nextDeg: number) => void;
 }) {
   const t = useT();
-  const startRef = useRef<{ cx: number; cy: number; baseDist: number; baseSize: number } | null>(null);
-  const rotStartRef = useRef<{ cx: number; cy: number; baseAng: number; baseRot: number } | null>(null);
+  const startRef = useRef<{ cx: number; cy: number; baseDist: number; baseSize: number } | null>(
+    null,
+  );
+  const rotStartRef = useRef<{ cx: number; cy: number; baseAng: number; baseRot: number } | null>(
+    null,
+  );
 
   function layerCentre() {
     const rect = canvasRef.current?.getBoundingClientRect();

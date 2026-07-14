@@ -1,13 +1,43 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Sparkles, Truck, ShieldCheck, Pencil, FileCheck2, Factory, PackageCheck, Heart, Home, Baby, GlassWater, Store, Scissors, Gamepad2, Briefcase, Plug, Package, Settings2, Palette, Wifi, MessageCircle } from "lucide-react";
+import {
+  Sparkles,
+  Truck,
+  ShieldCheck,
+  Pencil,
+  FileCheck2,
+  Factory,
+  PackageCheck,
+  Heart,
+  Home,
+  Baby,
+  GlassWater,
+  Store,
+  Scissors,
+  Gamepad2,
+  Briefcase,
+  Plug,
+  Package,
+  Settings2,
+  Palette,
+  Wifi,
+  MessageCircle,
+} from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "MudiNeon · Kişiye Özel LED Neon Tabela" },
-      { name: "description", content: "Kişiye özel LED neon tabelanı kendin tasarla, anında fiyat gör. Tasarım onayıyla üretim, Türkiye geneli güvenli kargo." },
+      {
+        name: "description",
+        content:
+          "Kişiye özel LED neon tabelanı kendin tasarla, anında fiyat gör. Tasarım onayıyla üretim, Türkiye geneli güvenli kargo.",
+      },
       { property: "og:title", content: "MudiNeon · Kişiye Özel LED Neon Tabela" },
-      { property: "og:description", content: "Yazını gir, rengini ve ölçünü seç, neon tabelanı tasarla. Üretime başlamadan tasarım onayı." },
+      {
+        property: "og:description",
+        content:
+          "Yazını gir, rengini ve ölçünü seç, neon tabelanı tasarla. Üretime başlamadan tasarım onayı.",
+      },
     ],
   }),
   component: HomePage,
@@ -39,10 +69,30 @@ const BENEFITS = [
 ];
 
 const STEPS = [
-  { icon: Pencil, n: "1", t: "Tasarla", d: "Yazını yaz, fontunu ve rengini seç, ölçünü ayarla. Canlı önizleme ile sonucu gör." },
-  { icon: FileCheck2, n: "2", t: "Teklif al veya sepete ekle", d: "Anında fiyatı gör. İstersen ücretsiz teklif al, istersen direkt sepete ekle." },
-  { icon: ShieldCheck, n: "3", t: "Tasarım onayı ver", d: "Üretime başlamadan önce sana dijital ön görseli gönderiyoruz." },
-  { icon: Factory, n: "4", t: "Üretim ve kargo", d: "Onayın sonrası el emeğiyle üretiyor, özenle paketleyip kapına gönderiyoruz." },
+  {
+    icon: Pencil,
+    n: "1",
+    t: "Tasarla",
+    d: "Yazını yaz, fontunu ve rengini seç, ölçünü ayarla. Canlı önizleme ile sonucu gör.",
+  },
+  {
+    icon: FileCheck2,
+    n: "2",
+    t: "Teklif al veya sepete ekle",
+    d: "Anında fiyatı gör. İstersen ücretsiz teklif al, istersen direkt sepete ekle.",
+  },
+  {
+    icon: ShieldCheck,
+    n: "3",
+    t: "Tasarım onayı ver",
+    d: "Üretime başlamadan önce sana dijital ön görseli gönderiyoruz.",
+  },
+  {
+    icon: Factory,
+    n: "4",
+    t: "Üretim ve kargo",
+    d: "Onayın sonrası el emeğiyle üretiyor, özenle paketleyip kapına gönderiyoruz.",
+  },
 ];
 
 function HomePage() {
@@ -54,11 +104,23 @@ function HomePage() {
 
         {/* Animated neon glow orbs — lighter blur on mobile */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
-          <div className="hero-orb absolute -top-32 -left-20 h-72 w-72 rounded-full blur-2xl md:h-[28rem] md:w-[28rem] md:blur-3xl animate-hero-orb-1" style={{ background: "radial-gradient(circle, rgba(255,62,181,0.45), transparent 60%)" }} />
-          <div className="hero-orb absolute top-1/3 -right-24 h-80 w-80 rounded-full blur-2xl md:h-[32rem] md:w-[32rem] md:blur-3xl animate-hero-orb-2" style={{ background: "radial-gradient(circle, rgba(30,144,255,0.45), transparent 60%)" }} />
-          <div className="hero-orb absolute -bottom-24 left-1/3 hidden h-[26rem] w-[26rem] rounded-full blur-3xl md:block animate-hero-orb-3" style={{ background: "radial-gradient(circle, rgba(0,217,107,0.35), transparent 60%)" }} />
+          <div
+            className="hero-orb absolute -top-32 -left-20 h-72 w-72 rounded-full blur-2xl md:h-[28rem] md:w-[28rem] md:blur-3xl animate-hero-orb-1"
+            style={{
+              background: "radial-gradient(circle, rgba(255,62,181,0.45), transparent 60%)",
+            }}
+          />
+          <div
+            className="hero-orb absolute top-1/3 -right-24 h-80 w-80 rounded-full blur-2xl md:h-[32rem] md:w-[32rem] md:blur-3xl animate-hero-orb-2"
+            style={{
+              background: "radial-gradient(circle, rgba(30,144,255,0.45), transparent 60%)",
+            }}
+          />
+          <div
+            className="hero-orb absolute -bottom-24 left-1/3 hidden h-[26rem] w-[26rem] rounded-full blur-3xl md:block animate-hero-orb-3"
+            style={{ background: "radial-gradient(circle, rgba(0,217,107,0.35), transparent 60%)" }}
+          />
         </div>
-
 
         {/* Twinkling sparkle dots — fewer on mobile */}
         <div className="pointer-events-none absolute inset-0" aria-hidden>
@@ -84,7 +146,6 @@ function HomePage() {
           ))}
         </div>
 
-
         <div className="relative mx-auto max-w-7xl px-4 py-16 md:py-24 lg:py-28">
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
             <div>
@@ -92,13 +153,12 @@ function HomePage() {
                 <Sparkles className="h-3.5 w-3.5" /> El emeği · Türkiye'den
               </span>
               <h1 className="mt-4 text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl">
-                Hayalindeki{" "}
-                <span className="text-gradient-neon">neon tabelayı</span>{" "}
-                kendin tasarla.
+                Hayalindeki <span className="text-gradient-neon">neon tabelayı</span> kendin
+                tasarla.
               </h1>
               <p className="mt-5 max-w-lg text-base text-white/70 sm:text-lg">
-                Yazını yaz, fontunu ve rengini seç, ölçüyü ayarla — anında canlı önizleme ve TRY fiyat.
-                Üretime başlamadan önce tasarım onayını alıyoruz.
+                Yazını yaz, fontunu ve rengini seç, ölçüyü ayarla — anında canlı önizleme ve TRY
+                fiyat. Üretime başlamadan önce tasarım onayını alıyoruz.
               </p>
 
               <div className="mt-8 flex flex-wrap gap-3">
@@ -117,9 +177,15 @@ function HomePage() {
               </div>
 
               <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-white/60">
-                <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5" /> Tasarım onayı</span>
-                <span className="inline-flex items-center gap-1.5"><Truck className="h-3.5 w-3.5" /> Türkiye geneli kargo</span>
-                <span className="inline-flex items-center gap-1.5"><Heart className="h-3.5 w-3.5" /> %100 el emeği</span>
+                <span className="inline-flex items-center gap-1.5">
+                  <ShieldCheck className="h-3.5 w-3.5" /> Tasarım onayı
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <Truck className="h-3.5 w-3.5" /> Türkiye geneli kargo
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <Heart className="h-3.5 w-3.5" /> %100 el emeği
+                </span>
               </div>
             </div>
 
@@ -148,7 +214,6 @@ function HomePage() {
                   >
                     {s.text}
                   </span>
-
                 </div>
               ))}
             </div>
@@ -177,7 +242,8 @@ function HomePage() {
           <div className="text-center">
             <h2 className="text-3xl font-bold sm:text-4xl">Nasıl Çalışır?</h2>
             <p className="mx-auto mt-2 max-w-xl text-muted-foreground">
-              Siparişten teslimata kadar her adım net ve şeffaf. Sürpriz yok, tasarım onayın olmadan üretim yok.
+              Siparişten teslimata kadar her adım net ve şeffaf. Sürpriz yok, tasarım onayın olmadan
+              üretim yok.
             </p>
           </div>
 
@@ -232,7 +298,10 @@ function HomePage() {
             { icon: Gamepad2, t: "Oyun Odası" },
             { icon: Briefcase, t: "Ofis & Stüdyo" },
           ].map((u) => (
-            <div key={u.t} className="flex w-40 shrink-0 flex-col items-center gap-2 rounded-2xl border border-border bg-card p-4 text-center shadow-soft">
+            <div
+              key={u.t}
+              className="flex w-40 shrink-0 flex-col items-center gap-2 rounded-2xl border border-border bg-card p-4 text-center shadow-soft"
+            >
               <div className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-neon text-white">
                 <u.icon className="h-5 w-5" />
               </div>
@@ -262,7 +331,10 @@ function HomePage() {
               { icon: Package, t: "Güvenli paketleme" },
               { icon: Truck, t: "Türkiye geneli kargo" },
             ].map((i) => (
-              <div key={i.t} className="flex w-56 shrink-0 items-start gap-3 rounded-2xl bg-card p-4 shadow-soft">
+              <div
+                key={i.t}
+                className="flex w-56 shrink-0 items-start gap-3 rounded-2xl bg-card p-4 shadow-soft"
+              >
                 <div className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-neon text-white">
                   <i.icon className="h-4 w-4" />
                 </div>
@@ -283,7 +355,10 @@ function HomePage() {
             { icon: Sparkles, t: "Güvenli LED Teknolojisi" },
             { icon: MessageCircle, t: "WhatsApp ile Hızlı Teklif" },
           ].map((b) => (
-            <div key={b.t} className="flex items-center gap-2 rounded-xl border border-border bg-card p-3 text-xs font-medium shadow-soft">
+            <div
+              key={b.t}
+              className="flex items-center gap-2 rounded-xl border border-border bg-card p-3 text-xs font-medium shadow-soft"
+            >
               <b.icon className="h-4 w-4 shrink-0 text-foreground/80" />
               <span>{b.t}</span>
             </div>
@@ -314,7 +389,10 @@ function HomePage() {
             ))}
           </div>
           <div className="mt-8 text-center">
-            <Link to="/tasarla" className="inline-block rounded-full bg-gradient-neon px-6 py-3 text-sm font-semibold text-white shadow-glow">
+            <Link
+              to="/tasarla"
+              className="inline-block rounded-full bg-gradient-neon px-6 py-3 text-sm font-semibold text-white shadow-glow"
+            >
               Ölçünü Birlikte Belirleyelim
             </Link>
           </div>
@@ -337,4 +415,3 @@ function HomePage() {
     </>
   );
 }
-

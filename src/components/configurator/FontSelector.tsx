@@ -27,9 +27,10 @@ export function FontSelector({
   const selectedId = value ?? config.fontId;
   const setSelected = onChange ?? ((id: string) => update({ fontId: id }));
 
-  const grouped = FONT_CATEGORY_ORDER
-    .map((cat) => ({ cat, fonts: FONTS.filter((f) => f.category === cat) }))
-    .filter((g) => g.fonts.length > 0);
+  const grouped = FONT_CATEGORY_ORDER.map((cat) => ({
+    cat,
+    fonts: FONTS.filter((f) => f.category === cat),
+  })).filter((g) => g.fonts.length > 0);
 
   return (
     <div className="space-y-5">
@@ -87,9 +88,7 @@ function FontGroup({
               >
                 MudiNeon
               </span>
-              <span className="mt-1 truncate text-[10px] text-muted-foreground">
-                {f.label}
-              </span>
+              <span className="mt-1 truncate text-[10px] text-muted-foreground">{f.label}</span>
               {f.badges && f.badges.length > 0 && (
                 <div className="absolute left-1 top-1 flex flex-wrap gap-1">
                   {f.badges.map((b) => (

@@ -29,46 +29,104 @@ type Form = {
   decoration_print_only_mult: number;
 };
 
-const SECTIONS = [
+interface FieldConfig {
+  key: keyof Form;
+  label: string;
+  suffix: string;
+  step?: number;
+  hint?: string;
+}
+
+const SECTIONS: {
+  title: string;
+  description: string;
+  icon: any;
+  fields: FieldConfig[];
+}[] = [
   {
     title: "Temel Fiyat Ayarları",
     description: "Tabela boyutuna ve satır sayısına göre hesaplanan baz üretim ücretleri.",
     icon: Settings,
     fields: [
       { key: "base_rate_per_cm2", label: "Taban Fiyat (TRY / cm²)", step: 0.1, suffix: "TRY" },
-      { key: "extra_line_fee", label: "Ek Satır Ücreti", suffix: "TRY", hint: "Tek satır harici her ek satır için" },
+      {
+        key: "extra_line_fee",
+        label: "Ek Satır Ücreti",
+        suffix: "TRY",
+        hint: "Tek satır harici her ek satır için",
+      },
       { key: "shipping_tr", label: "Yurtiçi Sabit Kargo Ücreti", suffix: "TRY" },
-    ] as const,
+    ],
   },
   {
     title: "Tabela Çarpanları & Opsiyonlar",
     description: "Özel üretim koşulları ve donanım katsayıları.",
     icon: Percent,
     fields: [
-      { key: "outdoor_mult", label: "Dış Mekan Katsayısı", step: 0.05, suffix: "x", hint: "1.25 → Baz fiyata +%25 ekler" },
-      { key: "rgb_mult", label: "RGB / Çok Renkli Katsayısı", step: 0.05, suffix: "x", hint: "1.35 → Renk geçişli şerit farkı" },
-      { key: "urgent_mult", label: "Acil Üretim Katsayısı", step: 0.05, suffix: "x", hint: "1.20 → Öncelikli teslimat farkı" },
-    ] as const,
+      {
+        key: "outdoor_mult",
+        label: "Dış Mekan Katsayısı",
+        step: 0.05,
+        suffix: "x",
+        hint: "1.25 → Baz fiyata +%25 ekler",
+      },
+      {
+        key: "rgb_mult",
+        label: "RGB / Çok Renkli Katsayısı",
+        step: 0.05,
+        suffix: "x",
+        hint: "1.35 → Renk geçişli şerit farkı",
+      },
+      {
+        key: "urgent_mult",
+        label: "Acil Üretim Katsayısı",
+        step: 0.05,
+        suffix: "x",
+        hint: "1.20 → Öncelikli teslimat farkı",
+      },
+    ],
   },
   {
     title: "Süslemeler & Kulüp Armaları",
-    description: "Tabelalara eklenen SVG ikonlar ve hybrid baskı/neon modlarının fiyatlandırılması.",
+    description:
+      "Tabelalara eklenen SVG ikonlar ve hybrid baskı/neon modlarının fiyatlandırılması.",
     icon: Sparkles,
     fields: [
       { key: "decoration_preset_base", label: "Hazır İkon (Preset) Taban Ücreti", suffix: "TRY" },
       { key: "decoration_upload_base", label: "SVG Yükleme Taban Ücreti", suffix: "TRY" },
-      { key: "decoration_hybrid_fee", label: "Baskı + Neon Ek Ücreti", suffix: "TRY", hint: "Arkası baskılı + önü neon şeritli tabelalar için" },
-      { key: "decoration_print_only_mult", label: "Sadece Baskı Çarpanı", step: 0.05, suffix: "x", hint: "0.40 → Sadece baskılı (neon takılmayan) katman %40 oranlı maliyet" },
-    ] as const,
+      {
+        key: "decoration_hybrid_fee",
+        label: "Baskı + Neon Ek Ücreti",
+        suffix: "TRY",
+        hint: "Arkası baskılı + önü neon şeritli tabelalar için",
+      },
+      {
+        key: "decoration_print_only_mult",
+        label: "Sadece Baskı Çarpanı",
+        step: 0.05,
+        suffix: "x",
+        hint: "0.40 → Sadece baskılı (neon takılmayan) katman %40 oranlı maliyet",
+      },
+    ],
   },
   {
     title: "Adaptör & Priz Seçenekleri",
     description: "Bölgelere göre fiş ve adaptör maliyetleri.",
     icon: DollarSign,
     fields: [
-      { key: "adapter_tr", label: "TR Tip Adaptör", suffix: "TRY", hint: "Standart Türkiye priz adaptörü" },
-      { key: "adapter_eu", label: "EU Tip Adaptör", suffix: "TRY", hint: "Avrupa priz adaptör farkı" },
-    ] as const,
+      {
+        key: "adapter_tr",
+        label: "TR Tip Adaptör",
+        suffix: "TRY",
+        hint: "Standart Türkiye priz adaptörü",
+      },
+      {
+        key: "adapter_eu",
+        label: "EU Tip Adaptör",
+        suffix: "TRY",
+        hint: "Avrupa priz adaptör farkı",
+      },
+    ],
   },
 ];
 
@@ -135,21 +193,28 @@ function AdminPricing() {
           {SECTIONS.map((sec) => {
             const Icon = sec.icon;
             return (
-              <Card key={sec.title} className="border border-border/80 bg-card/60 backdrop-blur-sm shadow-soft transition-all duration-200 hover:border-border hover:shadow-md">
+              <Card
+                key={sec.title}
+                className="border border-border/80 bg-card/60 backdrop-blur-sm shadow-soft transition-all duration-200 hover:border-border hover:shadow-md"
+              >
                 <CardHeader className="flex flex-row items-center gap-3 space-y-0 pb-3">
                   <div className="rounded-lg bg-accent p-2 text-foreground">
                     <Icon className="h-4 w-4" />
                   </div>
                   <div>
                     <CardTitle className="text-base">{sec.title}</CardTitle>
-                    <CardDescription className="text-xs line-clamp-1">{sec.description}</CardDescription>
+                    <CardDescription className="text-xs line-clamp-1">
+                      {sec.description}
+                    </CardDescription>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {sec.fields.map((f) => (
                     <div key={f.key} className="space-y-1.5">
                       <div className="flex items-center justify-between">
-                        <Label className="text-xs font-semibold text-foreground/90">{f.label}</Label>
+                        <Label className="text-xs font-semibold text-foreground/90">
+                          {f.label}
+                        </Label>
                         {f.hint && (
                           <div className="group relative cursor-help text-muted-foreground hover:text-foreground">
                             <HelpCircle className="h-3.5 w-3.5" />
@@ -180,7 +245,11 @@ function AdminPricing() {
         </div>
 
         <div className="flex justify-end pt-4 border-t border-border">
-          <Button type="submit" disabled={busy} className="bg-gradient-neon hover:opacity-95 text-white shadow-glow px-6 font-semibold min-w-[160px] transition-all duration-150">
+          <Button
+            type="submit"
+            disabled={busy}
+            className="bg-gradient-neon hover:opacity-95 text-white shadow-glow px-6 font-semibold min-w-[160px] transition-all duration-150"
+          >
             {busy ? "Kaydediliyor…" : "Değişiklikleri Kaydet"}
           </Button>
         </div>

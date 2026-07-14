@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -51,28 +58,52 @@ export function QuoteDialog({ open, onOpenChange, price }: Props) {
         <DialogHeader>
           <DialogTitle>{t("quoteTitle")}</DialogTitle>
           <DialogDescription>
-            {t("quoteEstPrice")} <span className="font-medium text-foreground">{formatTRY(price)}</span>. {t("quoteSubtitle")}
+            {t("quoteEstPrice")}{" "}
+            <span className="font-medium text-foreground">{formatTRY(price)}</span>.{" "}
+            {t("quoteSubtitle")}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={submit} className="space-y-3">
           <div>
             <Label htmlFor="q-name">{t("contactNameLabel")}</Label>
-            <Input id="q-name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+            <Input
+              id="q-name"
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+            />
           </div>
           <div>
             <Label htmlFor="q-email">{t("contactEmailLabel")}</Label>
-            <Input id="q-email" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+            <Input
+              id="q-email"
+              type="email"
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+            />
           </div>
           <div>
             <Label htmlFor="q-phone">{t("contactPhoneLabel")}</Label>
-            <Input id="q-phone" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+            <Input
+              id="q-phone"
+              value={form.phone}
+              onChange={(e) => setForm({ ...form, phone: e.target.value })}
+            />
           </div>
           <div>
             <Label htmlFor="q-notes">{t("notes")}</Label>
-            <Textarea id="q-notes" rows={3} value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
+            <Textarea
+              id="q-notes"
+              rows={3}
+              value={form.notes}
+              onChange={(e) => setForm({ ...form, notes: e.target.value })}
+            />
           </div>
           <DialogFooter>
-            <Button type="submit" disabled={submitting} className="w-full bg-gradient-neon text-white">
+            <Button
+              type="submit"
+              disabled={submitting}
+              className="w-full bg-gradient-neon text-white"
+            >
               {submitting ? t("submitting") : t("quoteSubmit")}
             </Button>
           </DialogFooter>

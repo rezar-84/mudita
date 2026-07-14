@@ -1,13 +1,10 @@
 import { type DecorationPreset } from "./decorations";
 
-const modules = import.meta.glob(
-  "../assets/objects/sport_emblems/soccer/turkey/*.svg",
-  {
-    query: "?raw",
-    import: "default",
-    eager: true,
-  }
-) as Record<string, string>;
+const modules = import.meta.glob("../assets/objects/sport_emblems/soccer/turkey/*.svg", {
+  query: "?raw",
+  import: "default",
+  eager: true,
+}) as Record<string, string>;
 
 function formatEmblemLabel(filename: string): string {
   // e.g. "turkey_adana-demirspor.football-logos.cc.svg" -> "Adana Demirspor"
@@ -17,11 +14,11 @@ function formatEmblemLabel(filename: string): string {
     .replace(/\.svg$/, "");
 
   const customMap: Record<string, string> = {
-    "besiktas": "Beşiktaş JK",
-    "fenerbahce": "Fenerbahçe SK",
-    "galatasaray": "Galatasaray SK",
-    "trabzonspor": "Trabzonspor",
-    "basaksehir": "Başakşehir FK",
+    besiktas: "Beşiktaş JK",
+    fenerbahce: "Fenerbahçe SK",
+    galatasaray: "Galatasaray SK",
+    trabzonspor: "Trabzonspor",
+    basaksehir: "Başakşehir FK",
     "turkish-football-federation": "TFF",
     "turkey-national-team": "Türkiye Milli Takımı",
     "1st-lig": "Trendyol 1. Lig",
@@ -45,7 +42,10 @@ export const SPORT_EMBLEMS: DecorationPreset[] = Object.entries(modules).map(
 
     const viewBoxMatch = rawMarkup.match(/viewBox=["']([^"']+)["']/i);
     const viewBox = viewBoxMatch ? viewBoxMatch[1] : undefined;
-    const viewBoxParts = viewBox?.trim().split(/[\s,]+/).map(Number);
+    const viewBoxParts = viewBox
+      ?.trim()
+      .split(/[\s,]+/)
+      .map(Number);
     const aspectRatio =
       viewBoxParts && viewBoxParts.length === 4 && viewBoxParts[2] > 0 && viewBoxParts[3] > 0
         ? viewBoxParts[2] / viewBoxParts[3]
@@ -60,5 +60,5 @@ export const SPORT_EMBLEMS: DecorationPreset[] = Object.entries(modules).map(
       viewBox,
       aspectRatio,
     };
-  }
+  },
 );

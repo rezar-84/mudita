@@ -15,9 +15,17 @@ export const Route = createFileRoute("/yukle")({
   head: () => ({
     meta: [
       { title: "Logo / Görsel ile Teklif Al · MudiNeon" },
-      { name: "description", content: "Logonu, çizimini, referans fotoğrafını veya marka tasarımını yükle, sana özel LED neon tabela teklifi hazırlayalım." },
+      {
+        name: "description",
+        content:
+          "Logonu, çizimini, referans fotoğrafını veya marka tasarımını yükle, sana özel LED neon tabela teklifi hazırlayalım.",
+      },
       { property: "og:title", content: "Logo / Görsel ile Teklif Al" },
-      { property: "og:description", content: "PNG, JPG, PDF, SVG — dosyanı yükle, ölçü ve detayları paylaş, ücretsiz teklif al." },
+      {
+        property: "og:description",
+        content:
+          "PNG, JPG, PDF, SVG — dosyanı yükle, ölçü ve detayları paylaş, ücretsiz teklif al.",
+      },
     ],
   }),
   component: UploadPage,
@@ -55,7 +63,7 @@ function UploadPage() {
     if (!parsed.success) return toast.error(parsed.error.issues[0].message);
     if (!file) return toast.error(t("uploadErrFile"));
     if (file.size > 10 * 1024 * 1024) return toast.error(t("uploadErrSize"));
-    
+
     setBusy(true);
     const toastId = toast.loading(t("placingOrder") || "Gönderiliyor...");
 
@@ -78,7 +86,7 @@ function UploadPage() {
               file_name: file.name,
               file_size: file.size,
               file_base64: base64,
-            }
+            },
           });
           toast.success(t("uploadSuccess"), { id: toastId });
           setForm({ name: "", email: "", phone: "", size: "", usage: "", deadline: "", notes: "" });
@@ -112,20 +120,24 @@ function UploadPage() {
 
       <div className="mt-6 grid gap-3 sm:grid-cols-3">
         {badges.map((b) => (
-          <div key={b.t} className="flex items-center gap-2 rounded-xl border border-border bg-card p-3 text-sm">
+          <div
+            key={b.t}
+            className="flex items-center gap-2 rounded-xl border border-border bg-card p-3 text-sm"
+          >
             <b.icon className="h-4 w-4 text-neon-pink" /> {b.t}
           </div>
         ))}
       </div>
 
-      <form onSubmit={submit} className="mt-8 space-y-5 rounded-2xl border border-border bg-card p-6 shadow-soft">
+      <form
+        onSubmit={submit}
+        className="mt-8 space-y-5 rounded-2xl border border-border bg-card p-6 shadow-soft"
+      >
         <div>
           <Label className="mb-2 block">{t("uploadFileLabel")}</Label>
           <label className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-border bg-secondary/30 p-8 text-center hover:bg-secondary/50">
             <Upload className="mb-2 h-6 w-6 text-muted-foreground" />
-            <span className="text-sm font-medium">
-              {file ? file.name : t("uploadFileCta")}
-            </span>
+            <span className="text-sm font-medium">{file ? file.name : t("uploadFileCta")}</span>
             <span className="mt-1 text-xs text-muted-foreground">{t("uploadFileHint")}</span>
             <input
               type="file"
@@ -139,40 +151,77 @@ function UploadPage() {
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <Label htmlFor="u-name">{t("uploadFieldName")}</Label>
-            <Input id="u-name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+            <Input
+              id="u-name"
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+            />
           </div>
           <div>
             <Label htmlFor="u-phone">{t("uploadFieldPhone")}</Label>
-            <Input id="u-phone" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+            <Input
+              id="u-phone"
+              value={form.phone}
+              onChange={(e) => setForm({ ...form, phone: e.target.value })}
+            />
           </div>
         </div>
         <div>
           <Label htmlFor="u-email">{t("uploadFieldEmail")}</Label>
-          <Input id="u-email" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+          <Input
+            id="u-email"
+            type="email"
+            value={form.email}
+            onChange={(e) => setForm({ ...form, email: e.target.value })}
+          />
         </div>
 
         <div className="grid gap-4 sm:grid-cols-3">
           <div>
             <Label htmlFor="u-size">{t("uploadFieldSize")}</Label>
-            <Input id="u-size" placeholder={t("uploadFieldSizePh")} value={form.size} onChange={(e) => setForm({ ...form, size: e.target.value })} />
+            <Input
+              id="u-size"
+              placeholder={t("uploadFieldSizePh")}
+              value={form.size}
+              onChange={(e) => setForm({ ...form, size: e.target.value })}
+            />
           </div>
           <div>
             <Label htmlFor="u-usage">{t("uploadFieldUsage")}</Label>
-            <Input id="u-usage" placeholder={t("uploadFieldUsagePh")} value={form.usage} onChange={(e) => setForm({ ...form, usage: e.target.value })} />
+            <Input
+              id="u-usage"
+              placeholder={t("uploadFieldUsagePh")}
+              value={form.usage}
+              onChange={(e) => setForm({ ...form, usage: e.target.value })}
+            />
           </div>
           <div>
             <Label htmlFor="u-deadline">{t("uploadFieldDeadline")}</Label>
-            <Input id="u-deadline" placeholder={t("uploadFieldDeadlinePh")} value={form.deadline} onChange={(e) => setForm({ ...form, deadline: e.target.value })} />
+            <Input
+              id="u-deadline"
+              placeholder={t("uploadFieldDeadlinePh")}
+              value={form.deadline}
+              onChange={(e) => setForm({ ...form, deadline: e.target.value })}
+            />
           </div>
         </div>
 
         <div>
           <Label htmlFor="u-notes">{t("uploadFieldNotes")}</Label>
-          <Textarea id="u-notes" rows={4} value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
+          <Textarea
+            id="u-notes"
+            rows={4}
+            value={form.notes}
+            onChange={(e) => setForm({ ...form, notes: e.target.value })}
+          />
         </div>
 
-        <Button type="submit" disabled={busy} className="w-full bg-gradient-neon text-white shadow-glow">
-          {busy ? (t("placingOrder") || "Gönderiliyor...") : t("uploadSubmit")}
+        <Button
+          type="submit"
+          disabled={busy}
+          className="w-full bg-gradient-neon text-white shadow-glow"
+        >
+          {busy ? t("placingOrder") || "Gönderiliyor..." : t("uploadSubmit")}
         </Button>
 
         <p className="flex items-start gap-2 rounded-lg border border-border bg-accent/30 p-3 text-xs text-muted-foreground">

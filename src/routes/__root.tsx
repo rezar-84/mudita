@@ -1,4 +1,10 @@
-import { Outlet, createRootRouteWithContext, HeadContent, Scripts, useRouter } from "@tanstack/react-router";
+import {
+  Outlet,
+  createRootRouteWithContext,
+  HeadContent,
+  Scripts,
+  useRouter,
+} from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { SiteHeader, SiteFooter } from "@/components/SiteLayout";
@@ -14,7 +20,10 @@ function NotFoundComponent() {
       <div className="text-center">
         <h1 className="text-7xl font-bold">404</h1>
         <p className="mt-2 text-muted-foreground">Aradığınız sayfa bulunamadı.</p>
-        <a href="/" className="mt-6 inline-block rounded-full bg-gradient-neon px-5 py-2 text-sm text-white shadow-glow">
+        <a
+          href="/"
+          className="mt-6 inline-block rounded-full bg-gradient-neon px-5 py-2 text-sm text-white shadow-glow"
+        >
           Ana sayfaya dön
         </a>
       </div>
@@ -28,15 +37,27 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "MudiNeon · Kişiye Özel LED Neon Tabela" },
-      { name: "description", content: "Kişiye özel LED neon tabela tasarla, anında fiyat al. Türkiye geneli kargo, el emeği üretim." },
+      {
+        name: "description",
+        content:
+          "Kişiye özel LED neon tabela tasarla, anında fiyat al. Türkiye geneli kargo, el emeği üretim.",
+      },
       { name: "author", content: "MudiNeon" },
       { property: "og:title", content: "MudiNeon · Kişiye Özel LED Neon Tabela" },
-      { property: "og:description", content: "Kişiye özel LED neon tabela tasarla, anında fiyat al. Türkiye geneli kargo, el emeği üretim." },
+      {
+        property: "og:description",
+        content:
+          "Kişiye özel LED neon tabela tasarla, anında fiyat al. Türkiye geneli kargo, el emeği üretim.",
+      },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://mudineon.com" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:title", content: "MudiNeon · Kişiye Özel LED Neon Tabela" },
-      { name: "twitter:description", content: "Kişiye özel LED neon tabela tasarla, anında fiyat al. Türkiye geneli kargo, el emeği üretim." },
+      {
+        name: "twitter:description",
+        content:
+          "Kişiye özel LED neon tabela tasarla, anında fiyat al. Türkiye geneli kargo, el emeği üretim.",
+      },
     ],
     links: [
       { rel: "stylesheet", href: appCss },

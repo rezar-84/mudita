@@ -1,6 +1,18 @@
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import logo from "@/assets/logo.png";
-import { Menu, X, Globe, User, History, Package, Settings, LogIn, Shield, LogOut, ShoppingCart } from "lucide-react";
+import {
+  Menu,
+  X,
+  Globe,
+  User,
+  History,
+  Package,
+  Settings,
+  LogIn,
+  Shield,
+  LogOut,
+  ShoppingCart,
+} from "lucide-react";
 import { useState } from "react";
 import { useT, useLocale, setLocale, type Locale } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
@@ -47,7 +59,9 @@ function LanguagePill({ className }: { className?: string }) {
           aria-pressed={locale === l}
           className={cn(
             "min-w-[2rem] rounded-full px-2 py-1 transition",
-            locale === l ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground",
+            locale === l
+              ? "bg-foreground text-background"
+              : "text-muted-foreground hover:text-foreground",
           )}
         >
           {l.toUpperCase()}
@@ -112,7 +126,8 @@ function UserMenu() {
   }
 
   if (!user) {
-    const currentPath = pathname && pathname !== "/auth" && !pathname.startsWith("/auth/") ? pathname : undefined;
+    const currentPath =
+      pathname && pathname !== "/auth" && !pathname.startsWith("/auth/") ? pathname : undefined;
     return (
       <Link
         to="/auth"
@@ -137,7 +152,10 @@ function UserMenu() {
           <span className="hidden max-w-[9rem] truncate lg:inline">{user.email}</span>
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-64 bg-card border border-border shadow-soft z-50">
+      <DropdownMenuContent
+        align="end"
+        className="w-64 bg-card border border-border shadow-soft z-50"
+      >
         <DropdownMenuLabel className="flex items-center gap-3 py-3">
           <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-neon text-sm font-semibold text-white">
             {initial}
@@ -184,7 +202,9 @@ function UserMenu() {
                 aria-pressed={locale === l}
                 className={cn(
                   "min-w-[2rem] rounded-full px-2 py-0.5 font-semibold transition",
-                  locale === l ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground",
+                  locale === l
+                    ? "bg-foreground text-background"
+                    : "text-muted-foreground hover:text-foreground",
                 )}
               >
                 {l.toUpperCase()}
@@ -196,7 +216,10 @@ function UserMenu() {
           <>
             <DropdownMenuSeparator className="bg-border" />
             <DropdownMenuItem asChild>
-              <Link to="/admin" className="flex w-full items-center gap-2 cursor-pointer text-neon-pink">
+              <Link
+                to="/admin"
+                className="flex w-full items-center gap-2 cursor-pointer text-neon-pink"
+              >
                 <Shield className="h-4 w-4" /> <span>{t("userMenuAdmin")}</span>
               </Link>
             </DropdownMenuItem>
@@ -276,7 +299,6 @@ export function SiteHeader() {
         </div>
       </div>
 
-
       {open && (
         <nav className="border-t border-border bg-background xl:hidden">
           <div className="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-3">
@@ -320,17 +342,37 @@ export function SiteFooter() {
         <div>
           <h4 className="text-sm font-semibold">{t("footerExplore")}</h4>
           <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
-            <li><Link to="/tasarla" className="hover:text-foreground">{t("ctaDesign")}</Link></li>
-            <li><Link to="/galeri" className="hover:text-foreground">{t("navGallery")}</Link></li>
-            <li><Link to="/yukle" className="hover:text-foreground">{t("ctaUploadLogo")}</Link></li>
-            <li><Link to="/sss" className="hover:text-foreground">{t("navFaq")}</Link></li>
+            <li>
+              <Link to="/tasarla" className="hover:text-foreground">
+                {t("ctaDesign")}
+              </Link>
+            </li>
+            <li>
+              <Link to="/galeri" className="hover:text-foreground">
+                {t("navGallery")}
+              </Link>
+            </li>
+            <li>
+              <Link to="/yukle" className="hover:text-foreground">
+                {t("ctaUploadLogo")}
+              </Link>
+            </li>
+            <li>
+              <Link to="/sss" className="hover:text-foreground">
+                {t("navFaq")}
+              </Link>
+            </li>
           </ul>
         </div>
         <div>
           <h4 className="text-sm font-semibold">{t("navContact")}</h4>
           <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
             <li>{t("footerWhatsappQuick")}</li>
-            <li><Link to="/iletisim" className="hover:text-foreground">{t("navContact")}</Link></li>
+            <li>
+              <Link to="/iletisim" className="hover:text-foreground">
+                {t("navContact")}
+              </Link>
+            </li>
             <li>{t("shippingTip")}</li>
           </ul>
         </div>

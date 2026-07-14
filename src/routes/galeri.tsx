@@ -10,9 +10,16 @@ export const Route = createFileRoute("/galeri")({
   head: () => ({
     meta: [
       { title: "İlham Galerisi · Neon Tabela Örnekleri · MudiNeon" },
-      { name: "description", content: "Ev, ofis, kafe, düğün, bebek odası, logo ve mağaza için ürettiğimiz neon tabelalardan ilham al ve kendi tasarımını yap." },
+      {
+        name: "description",
+        content:
+          "Ev, ofis, kafe, düğün, bebek odası, logo ve mağaza için ürettiğimiz neon tabelalardan ilham al ve kendi tasarımını yap.",
+      },
       { property: "og:title", content: "Neon Tabela İlham Galerisi · MudiNeon" },
-      { property: "og:description", content: "Kategoriye göre filtrele, beğendiğin tarzın benzerini birkaç tıkla tasarla." },
+      {
+        property: "og:description",
+        content: "Kategoriye göre filtrele, beğendiğin tarzın benzerini birkaç tıkla tasarla.",
+      },
     ],
   }),
   component: GalleryPage,
@@ -21,14 +28,14 @@ export const Route = createFileRoute("/galeri")({
 type Category = "Tümü" | "Ev" | "Ofis" | "Kafe" | "Düğün" | "Bebek Odası" | "Logo" | "Mağaza";
 
 const categoryKeys: Record<Category, string> = {
-  "Tümü": "categoryAll",
-  "Ev": "categoryHome",
-  "Ofis": "categoryOffice",
-  "Kafe": "categoryCafe",
-  "Düğün": "categoryWedding",
+  Tümü: "categoryAll",
+  Ev: "categoryHome",
+  Ofis: "categoryOffice",
+  Kafe: "categoryCafe",
+  Düğün: "categoryWedding",
   "Bebek Odası": "categoryBaby",
-  "Logo": "categoryLogo",
-  "Mağaza": "categoryShop"
+  Logo: "categoryLogo",
+  Mağaza: "categoryShop",
 };
 
 interface Item {
@@ -44,21 +51,150 @@ interface Item {
 }
 
 const ITEMS: Item[] = [
-  { text: "Aşk", fontId: "pacifico", fontFamily: "'Pacifico', cursive", colorId: "pink", color: "#ff8ad1", glow: "#ff3eb5", cat: "Düğün", title: "Düğün Arkası Aşk", useCase: "Nikah masası arkası, fotoğraf köşesi" },
-  { text: "Forever", fontId: "pacifico", fontFamily: "'Pacifico', cursive", colorId: "orange", color: "#ffb27a", glow: "#ff7a00", cat: "Düğün", title: "Forever — Söz / Nişan", useCase: "Söz, nişan ve kına gecesi" },
-  { text: "Open", fontId: "bungee", fontFamily: "'Bungee', sans-serif", colorId: "red", color: "#ff4d6d", glow: "#ff003c", cat: "Mağaza", title: "Open · Vitrin Tabelası", useCase: "Mağaza ve butik vitrini" },
-  { text: "Coffee", fontId: "caveat", fontFamily: "'Caveat', cursive", colorId: "yellow", color: "#ffd56b", glow: "#ffaa00", cat: "Kafe", title: "Coffee · Sıcak Köşe", useCase: "Kafe ve kahve dükkanı" },
-  { text: "Bar", fontId: "russo", fontFamily: "'Russo One', sans-serif", colorId: "yellow", color: "#fff48a", glow: "#ffd400", cat: "Kafe", title: "Bar · Gece Atmosferi", useCase: "Bar, restoran, lounge" },
-  { text: "Hello", fontId: "monoton", fontFamily: "'Monoton', cursive", colorId: "blue", color: "#7ab8ff", glow: "#1e90ff", cat: "Ev", title: "Hello · Giriş Duvarı", useCase: "Antre ve oturma odası" },
-  { text: "Dream", fontId: "montserrat", fontFamily: "'Montserrat', sans-serif", colorId: "purple", color: "#cba0ff", glow: "#8a2be2", cat: "Ev", title: "Dream · Yatak Odası", useCase: "Yatak odası başucu" },
-  { text: "Baby", fontId: "caveat", fontFamily: "'Caveat', cursive", colorId: "pink", color: "#ff8ad1", glow: "#ff3eb5", cat: "Bebek Odası", title: "Baby · Bebek Odası", useCase: "Bebek odası dekorasyonu" },
-  { text: "Defne", fontId: "pacifico", fontFamily: "'Pacifico', cursive", colorId: "warm-white", color: "#fff1c1", glow: "#ffd56b", cat: "Bebek Odası", title: "İsme Özel Bebek Tabelası", useCase: "Bebeğin ismi ile özel hediye" },
-  { text: "Work", fontId: "montserrat", fontFamily: "'Montserrat', sans-serif", colorId: "cool-white", color: "#eaf6ff", glow: "#9ed8ff", cat: "Ofis", title: "Work · Modern Ofis", useCase: "Ofis ve toplantı odası" },
-  { text: "Ideas", fontId: "bungee", fontFamily: "'Bungee', sans-serif", colorId: "green", color: "#8fffb0", glow: "#00d96b", cat: "Ofis", title: "Ideas · Çalışma Köşesi", useCase: "Ajans ve yaratıcı ofis" },
-  { text: "MudiNeon", fontId: "pacifico", fontFamily: "'Pacifico', cursive", colorId: "pink", color: "#ff8ad1", glow: "#ff3eb5", cat: "Logo", title: "Marka Logosu Neon", useCase: "Marka logonuzun neon versiyonu" },
+  {
+    text: "Aşk",
+    fontId: "pacifico",
+    fontFamily: "'Pacifico', cursive",
+    colorId: "pink",
+    color: "#ff8ad1",
+    glow: "#ff3eb5",
+    cat: "Düğün",
+    title: "Düğün Arkası Aşk",
+    useCase: "Nikah masası arkası, fotoğraf köşesi",
+  },
+  {
+    text: "Forever",
+    fontId: "pacifico",
+    fontFamily: "'Pacifico', cursive",
+    colorId: "orange",
+    color: "#ffb27a",
+    glow: "#ff7a00",
+    cat: "Düğün",
+    title: "Forever — Söz / Nişan",
+    useCase: "Söz, nişan ve kına gecesi",
+  },
+  {
+    text: "Open",
+    fontId: "bungee",
+    fontFamily: "'Bungee', sans-serif",
+    colorId: "red",
+    color: "#ff4d6d",
+    glow: "#ff003c",
+    cat: "Mağaza",
+    title: "Open · Vitrin Tabelası",
+    useCase: "Mağaza ve butik vitrini",
+  },
+  {
+    text: "Coffee",
+    fontId: "caveat",
+    fontFamily: "'Caveat', cursive",
+    colorId: "yellow",
+    color: "#ffd56b",
+    glow: "#ffaa00",
+    cat: "Kafe",
+    title: "Coffee · Sıcak Köşe",
+    useCase: "Kafe ve kahve dükkanı",
+  },
+  {
+    text: "Bar",
+    fontId: "russo",
+    fontFamily: "'Russo One', sans-serif",
+    colorId: "yellow",
+    color: "#fff48a",
+    glow: "#ffd400",
+    cat: "Kafe",
+    title: "Bar · Gece Atmosferi",
+    useCase: "Bar, restoran, lounge",
+  },
+  {
+    text: "Hello",
+    fontId: "monoton",
+    fontFamily: "'Monoton', cursive",
+    colorId: "blue",
+    color: "#7ab8ff",
+    glow: "#1e90ff",
+    cat: "Ev",
+    title: "Hello · Giriş Duvarı",
+    useCase: "Antre ve oturma odası",
+  },
+  {
+    text: "Dream",
+    fontId: "montserrat",
+    fontFamily: "'Montserrat', sans-serif",
+    colorId: "purple",
+    color: "#cba0ff",
+    glow: "#8a2be2",
+    cat: "Ev",
+    title: "Dream · Yatak Odası",
+    useCase: "Yatak odası başucu",
+  },
+  {
+    text: "Baby",
+    fontId: "caveat",
+    fontFamily: "'Caveat', cursive",
+    colorId: "pink",
+    color: "#ff8ad1",
+    glow: "#ff3eb5",
+    cat: "Bebek Odası",
+    title: "Baby · Bebek Odası",
+    useCase: "Bebek odası dekorasyonu",
+  },
+  {
+    text: "Defne",
+    fontId: "pacifico",
+    fontFamily: "'Pacifico', cursive",
+    colorId: "warm-white",
+    color: "#fff1c1",
+    glow: "#ffd56b",
+    cat: "Bebek Odası",
+    title: "İsme Özel Bebek Tabelası",
+    useCase: "Bebeğin ismi ile özel hediye",
+  },
+  {
+    text: "Work",
+    fontId: "montserrat",
+    fontFamily: "'Montserrat', sans-serif",
+    colorId: "cool-white",
+    color: "#eaf6ff",
+    glow: "#9ed8ff",
+    cat: "Ofis",
+    title: "Work · Modern Ofis",
+    useCase: "Ofis ve toplantı odası",
+  },
+  {
+    text: "Ideas",
+    fontId: "bungee",
+    fontFamily: "'Bungee', sans-serif",
+    colorId: "green",
+    color: "#8fffb0",
+    glow: "#00d96b",
+    cat: "Ofis",
+    title: "Ideas · Çalışma Köşesi",
+    useCase: "Ajans ve yaratıcı ofis",
+  },
+  {
+    text: "MudiNeon",
+    fontId: "pacifico",
+    fontFamily: "'Pacifico', cursive",
+    colorId: "pink",
+    color: "#ff8ad1",
+    glow: "#ff3eb5",
+    cat: "Logo",
+    title: "Marka Logosu Neon",
+    useCase: "Marka logonuzun neon versiyonu",
+  },
 ];
 
-const CATEGORIES: Category[] = ["Tümü", "Ev", "Ofis", "Kafe", "Düğün", "Bebek Odası", "Logo", "Mağaza"];
+const CATEGORIES: Category[] = [
+  "Tümü",
+  "Ev",
+  "Ofis",
+  "Kafe",
+  "Düğün",
+  "Bebek Odası",
+  "Logo",
+  "Mağaza",
+];
 
 function buildDesignUrl(item: Item): string {
   const baseLayers = defaultConfig.textLayers ?? [];
@@ -66,10 +202,7 @@ function buildDesignUrl(item: Item): string {
   const cfg: NeonDesignConfig = {
     ...defaultConfig,
     textLayers: baseLayer
-      ? [
-          { ...baseLayer, text: item.text, fontId: item.fontId, colorId: item.colorId },
-          ...rest,
-        ]
+      ? [{ ...baseLayer, text: item.text, fontId: item.fontId, colorId: item.colorId }, ...rest]
       : baseLayers,
   };
   return `/tasarla?d=${encodeConfig(cfg)}`;
@@ -87,9 +220,7 @@ function GalleryPage() {
     <div className="mx-auto max-w-7xl px-4 py-10">
       <div className="mb-8">
         <h1 className="text-3xl font-bold sm:text-4xl">{t("galleryTitle")}</h1>
-        <p className="mt-2 max-w-xl text-muted-foreground">
-          {t("gallerySubtitle")}
-        </p>
+        <p className="mt-2 max-w-xl text-muted-foreground">{t("gallerySubtitle")}</p>
       </div>
 
       <div className="mb-6 flex flex-wrap gap-2">
@@ -142,7 +273,6 @@ function GalleryPage() {
               >
                 {t("useThisDesign")}
               </a>
-
             </div>
           </div>
         ))}

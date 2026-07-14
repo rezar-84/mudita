@@ -1,4 +1,5 @@
 import type { CartItem, NeonDesignConfig } from "./types";
+import { sanitiseConfigDecorations } from "./svgSanitize";
 
 const KEY = "mudita-cart-v1";
 
@@ -6,7 +7,11 @@ export function getCart(): CartItem[] {
   if (typeof window === "undefined") return [];
   try {
     const raw = localStorage.getItem(KEY);
-    return raw ? (JSON.parse(raw) as CartItem[]) : [];
+    const parsed = raw ? (JSON.parse(raw) as CartItem[]) : [];
+    return parsed.map((item) => ({
+      ...item,
+      config: sanitiseConfigDecorations(item.config),
+    }));
   } catch {
     return [];
   }
@@ -21,7 +26,7 @@ export function addToCart(config: NeonDesignConfig, price: number) {
   const items = getCart();
   items.push({
     id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-    config,
+    config: sanitiseConfigDecorations(config),
     price,
     createdAt: Date.now(),
   });
@@ -38,7 +43,7 @@ export function updateCartItem(id: string, config: NeonDesignConfig, price: numb
   if (idx >= 0) {
     items[idx] = {
       ...items[idx],
-      config,
+      config: sanitiseConfigDecorations(config),
       price,
     };
     saveCart(items);

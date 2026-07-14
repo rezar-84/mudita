@@ -49,6 +49,7 @@ No project secrets need to be added — Cloud's Google provider stores those val
    - `authCallbackError` — error toast text
 
 **Sanitizer helper** (inline in the callback route):
+
 ```ts
 function safeNext(raw: string | undefined): string {
   if (!raw) return "/";
@@ -58,12 +59,14 @@ function safeNext(raw: string | undefined): string {
 ```
 
 **Files touched**
+
 - new: `src/routes/auth.callback.tsx`
 - edit: `src/routes/auth.tsx` (Google button + post-signin navigate)
 - edit: `src/components/SiteLayout.tsx` (Sign-in link forwards `next`)
 - edit: `src/lib/i18n.ts` (2 new keys × 2 locales)
 
 **Out of scope**
+
 - No database migrations.
 - No changes to the managed `_authenticated/route.tsx`.
 - No changes to `src/integrations/supabase/*` (auto-generated).

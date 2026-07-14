@@ -29,7 +29,9 @@ function HesapLayout() {
                 to={l.to as "/hesap"}
                 className={cn(
                   "flex items-center gap-2 rounded-md px-3 py-2 text-sm transition",
-                  active ? "bg-accent font-medium text-foreground" : "text-muted-foreground hover:bg-accent/50 hover:text-foreground"
+                  active
+                    ? "bg-accent font-medium text-foreground"
+                    : "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
                 )}
               >
                 <l.icon className="h-4 w-4" />

@@ -175,13 +175,13 @@ export interface NeonDesignConfig {
    */
   zOrder?: string[];
   // Visual preview-only options (do not affect price)
-  brightness?: number;   // 40 – 120, default 100
-  flicker?: boolean;     // default true
+  brightness?: number; // 40 – 120, default 100
+  flicker?: boolean; // default true
   ledEffect?: "none" | "blinking" | "strobe" | "fade" | "flashlight";
-  zoom?: number;         // 0.6 – 1.4, default 1
-  isLightOn?: boolean;   // default true — turns glow off when false
+  zoom?: number; // 0.6 – 1.4, default 1
+  isLightOn?: boolean; // default true — turns glow off when false
   drawStrokeWidth?: number; // Active stroke width for Freehand tool (range 2..16, default 6)
-  penStrokeWidth?: number;  // Active stroke width for Pen tool (range 2..16, default 6)
+  penStrokeWidth?: number; // Active stroke width for Pen tool (range 2..16, default 6)
   /** @deprecated layer positions live on each layer now. */
   positionX?: number;
   /** @deprecated */

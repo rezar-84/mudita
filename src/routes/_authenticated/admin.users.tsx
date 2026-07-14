@@ -24,7 +24,13 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -47,13 +53,13 @@ interface UserData {
   id: string;
   email: string | undefined;
   created_at: string;
-  last_sign_in_at: string | null;
+  last_sign_in_at?: string | null;
   roles: string[];
   profile: {
-    display_name?: string;
-    phone?: string;
+    display_name?: string | null;
+    phone?: string | null;
     address?: any;
-    updated_at?: string;
+    updated_at?: string | null;
   } | null;
 }
 
@@ -74,7 +80,7 @@ function AdminUsers() {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState<"all" | "admin" | "customer">("all");
-  
+
   // Modal states
   const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
   const [editMode, setEditMode] = useState(false);
@@ -114,11 +120,9 @@ function AdminUsers() {
           prev
             ? {
                 ...prev,
-                roles: isAdmin
-                  ? prev.roles.filter((r) => r !== "admin")
-                  : [...prev.roles, "admin"],
+                roles: isAdmin ? prev.roles.filter((r) => r !== "admin") : [...prev.roles, "admin"],
               }
-            : null
+            : null,
         );
       }
     } catch (err: any) {
@@ -154,7 +158,7 @@ function AdminUsers() {
                 address,
               },
             }
-          : null
+          : null,
       );
     } catch (err: any) {
       toast.error(err.message || "Profil güncellenirken hata oluştu");
@@ -196,9 +200,7 @@ function AdminUsers() {
     return nameMatch || emailMatch || phoneMatch;
   });
 
-  const userOrders = selectedUser
-    ? orders.filter((o) => o.user_id === selectedUser.id)
-    : [];
+  const userOrders = selectedUser ? orders.filter((o) => o.user_id === selectedUser.id) : [];
 
   return (
     <div className="space-y-6">
@@ -262,7 +264,10 @@ function AdminUsers() {
             {filteredUsers.map((u) => {
               const isAdmin = u.roles.includes("admin");
               return (
-                <tr key={u.id} className="border-b border-border hover:bg-muted/30 transition-colors">
+                <tr
+                  key={u.id}
+                  className="border-b border-border hover:bg-muted/30 transition-colors"
+                >
                   <td className="p-3">
                     <div className="font-medium">{u.profile?.display_name || "İsimsiz"}</div>
                     <div className="text-xs text-muted-foreground">{u.email}</div>
@@ -362,7 +367,9 @@ function AdminUsers() {
                       <span
                         key={r}
                         className={`rounded-full px-2 py-0.5 text-xs font-semibold uppercase ${
-                          r === "admin" ? "bg-red-500/15 text-red-500" : "bg-blue-500/15 text-blue-500"
+                          r === "admin"
+                            ? "bg-red-500/15 text-red-500"
+                            : "bg-blue-500/15 text-blue-500"
                         }`}
                       >
                         {r}
@@ -403,7 +410,7 @@ function AdminUsers() {
                         Profilini Düzenle
                       </Button>
                     </div>
-                    
+
                     <div className="grid gap-4 rounded-lg border border-border p-4 text-sm sm:grid-cols-2">
                       <div>
                         <span className="text-xs text-muted-foreground">Ad Soyad</span>
@@ -415,16 +422,23 @@ function AdminUsers() {
                       </div>
                       <div className="sm:col-span-2">
                         <span className="text-xs text-muted-foreground">Adres Satırı 1</span>
-                        <p className="font-medium">{(selectedUser.profile?.address as Address)?.line1 || "—"}</p>
+                        <p className="font-medium">
+                          {(selectedUser.profile?.address as Address)?.line1 || "—"}
+                        </p>
                       </div>
                       <div className="sm:col-span-2">
                         <span className="text-xs text-muted-foreground">Adres Satırı 2</span>
-                        <p className="font-medium">{(selectedUser.profile?.address as Address)?.line2 || "—"}</p>
+                        <p className="font-medium">
+                          {(selectedUser.profile?.address as Address)?.line2 || "—"}
+                        </p>
                       </div>
                       <div>
                         <span className="text-xs text-muted-foreground">İlçe / İl</span>
                         <p className="font-medium">
-                          {[(selectedUser.profile?.address as Address)?.district, (selectedUser.profile?.address as Address)?.city]
+                          {[
+                            (selectedUser.profile?.address as Address)?.district,
+                            (selectedUser.profile?.address as Address)?.city,
+                          ]
                             .filter(Boolean)
                             .join(" / ") || "—"}
                         </p>
@@ -432,14 +446,19 @@ function AdminUsers() {
                       <div>
                         <span className="text-xs text-muted-foreground">Posta Kodu / Ülke</span>
                         <p className="font-medium">
-                          {[(selectedUser.profile?.address as Address)?.postal_code, (selectedUser.profile?.address as Address)?.country]
+                          {[
+                            (selectedUser.profile?.address as Address)?.postal_code,
+                            (selectedUser.profile?.address as Address)?.country,
+                          ]
                             .filter(Boolean)
                             .join(" / ") || "—"}
                         </p>
                       </div>
                       <div>
                         <span className="text-xs text-muted-foreground">Vergi No / TC</span>
-                        <p className="font-medium">{(selectedUser.profile?.address as Address)?.tax_id || "—"}</p>
+                        <p className="font-medium">
+                          {(selectedUser.profile?.address as Address)?.tax_id || "—"}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -450,10 +469,15 @@ function AdminUsers() {
                     {userOrders.length > 0 ? (
                       <div className="max-h-60 overflow-y-auto rounded-lg border border-border divide-y divide-border">
                         {userOrders.map((order) => (
-                          <div key={order.id} className="flex items-center justify-between p-3 hover:bg-muted/10 transition-colors">
+                          <div
+                            key={order.id}
+                            className="flex items-center justify-between p-3 hover:bg-muted/10 transition-colors"
+                          >
                             <div>
                               <div className="flex items-center gap-2">
-                                <span className="font-mono text-xs font-semibold">{order.id.slice(0, 8)}</span>
+                                <span className="font-mono text-xs font-semibold">
+                                  {order.id.slice(0, 8)}
+                                </span>
                                 <span className="text-xs text-muted-foreground">
                                   {new Date(order.created_at).toLocaleDateString("tr-TR")}
                                 </span>
@@ -487,7 +511,8 @@ function AdminUsers() {
                   <div className="rounded-lg border border-red-500/20 bg-red-500/5 p-4 space-y-3">
                     <h4 className="font-semibold text-sm text-red-500">Tehlikeli Alan</h4>
                     <p className="text-xs text-muted-foreground">
-                      Kullanıcıyı silmek, kullanıcının hesabını, siparişlerini ve tasarımlarını kalıcı olarak sistemden kaldıracaktır. Bu işlem geri alınamaz.
+                      Kullanıcıyı silmek, kullanıcının hesabını, siparişlerini ve tasarımlarını
+                      kalıcı olarak sistemden kaldıracaktır. Bu işlem geri alınamaz.
                     </p>
                     {!isDeleting ? (
                       <Button

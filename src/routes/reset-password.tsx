@@ -46,7 +46,14 @@ function ResetPage() {
         <form onSubmit={submit} className="mt-6 space-y-3">
           <div>
             <Label htmlFor="password">Yeni Şifre</Label>
-            <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
+            <Input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              minLength={6}
+            />
           </div>
           <Button type="submit" disabled={busy} className="w-full bg-gradient-neon text-white">
             {busy ? "…" : "Şifreyi Güncelle"}

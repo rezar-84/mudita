@@ -106,7 +106,9 @@ export function EditorPropertiesToolbar() {
               variant="ghost"
               size="icon"
               className="h-6 w-6"
-              onClick={() => updateTextLayer(l.id, { rotation: ((l.rotation - 90 + 540) % 360) - 180 })}
+              onClick={() =>
+                updateTextLayer(l.id, { rotation: ((l.rotation - 90 + 540) % 360) - 180 })
+              }
               title="-90°"
             >
               <RotateCcw className="h-3 w-3" />
@@ -116,7 +118,9 @@ export function EditorPropertiesToolbar() {
               variant="ghost"
               size="icon"
               className="h-6 w-6"
-              onClick={() => updateTextLayer(l.id, { rotation: ((l.rotation + 90 + 540) % 360) - 180 })}
+              onClick={() =>
+                updateTextLayer(l.id, { rotation: ((l.rotation + 90 + 540) % 360) - 180 })
+              }
               title="+90°"
             >
               <RotateCw className="h-3 w-3" />
@@ -133,14 +137,30 @@ export function EditorPropertiesToolbar() {
             onClick={() => updateTextLayer(l.id, { locked: !l.locked })}
             title={l.locked ? t("unlock") : t("lock")}
           >
-            {l.locked ? <Lock className="h-3.5 w-3.5 text-neon-cyan" /> : <Unlock className="h-3.5 w-3.5" />}
+            {l.locked ? (
+              <Lock className="h-3.5 w-3.5 text-neon-cyan" />
+            ) : (
+              <Unlock className="h-3.5 w-3.5" />
+            )}
           </Button>
 
           {/* Duplicate & Delete */}
-          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onDuplicate} title={t("duplicate")}>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7"
+            onClick={onDuplicate}
+            title={t("duplicate")}
+          >
             <Copy className="h-3.5 w-3.5" />
           </Button>
-          <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:bg-destructive/10" onClick={() => removeTextLayer(l.id)} title={t("delete")}>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7 text-destructive hover:bg-destructive/10"
+            onClick={() => removeTextLayer(l.id)}
+            title={t("delete")}
+          >
             <Trash2 className="h-3.5 w-3.5" />
           </Button>
         </div>
@@ -200,7 +220,9 @@ export function EditorPropertiesToolbar() {
                 onValueChange={([v]) => updateDecoration(d.id, { strokeWidth: v })}
                 className="h-1.5"
               />
-              <span className="w-6 text-right text-[10px] text-muted-foreground">{d.strokeWidth ?? 6}px</span>
+              <span className="w-6 text-right text-[10px] text-muted-foreground">
+                {d.strokeWidth ?? 6}px
+              </span>
             </div>
           )}
 
@@ -245,7 +267,9 @@ export function EditorPropertiesToolbar() {
               variant="ghost"
               size="icon"
               className="h-6 w-6"
-              onClick={() => updateDecoration(d.id, { rotation: ((d.rotation - 90 + 540) % 360) - 180 })}
+              onClick={() =>
+                updateDecoration(d.id, { rotation: ((d.rotation - 90 + 540) % 360) - 180 })
+              }
               title="-90°"
             >
               <RotateCcw className="h-3 w-3" />
@@ -255,7 +279,9 @@ export function EditorPropertiesToolbar() {
               variant="ghost"
               size="icon"
               className="h-6 w-6"
-              onClick={() => updateDecoration(d.id, { rotation: ((d.rotation + 90 + 540) % 360) - 180 })}
+              onClick={() =>
+                updateDecoration(d.id, { rotation: ((d.rotation + 90 + 540) % 360) - 180 })
+              }
               title="+90°"
             >
               <RotateCw className="h-3 w-3" />
@@ -271,13 +297,29 @@ export function EditorPropertiesToolbar() {
             onClick={() => updateDecoration(d.id, { locked: !d.locked })}
             title={d.locked ? t("unlock") : t("lock")}
           >
-            {d.locked ? <Lock className="h-3.5 w-3.5 text-neon-cyan" /> : <Unlock className="h-3.5 w-3.5" />}
+            {d.locked ? (
+              <Lock className="h-3.5 w-3.5 text-neon-cyan" />
+            ) : (
+              <Unlock className="h-3.5 w-3.5" />
+            )}
           </Button>
 
-          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onDuplicate} title={t("duplicate")}>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7"
+            onClick={onDuplicate}
+            title={t("duplicate")}
+          >
             <Copy className="h-3.5 w-3.5" />
           </Button>
-          <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:bg-destructive/10" onClick={() => removeDecoration(d.id)} title={t("delete")}>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7 text-destructive hover:bg-destructive/10"
+            onClick={() => removeDecoration(d.id)}
+            title={t("delete")}
+          >
             <Trash2 className="h-3.5 w-3.5" />
           </Button>
         </div>
@@ -295,7 +337,10 @@ export function EditorPropertiesToolbar() {
             {activeTool === "draw" ? "Serbest Çizim Aktif" : "Kalem Vektör Aktif"}
           </span>
           <span className="text-[10px] text-muted-foreground hidden sm:inline">
-            · {activeTool === "draw" ? "Çizmek için basılı tutup sürükleyin." : "Noktalar eklemek için tıklayın."}
+            ·{" "}
+            {activeTool === "draw"
+              ? "Çizmek için basılı tutup sürükleyin."
+              : "Noktalar eklemek için tıklayın."}
           </span>
         </div>
 
@@ -315,7 +360,9 @@ export function EditorPropertiesToolbar() {
           <div className="flex items-center gap-2">
             <span className="text-muted-foreground">Aktif Kalınlık:</span>
             <select
-              value={activeTool === "draw" ? (config.drawStrokeWidth ?? 6) : (config.penStrokeWidth ?? 6)}
+              value={
+                activeTool === "draw" ? (config.drawStrokeWidth ?? 6) : (config.penStrokeWidth ?? 6)
+              }
               onChange={(e) => {
                 const val = parseInt(e.target.value);
                 if (activeTool === "draw") update({ drawStrokeWidth: val });
@@ -323,11 +370,21 @@ export function EditorPropertiesToolbar() {
               }}
               className="rounded bg-white/10 px-1 py-0.5 text-xs text-white border border-white/10 outline-none cursor-pointer"
             >
-              <option value="2" className="bg-black text-white">2px (Çok İnce)</option>
-              <option value="4" className="bg-black text-white">4px (İnce)</option>
-              <option value="6" className="bg-black text-white">6px (Orta)</option>
-              <option value="10" className="bg-black text-white">10px (Kalın)</option>
-              <option value="14" className="bg-black text-white">14px (Çok Kalın)</option>
+              <option value="2" className="bg-black text-white">
+                2px (Çok İnce)
+              </option>
+              <option value="4" className="bg-black text-white">
+                4px (İnce)
+              </option>
+              <option value="6" className="bg-black text-white">
+                6px (Orta)
+              </option>
+              <option value="10" className="bg-black text-white">
+                10px (Kalın)
+              </option>
+              <option value="14" className="bg-black text-white">
+                14px (Çok Kalın)
+              </option>
             </select>
           </div>
         </div>
@@ -346,7 +403,9 @@ export function EditorPropertiesToolbar() {
       <div className="flex items-center gap-4 text-[11px]">
         <div className="flex items-center gap-1.5">
           <span>Arka Plan:</span>
-          <span className="font-semibold capitalize text-foreground/80">{config.background.replace("-", " ")}</span>
+          <span className="font-semibold capitalize text-foreground/80">
+            {config.background.replace("-", " ")}
+          </span>
         </div>
         <div className="flex items-center gap-1.5">
           <span>Arkada Tahta:</span>

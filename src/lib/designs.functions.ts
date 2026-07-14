@@ -19,12 +19,23 @@ export const listMyDesigns = createServerFn({ method: "GET" })
 export const saveDesign = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) =>
-    z.object({ name: z.string().min(1).max(120), config: configSchema, thumbnail_url: z.string().url().optional() }).parse(i)
+    z
+      .object({
+        name: z.string().min(1).max(120),
+        config: configSchema,
+        thumbnail_url: z.string().url().optional(),
+      })
+      .parse(i),
   )
   .handler(async ({ data, context }) => {
     const { data: row, error } = await context.supabase
       .from("saved_designs")
-      .insert({ user_id: context.userId, name: data.name, config: data.config as never, thumbnail_url: data.thumbnail_url })
+      .insert({
+        user_id: context.userId,
+        name: data.name,
+        config: data.config as never,
+        thumbnail_url: data.thumbnail_url,
+      })
       .select("id")
       .single();
     if (error) throw new Error(error.message);
@@ -35,7 +46,11 @@ export const deleteDesign = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i: unknown) => z.object({ id: z.string().uuid() }).parse(i))
   .handler(async ({ data, context }) => {
-    const { error } = await context.supabase.from("saved_designs").delete().eq("id", data.id).eq("user_id", context.userId);
+    const { error } = await context.supabase
+      .from("saved_designs")
+      .delete()
+      .eq("id", data.id)
+      .eq("user_id", context.userId);
     if (error) throw new Error(error.message);
     return { ok: true };
   });

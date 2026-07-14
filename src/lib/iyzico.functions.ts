@@ -39,7 +39,7 @@ const iyzicoInitSchema = z.object({
       name: z.string(),
       category: z.string().default("Neon Sign"),
       price: z.number(),
-    })
+    }),
   ),
 });
 
@@ -97,7 +97,11 @@ export const iyzicoInitCheckoutForm = createServerFn({ method: "POST" })
       })),
     };
 
-    return new Promise((resolve, reject) => {
+    return new Promise<{
+      token: string;
+      checkoutFormContent: string;
+      paymentPageUrl: string;
+    }>((resolve, reject) => {
       iyzipay.checkoutFormInitialize.create(requestBody, (err: any, result: any) => {
         if (err) {
           reject(new Error(err.message || "iyzico checkout initialization failed"));
@@ -120,7 +124,13 @@ export const iyzicoRetrievePaymentResult = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const iyzipay = getIyzipayInstance();
 
-    return new Promise((resolve, reject) => {
+    return new Promise<{
+      paymentStatus: string;
+      paymentId: string;
+      orderId: string;
+      paidPrice: string;
+      installment: number;
+    }>((resolve, reject) => {
       iyzipay.checkoutForm.retrieve({ token: data.token }, (err: any, result: any) => {
         if (err) {
           reject(new Error(err.message || "iyzico retrieval failed"));
