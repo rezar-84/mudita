@@ -7,9 +7,9 @@ import {
   AlignLeft,
   AlignCenter,
   AlignRight,
-  AlignTop,
-  AlignVerticalJustifyCenter,
-  AlignBottom,
+  AlignStartHorizontal,
+  AlignCenterHorizontal,
+  AlignEndHorizontal,
 } from "lucide-react";
 
 export function AlignmentControls() {
@@ -77,9 +77,9 @@ export function AlignmentControls() {
         {btn(t("alignRight"), AlignRight, "right")}
         <span className="mx-1 w-px self-stretch bg-border" />
         {/* Vertical alignment — aligns to a horizontal reference line (top / middle / bottom) */}
-        {btn(t("alignTop"), AlignTop, "top")}
-        {btn(t("alignCenterV"), AlignVerticalJustifyCenter, "centerV")}
-        {btn(t("alignBottom"), AlignBottom, "bottom")}
+        {btn(t("alignTop"), AlignStartHorizontal, "top")}
+        {btn(t("alignCenterV"), AlignCenterHorizontal, "centerV")}
+        {btn(t("alignBottom"), AlignEndHorizontal, "bottom")}
       </div>
       <p className="text-[10px] text-muted-foreground">
         {ref === "page"
