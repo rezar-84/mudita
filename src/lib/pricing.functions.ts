@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { handleServerError } from "./serverErrors";
 
 function publicClient() {
   return createClient<Database>(process.env.SUPABASE_URL!, process.env.SUPABASE_PUBLISHABLE_KEY!, {
@@ -17,7 +18,7 @@ export const getPricingConfig = createServerFn({ method: "GET" }).handler(async 
     .select("*")
     .eq("id", 1)
     .maybeSingle();
-  if (error) throw new Error(error.message);
+  if (error) handleServerError(error, "Fiyatlandırma bilgileri yüklenemedi.");
   return data;
 });
 
@@ -44,7 +45,7 @@ export const updatePricingConfig = createServerFn({ method: "POST" })
       _user_id: context.userId,
       _role: "admin",
     });
-    if (!isAdmin) throw new Error("Forbidden");
+    if (!isAdmin) handleServerError(new Error("Forbidden"), "Yetkiniz bulunmuyor.");
     const { error } = await context.supabase
       .from("pricing_config")
       .update({
@@ -65,6 +66,6 @@ export const updatePricingConfig = createServerFn({ method: "POST" })
         updated_by: context.userId,
       })
       .eq("id", 1);
-    if (error) throw new Error(error.message);
+    if (error) handleServerError(error, "Fiyatlandırma bilgileri güncellenemedi.");
     return { ok: true };
   });

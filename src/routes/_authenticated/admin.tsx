@@ -13,6 +13,8 @@ import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({ meta: [{ title: "Admin Paneli · MudiNeon" }] }),
+  // SECURITY NOTE: This client-side redirect guard is for UX purposes only.
+  // The actual authorization boundary is enforced server-side inside server functions.
   beforeLoad: async () => {
     const { data: userData } = await supabase.auth.getUser();
     if (!userData.user) throw redirect({ to: "/auth" });

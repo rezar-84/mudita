@@ -104,9 +104,11 @@ export const iyzicoInitCheckoutForm = createServerFn({ method: "POST" })
     }>((resolve, reject) => {
       iyzipay.checkoutFormInitialize.create(requestBody, (err: any, result: any) => {
         if (err) {
-          reject(new Error(err.message || "iyzico checkout initialization failed"));
+          console.error("[Iyzico Error]:", err);
+          reject(new Error("Ödeme sistemi başlatılamadı."));
         } else if (result.status === "failure") {
-          reject(new Error(result.errorMessage || "iyzico error"));
+          console.error("[Iyzico Failure]:", result);
+          reject(new Error(result.errorMessage || "Ödeme işlemi başarısız."));
         } else {
           resolve({
             token: result.token,
@@ -133,9 +135,11 @@ export const iyzicoRetrievePaymentResult = createServerFn({ method: "POST" })
     }>((resolve, reject) => {
       iyzipay.checkoutForm.retrieve({ token: data.token }, (err: any, result: any) => {
         if (err) {
-          reject(new Error(err.message || "iyzico retrieval failed"));
+          console.error("[Iyzico Error]:", err);
+          reject(new Error("Ödeme sonucu doğrulanamadı."));
         } else if (result.status === "failure") {
-          reject(new Error(result.errorMessage || "iyzico error"));
+          console.error("[Iyzico Failure]:", result);
+          reject(new Error(result.errorMessage || "Ödeme doğrulama hatası."));
         } else {
           resolve({
             paymentStatus: result.paymentStatus, // 'SUCCESS' or others

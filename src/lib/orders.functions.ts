@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { handleServerError } from "./serverErrors";
 
 const configSchema = z.record(z.string(), z.unknown());
 
@@ -48,7 +49,7 @@ export const createOrder = createServerFn({ method: "POST" })
       })
       .select("id")
       .single();
-    if (error) throw new Error(error.message);
+    if (error) handleServerError(error, "Sipariş oluşturulamadı.");
     try {
       const { error: itemsError } = await context.supabase.from("order_items").insert(
         data.items.map((it) => ({
@@ -61,7 +62,7 @@ export const createOrder = createServerFn({ method: "POST" })
       if (itemsError) throw itemsError;
     } catch (err: any) {
       await context.supabase.from("orders").delete().eq("id", order.id);
-      throw new Error(err.message || "Order items insertion failed");
+      handleServerError(err, "Sipariş kalemleri kaydedilemedi.");
     }
     return { id: order.id };
   });
@@ -74,7 +75,7 @@ export const listMyOrders = createServerFn({ method: "GET" })
       .select("id, status, total_try, created_at, contact")
       .eq("user_id", context.userId)
       .order("created_at", { ascending: false });
-    if (error) throw new Error(error.message);
+    if (error) handleServerError(error, "Siparişleriniz listelenemedi.");
     return data ?? [];
   });
 
@@ -88,8 +89,8 @@ export const getMyOrder = createServerFn({ method: "GET" })
       .eq("id", data.id)
       .eq("user_id", context.userId)
       .maybeSingle();
-    if (error) throw new Error(error.message);
-    if (!order) throw new Error("Not found");
+    if (error) handleServerError(error, "Sipariş detayları yüklenemedi.");
+    if (!order) handleServerError(new Error("Not found"), "Sipariş bulunamadı.");
     const { data: items } = await context.supabase
       .from("order_items")
       .select("id, config, price_try, breakdown")
@@ -99,6 +100,8 @@ export const getMyOrder = createServerFn({ method: "GET" })
 
 // -------------------- Admin ------------------
 
+// SECURITY BOUNDARY: This server-side check is the real security boundary enforcing admin privileges.
+// Any client-side routing or redirection is purely for UX and must not be trusted on its own.
 async function assertAdmin(context: {
   supabase: import("@supabase/supabase-js").SupabaseClient;
   userId: string;
@@ -107,8 +110,8 @@ async function assertAdmin(context: {
     _user_id: context.userId,
     _role: "admin",
   });
-  if (error) throw new Error(error.message);
-  if (!data) throw new Error("Forbidden");
+  if (error) handleServerError(error, "Yetki kontrolü yapılamadı.");
+  if (!data) handleServerError(new Error("Forbidden"), "Yetkiniz bulunmuyor.");
 }
 
 export const adminListOrders = createServerFn({ method: "GET" })
@@ -120,7 +123,7 @@ export const adminListOrders = createServerFn({ method: "GET" })
       .select("id, user_id, status, total_try, contact, created_at")
       .order("created_at", { ascending: false })
       .limit(200);
-    if (error) throw new Error(error.message);
+    if (error) handleServerError(error, "Sipariş listesi yüklenemedi.");
     return data ?? [];
   });
 
@@ -140,7 +143,7 @@ export const adminUpdateOrderStatus = createServerFn({ method: "POST" })
       .from("orders")
       .update({ status: data.status })
       .eq("id", data.id);
-    if (error) throw new Error(error.message);
+    if (error) handleServerError(error, "Sipariş durumu güncellenemedi.");
     return { ok: true };
   });
 
@@ -156,13 +159,13 @@ export const adminGetOrderDetails = createServerFn({ method: "GET" })
       )
       .eq("id", data.id)
       .maybeSingle();
-    if (error) throw new Error(error.message);
-    if (!order) throw new Error("Sipariş bulunamadı");
+    if (error) handleServerError(error, "Sipariş detayları alınamadı.");
+    if (!order) handleServerError(new Error("Not found"), "Sipariş bulunamadı.");
     const { data: items, error: itemsError } = await context.supabase
       .from("order_items")
       .select("id, config, price_try, breakdown, created_at")
       .eq("order_id", data.id);
-    if (itemsError) throw new Error(itemsError.message);
+    if (itemsError) handleServerError(itemsError, "Sipariş kalemleri alınamadı.");
     return { order, items: items ?? [] };
   });
 
@@ -188,7 +191,7 @@ export const adminListCrmLeads = createServerFn({ method: "GET" })
       .select("*")
       .order("created_at", { ascending: false })
       .limit(300);
-    if (error) throw new Error(error.message);
+    if (error) handleServerError(error, "Müşteri adayları listelenemedi.");
     return data ?? [];
   });
 
@@ -202,7 +205,7 @@ export const adminUpsertCrmLead = createServerFn({ method: "POST" })
     const result = data.id
       ? await db.from("crm_leads").update(row).eq("id", data.id)
       : await db.from("crm_leads").insert(row);
-    if (result.error) throw new Error(result.error.message);
+    if (result.error) handleServerError(result.error, "Müşteri adayı kaydedilemedi.");
     return { ok: true };
   });
 
@@ -212,7 +215,7 @@ export const adminListUsers = createServerFn({ method: "GET" })
     await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data, error } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 200 });
-    if (error) throw new Error(error.message);
+    if (error) handleServerError(error, "Kullanıcı listesi alınamadı.");
     const { data: roles } = await supabaseAdmin.from("user_roles").select("user_id, role");
     const { data: profiles } = await supabaseAdmin
       .from("profiles")
@@ -285,7 +288,7 @@ export const adminUpdateUserProfile = createServerFn({ method: "POST" })
         address: data.address as never,
       })
       .eq("id", data.user_id);
-    if (error) throw new Error(error.message);
+    if (error) handleServerError(error, "Kullanıcı profili güncellenemedi.");
     return { ok: true };
   });
 
@@ -296,7 +299,7 @@ export const adminDeleteUser = createServerFn({ method: "POST" })
     await assertAdmin(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin.auth.admin.deleteUser(data.user_id);
-    if (error) throw new Error(error.message);
+    if (error) handleServerError(error, "Kullanıcı silinemedi.");
     return { ok: true };
   });
 
@@ -310,7 +313,7 @@ export const adminListGallery = createServerFn({ method: "GET" })
       .from("gallery_items")
       .select("*")
       .order("sort", { ascending: true });
-    if (error) throw new Error(error.message);
+    if (error) handleServerError(error, "Galeri listesi yüklenemedi.");
     return data ?? [];
   });
 
@@ -347,10 +350,10 @@ export const adminUpsertGallery = createServerFn({ method: "POST" })
     };
     if (data.id) {
       const { error } = await context.supabase.from("gallery_items").update(row).eq("id", data.id);
-      if (error) throw new Error(error.message);
+      if (error) handleServerError(error, "Galeri öğesi güncellenemedi.");
     } else {
       const { error } = await context.supabase.from("gallery_items").insert(row);
-      if (error) throw new Error(error.message);
+      if (error) handleServerError(error, "Galeri öğesi eklenemedi.");
     }
     return { ok: true };
   });
@@ -361,7 +364,7 @@ export const adminDeleteGallery = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
     const { error } = await context.supabase.from("gallery_items").delete().eq("id", data.id);
-    if (error) throw new Error(error.message);
+    if (error) handleServerError(error, "Galeri öğesi silinemedi.");
     return { ok: true };
   });
 
@@ -439,7 +442,7 @@ export const createCrmLeadPublic = createServerFn({ method: "POST" })
           }
         : null) as any,
     });
-    if (error) throw new Error(error.message);
+    if (error) handleServerError(error, "Talebiniz gönderilemedi.");
     return { ok: true };
   });
 
@@ -462,13 +465,18 @@ export const confirmPaidOrder = createServerFn({ method: "POST" })
 
     const result: any = await new Promise((resolve, reject) => {
       iyzipay.checkoutForm.retrieve({ token: data.token }, (err: any, result: any) => {
-        if (err) reject(new Error(err.message || "Iyzico connection error"));
-        else resolve(result);
+        if (err) {
+          console.error(err);
+          reject(new Error("Iyzico connection error"));
+        } else resolve(result);
       });
     });
 
     if (result.status === "failure" || result.paymentStatus !== "SUCCESS") {
-      throw new Error(result.errorMessage || "Payment verification failed");
+      handleServerError(
+        new Error(result.errorMessage || "Payment verification failed"),
+        "Ödeme doğrulanamadı.",
+      );
     }
 
     const orderId = result.basketId;
@@ -481,7 +489,7 @@ export const confirmPaidOrder = createServerFn({ method: "POST" })
       .single();
 
     if (orderErr || !order) {
-      throw new Error("Order not found or unauthorized");
+      handleServerError(new Error("Not found"), "Sipariş bulunamadı veya yetkisiz işlem.");
     }
 
     const { error: updateErr } = await supabaseAdmin
@@ -490,8 +498,51 @@ export const confirmPaidOrder = createServerFn({ method: "POST" })
       .eq("id", orderId);
 
     if (updateErr) {
-      throw new Error(updateErr.message);
+      handleServerError(updateErr, "Sipariş durumu güncellenemedi.");
     }
 
     return { ok: true, orderId };
+  });
+
+export const syncUserCartLead = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i: unknown) =>
+    z
+      .object({
+        items: z.array(
+          z.object({
+            id: z.string(),
+            config: configSchema,
+            price: z.number(),
+          }),
+        ),
+      })
+      .parse(i),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: profile } = await context.supabase
+      .from("profiles")
+      .select("display_name, phone")
+      .eq("id", context.userId)
+      .maybeSingle();
+
+    const { data: userData } = await supabaseAdmin.auth.admin.getUserById(context.userId);
+    const email = userData.user?.email || "";
+
+    const note =
+      `Sisteme giriş yapan kullanıcının bekleyen sepetindeki ürün sayısı: ${data.items.length}\n` +
+      data.items.map((it, idx) => `Ürün #${idx + 1}: Fiyat: ${it.price} TL`).join("\n");
+
+    const { error } = await (supabaseAdmin as any).from("crm_leads").insert({
+      source: "waiting_cart",
+      status: "new",
+      name: profile?.display_name || "Giriş Yapmış Kullanıcı",
+      email: email,
+      phone: profile?.phone || "",
+      note: note,
+      cart_snapshot: { items: data.items } as any,
+    });
+    if (error) handleServerError(error, "Sepet senkronizasyonu başarısız.");
+    return { ok: true };
   });

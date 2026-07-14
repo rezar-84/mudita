@@ -3,6 +3,8 @@ import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
+  // SECURITY NOTE: Client-side session checks are strictly UX guides.
+  // Real authentication is validated server-side on data fetches.
   beforeLoad: async ({ location }) => {
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) {

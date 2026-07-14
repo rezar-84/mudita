@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Session, User } from "@supabase/supabase-js";
+import { getCart } from "@/lib/cart";
+import { syncUserCartLead } from "@/lib/orders.functions";
 
 export function useAuth() {
   const [session, setSession] = useState<Session | null>(null);
@@ -13,9 +15,20 @@ export function useAuth() {
       setSession(data.session);
       setLoading(false);
     });
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
+    const { data: sub } = supabase.auth.onAuthStateChange(async (event, s) => {
       setSession(s);
       setLoading(false);
+
+      if (event === "SIGNED_IN" && s?.user) {
+        const items = getCart();
+        if (items.length > 0) {
+          try {
+            await syncUserCartLead({ data: { items } });
+          } catch (err) {
+            console.error("Cart sync failed:", err);
+          }
+        }
+      }
     });
     return () => {
       mounted = false;

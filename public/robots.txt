@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Allow: /galeri
+Allow: /sss
+Allow: /hakkimizda
+Allow: /iletisim
+Allow: /tasarla
+Allow: /yukle
+Disallow: /hesap/
+Disallow: /admin/
+Disallow: /auth/
+
+Sitemap: https://mudineon.com/sitemap.xml

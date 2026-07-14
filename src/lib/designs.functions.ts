@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { handleServerError } from "./serverErrors";
 
 const configSchema = z.record(z.string(), z.unknown());
 
@@ -12,7 +13,7 @@ export const listMyDesigns = createServerFn({ method: "GET" })
       .select("id, name, config, thumbnail_url, created_at, updated_at")
       .eq("user_id", context.userId)
       .order("updated_at", { ascending: false });
-    if (error) throw new Error(error.message);
+    if (error) handleServerError(error, "Tasarımlar listelenirken bir hata oluştu.");
     return data ?? [];
   });
 
@@ -38,7 +39,7 @@ export const saveDesign = createServerFn({ method: "POST" })
       })
       .select("id")
       .single();
-    if (error) throw new Error(error.message);
+    if (error) handleServerError(error, "Tasarım kaydedilirken bir hata oluştu.");
     return row;
   });
 
@@ -51,6 +52,6 @@ export const deleteDesign = createServerFn({ method: "POST" })
       .delete()
       .eq("id", data.id)
       .eq("user_id", context.userId);
-    if (error) throw new Error(error.message);
+    if (error) handleServerError(error, "Tasarım silinirken bir hata oluştu.");
     return { ok: true };
   });
